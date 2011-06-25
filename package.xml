@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE package SYSTEM "http://pear.php.net/dtd/package-1.0">
+<package version="1.0" packagerversion="1.9.2">
+ <name>yaf</name>
+ <summary>PHP Framework in PHP extension</summary>
+ <description>Yaf is a Zend framewokr&quot;s like php framework which written in C and built as PHP extension.
+ </description>
+ <maintainers>
+  <maintainer>
+   <user>laruence</user>
+   <name>Xinchen Hui</name>
+   <email>laruence@php.net</email>
+   <role>lead</role>
+  </maintainer>
+  </maintainers>
+ <release>
+  <version>2.0.0</version>
+  <date>2011-06-26</date>
+  <license>PHP</license>
+  <state>stable</state>
+  <notes>- First release version
+  </notes>
+  <deps>
+   <dep type="php" rel="ge" version="5.1.0"/>
+   <dep type="php" rel="le" version="5.3.6"/>
+  </deps>
+  <filelist>
+   <dir name="configs">
+    <file role="src" name="ini.c"/>
+    <file role="src" name="simple.c"/>
+   </dir> <!-- /configs -->
+   <dir name="requests">
+    <file role="src" name="http.c"/>
+    <file role="src" name="simple.c"/>
+   </dir> <!-- /requests -->
+   <dir name="response">
+    <file role="src" name="cli.c"/>
+    <file role="src" name="http.c"/>
+   </dir> <!-- /response -->
+   <dir name="routes">
+    <file role="src" name="interface.c"/>
+    <file role="src" name="map.c"/>
+    <file role="src" name="regex.c"/>
+    <file role="src" name="rewrite.c"/>
+    <file role="src" name="simple.c"/>
+    <file role="src" name="static.c"/>
+    <file role="src" name="supervar.c"/>
+   </dir> <!-- /routes -->
+   <dir name="views">
+    <file role="src" name="interface.c"/>
+    <file role="src" name="simple.c"/>
+   </dir> <!-- /views -->
+   <file role="src" name="config.m4"/>
+   <file role="src" name="config.w32"/>
+   <file role="src" name="CREDITS"/>
+   <file role="src" name="EXPERIMENTAL"/>
+   <file role="src" name="php_yaf.h"/>
+   <file role="src" name="yaf.c"/>
+   <file role="src" name="yaf.dsp"/>
+   <file role="src" name="yaf.php"/>
+   <file role="src" name="yaf.sln"/>
+   <file role="src" name="yaf_action.c"/>
+   <file role="src" name="yaf_action.h"/>
+   <file role="src" name="yaf_application.c"/>
+   <file role="src" name="yaf_application.h"/>
+   <file role="src" name="yaf_autoloader.c"/>
+   <file role="src" name="yaf_bootstrap.c"/>
+   <file role="src" name="yaf_bootstrap.h"/>
+   <file role="src" name="yaf_config.c"/>
+   <file role="src" name="yaf_config.h"/>
+   <file role="src" name="yaf_controller.c"/>
+   <file role="src" name="yaf_controller.h"/>
+   <file role="src" name="yaf_dispatcher.c"/>
+   <file role="src" name="yaf_dispatcher.h"/>
+   <file role="src" name="yaf_exception.c"/>
+   <file role="src" name="yaf_exception.h"/>
+   <file role="src" name="yaf_loader.c"/>
+   <file role="src" name="yaf_loader.h"/>
+   <file role="src" name="yaf_logo.h"/>
+   <file role="src" name="yaf_namespace.h"/>
+   <file role="src" name="yaf_plugin.c"/>
+   <file role="src" name="yaf_plugin.h"/>
+   <file role="src" name="yaf_registry.c"/>
+   <file role="src" name="yaf_registry.h"/>
+   <file role="src" name="yaf_request.c"/>
+   <file role="src" name="yaf_request.h"/>
+   <file role="src" name="yaf_response.c"/>
+   <file role="src" name="yaf_response.h"/>
+   <file role="src" name="yaf_router.c"/>
+   <file role="src" name="yaf_router.h"/>
+   <file role="src" name="yaf_session.c"/>
+   <file role="src" name="yaf_session.h"/>
+   <file role="src" name="yaf_view.c"/>
+   <file role="src" name="yaf_view.h"/>
+  </filelist>
+ </release>
+</package>
