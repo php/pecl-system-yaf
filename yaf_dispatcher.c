@@ -466,13 +466,12 @@ boolean yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *reque
 
 			/** tell the view engine where to find templates */
 			if (Z_OBJCE_P(view) == yaf_view_simple_ce) {
-				yaf_update_property_stringl(view, YAF_VIEW_PROPERTY_NAME_TPLDIR, Z_STRVAL_P(view_dir), Z_STRLEN_P(view_dir));
+				yaf_update_property(view, YAF_VIEW_PROPERTY_NAME_TPLDIR, view_dir);
 			} else {
 				zend_call_method_with_1_params(&view, Z_OBJCE_P(view), NULL, "setscriptpath", NULL, view_dir);
 			}
 
-			zval_dtor(view_dir);
-			efree(view_dir);
+			zval_ptr_dtor(&view_dir);
 
 			yaf_update_property(icontroller, YAF_CONTROLLER_PROPERTY_NAME_NAME,	controller);
 

@@ -1,25 +1,25 @@
 /*
-  +----------------------------------------------------------------------+
-  | Yet Another Framework                                                |
-  +----------------------------------------------------------------------+
-  | This source file is subject to version 3.01 of the PHP license,      |
-  | that is bundled with this package in the file LICENSE, and is        |
-  | available through the world-wide-web at the following url:           |
-  | http://www.php.net/license/3_01.txt                                  |
-  | If you did not receive a copy of the PHP license and are unable to   |
-  | obtain it through the world-wide-web, please send a note to          |
-  | license@php.net so we can mail you a copy immediately.               |
-  +----------------------------------------------------------------------+
-  | Author: Laruence<laruence@yahoo.com.cn>                              |
-  +----------------------------------------------------------------------+
+   +----------------------------------------------------------------------+
+   | Yet Another Framework                                                |
+   +----------------------------------------------------------------------+
+   | This source file is subject to version 3.01 of the PHP license,      |
+   | that is bundled with this package in the file LICENSE, and is        |
+   | available through the world-wide-web at the following url:           |
+   | http://www.php.net/license/3_01.txt                                  |
+   | If you did not receive a copy of the PHP license and are unable to   |
+   | obtain it through the world-wide-web, please send a note to          |
+   | license@php.net so we can mail you a copy immediately.               |
+   +----------------------------------------------------------------------+
+   | Author: Laruence<laruence@yahoo.com.cn>                              |
+   +----------------------------------------------------------------------+
    $Id: ini.c 1040 2011-03-23 05:27:42Z huixinchen $
- */
+   */
 zend_class_entry * yaf_config_ini_ce;
 
 yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, zval *section TSRMLS_DC);
 
 /** {{{ static unsigned int numerics[256]
- */
+*/
 static unsigned int numerics[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -202,7 +202,7 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 /* }}} */
 
 /** {{{static zval *yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSRMLS_DC) 
- */
+*/
 static zval *yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSRMLS_DC)  {
 	char 		*key 		= NULL;
 	char 		*buf		= NULL;
@@ -448,16 +448,30 @@ PHP_METHOD(yaf_config_ini, get) {
 	if (!len) {
 		RETURN_ZVAL(getThis(), 1, 0);
 	} else {
-		zval * properties;
-		HashTable * hash;
+		zval *properties = NULL;
+		char *entry, *seg, *pptr;
 
 		properties = yaf_read_property(getThis(), YAF_CONFIG_PROPERT_NAME);
-		hash  = Z_ARRVAL_P(properties);
+		entry = estrndup(name, len);
 
-		if (zend_hash_find(hash, name, len + 1, (void **) &ppzval) == FAILURE) {
-			RETURN_FALSE;
+		seg = php_strtok_r(entry, ".", &pptr);
+		while (seg) {
+
+			if (Z_TYPE_P(properties) != IS_ARRAY) {
+				efree(entry);
+				RETURN_NULL();
+			}
+
+			if (zend_hash_find(Z_ARRVAL_P(properties), seg, strlen(seg) + 1, (void **) &ppzval) == FAILURE) {
+				efree(entry);
+				RETURN_NULL();
+			}
+
+			properties = *ppzval;
+			seg = php_strtok_r(NULL, ".", &pptr);
 		}
-		
+		efree(entry);
+
 		if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
 			ret = yaf_config_ini_format(getThis(), ppzval TSRMLS_CC);
 			RETURN_ZVAL(ret, 0, 0);
@@ -634,25 +648,25 @@ PHP_METHOD(yaf_config_ini, __clone) {
 */
 zend_function_entry yaf_config_ini_methods[] = {
 	PHP_ME(yaf_config_ini, __construct,	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-	/* PHP_ME(yaf_config_ini, __destruct,	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_DTOR) */
-	PHP_ME(yaf_config_ini, __get,		yaf_getter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, __set,		yaf_setter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, __isset,		yaf_getter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, get,			NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, set,			NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, count,		NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, offsetGet,	yaf_getter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, offsetExists, yaf_getter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, offsetUnset,	yaf_getter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, offsetSet,	yaf_setter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, rewind,		NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, current,		NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, next,			NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, valid,		NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, key,			NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, toArray,		NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, readonly,		NULL, ZEND_ACC_PUBLIC)
-	{NULL, NULL, NULL}
+		/* PHP_ME(yaf_config_ini, __destruct,	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_DTOR) */
+		PHP_ME(yaf_config_ini, __get,		yaf_getter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, __set,		yaf_setter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, __isset,		yaf_getter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, get,			NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, set,			NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, count,		NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, offsetGet,	yaf_getter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, offsetExists, yaf_getter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, offsetUnset,	yaf_getter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, offsetSet,	yaf_setter_arg, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, rewind,		NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, current,		NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, next,			NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, valid,		NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, key,			NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, toArray,		NULL, ZEND_ACC_PUBLIC)
+		PHP_ME(yaf_config_ini, readonly,		NULL, ZEND_ACC_PUBLIC)
+		{NULL, NULL, NULL}
 };
 
 /* }}} */
