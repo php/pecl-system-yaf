@@ -3,7 +3,7 @@
  <name>yaf</name>
  <channel>pecl.php.net</channel>
  <summary>PHP Framework in PHP extension</summary>
- <description>Yaf is a Zend framewokr"s like php framework which written in C and built as PHP extension.</description>
+ <description>Yaf is a PHP framework similar to zend framework, which is written in c and built as PHP extension</description>
  <lead>
   <name>Xinchen Hui</name>
   <user>laruence</user>
