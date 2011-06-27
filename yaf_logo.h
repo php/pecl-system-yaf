@@ -20,9 +20,9 @@
 
 #define YAF_LOGO_MIME_TYPE "image/png"
 #define YAF_LOGO_GUID	   "YAF-LOGO-LARUNECE-COM"
-#define YAF_SUPPORT_URL	   "http://agile.baidu.com/"
+#define YAF_SUPPORT_URL	   "http://pecl.php.net/package/yaf"
 #define YAF_LOGO_IMG       "<a href=" YAF_SUPPORT_URL "> \
-						   <img src=\"?="YAF_LOGO_GUID"\" alt=\"Agile platform logo\" /></a>\n"
+						   <img src=\"?="YAF_LOGO_GUID"\" alt=\"Yaf logo\" /></a>\n"
 
 static const unsigned char yaf_logo[] = {
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
