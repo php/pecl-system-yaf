@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Laruence<laruence@yahoo.com.cn>                              |
   +----------------------------------------------------------------------+
-   $Id: simple.c 1040 2011-03-23 05:27:42Z huixinchen $
+   $Id$
  */
+
 zend_class_entry * yaf_config_simple_ce;
 
 /** {{{ yaf_config_t * yaf_config_simple_instance(yaf_config_t *this_ptr, zval *values, zval *readonly TSRMLS_DC)
@@ -66,6 +67,11 @@ PHP_METHOD(yaf_config_simple, __construct) {
 	zval *readonly 	= NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &values, &readonly) == FAILURE) {
+		zval *prop = NULL;
+		MAKE_STD_ZVAL(prop);
+		array_init(prop);
+		yaf_update_property(getThis(), YAF_CONFIG_PROPERT_NAME, prop);
+
 		WRONG_PARAM_COUNT;
 	}
 

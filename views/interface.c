@@ -12,7 +12,7 @@
   +----------------------------------------------------------------------+
   | Author: Laruence<laruence@yahoo.com.cn>                              |
   +----------------------------------------------------------------------+
-   $Id: interface.c 1040 2011-03-23 05:27:42Z huixinchen $
+   $Id$
  */
 
 zend_class_entry * yaf_view_interface_ce;

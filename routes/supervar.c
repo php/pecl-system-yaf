@@ -12,7 +12,7 @@
   +----------------------------------------------------------------------+
   | Author: Laruence<laruence@yahoo.com.cn>                              |
   +----------------------------------------------------------------------+
-   $Id: supervar.c 591 2011-03-08 16:06:49Z huixinchen $
+   $Id$
  */
 
 #define YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR "_var_name"

@@ -12,7 +12,7 @@
   +----------------------------------------------------------------------+
   | Author: Laruence<laruence@yahoo.com.cn>                              |
   +----------------------------------------------------------------------+
-   $Id: php_yaf.h 52 2011-05-19 10:28:53Z laruence $
+   $Id$
  */
 
 #ifndef PHP_YAF_H
@@ -46,7 +46,7 @@ extern zend_module_entry yaf_module_entry;
 #define YAF_SHUTDOWN_FUNCTION(module)  	ZEND_MINIT_FUNCTION(yaf_##module)
 #define YAF_SHUTDOWN(module)	 	  	  	ZEND_MODULE_SHUTDOWN_N(yaf_##module)(INIT_FUNC_ARGS_PASSTHRU)
 
-#define YAF_VERSION 						"1.0.0 $Id: php_yaf.h 52 2011-05-19 10:28:53Z laruence $"
+#define YAF_VERSION 						"1.0.0 $Id$"
 #define YAF_EXTRACT_FUNC_NAME			"extract"
 
 #define YAF_ROUTER_DEFAULT_ACTION	 	"index"

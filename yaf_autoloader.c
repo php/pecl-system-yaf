@@ -13,7 +13,7 @@
    | obtain it through the world-wide-web, please send a note to          |
    | license@php.net so we can mail you a copy immediately.               |
    +----------------------------------------------------------------------+
-   $Id: yaf_autoloader.c 51 2011-05-13 10:06:11Z laruence $ 
+   $Id$ 
    */
 
 #include "php.h"

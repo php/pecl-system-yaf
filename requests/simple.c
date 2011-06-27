@@ -12,7 +12,7 @@
   +----------------------------------------------------------------------+
   | Author: Laruence<laruence@yahoo.com.cn>                              |
   +----------------------------------------------------------------------+
-   $Id: simple.c 575 2011-03-08 11:12:08Z huixinchen $
+   $Id$
  */
 
 static zend_class_entry * yaf_request_simple_ce;

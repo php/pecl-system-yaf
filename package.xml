@@ -3,7 +3,7 @@
 <package version="1.0" packagerversion="1.9.2">
  <name>yaf</name>
  <summary>PHP Framework in PHP extension</summary>
- <description>Yaf is a Zend framewokr&quot;s like php framework which written in C and built as PHP extension.
+ <description>Yaf is a PHP framework similar to zend framework, which is written in c and built as PHP extension
  </description>
  <maintainers>
   <maintainer>
@@ -15,7 +15,7 @@
   </maintainers>
  <release>
   <version>2.0.0</version>
-  <date>2011-06-26</date>
+  <date>2011-06-27</date>
   <license>PHP</license>
   <state>stable</state>
   <notes>- First release version
@@ -46,6 +46,25 @@
     <file role="src" name="static.c"/>
     <file role="src" name="supervar.c"/>
    </dir> <!-- /routes -->
+   <dir name="tests">
+    <file role="test" name="001.phpt"/>
+    <file role="test" name="002.phpt"/>
+    <file role="test" name="003.phpt"/>
+    <file role="test" name="004.phpt"/>
+    <file role="test" name="005.phpt"/>
+    <file role="test" name="006.phpt"/>
+    <file role="test" name="007.phpt"/>
+    <file role="test" name="008.phpt"/>
+    <file role="test" name="009.phpt"/>
+    <file role="test" name="010.phpt"/>
+    <file role="test" name="011.phpt"/>
+    <file role="test" name="012.phpt"/>
+    <file role="test" name="013.phpt"/>
+    <file role="test" name="014.phpt"/>
+    <file role="test" name="015.phpt"/>
+    <file role="test" name="016.phpt"/>
+    <file role="test" name="simple.ini"/>
+   </dir> <!-- /tests -->
    <dir name="views">
     <file role="src" name="interface.c"/>
     <file role="src" name="simple.c"/>

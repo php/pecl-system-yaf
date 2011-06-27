@@ -26,7 +26,7 @@
  </notes>
  <contents> 
   <dir name="/"> 
-   <file name="config.m4" role="src" />
+   <file name="config.m4"    role="src" />
    <file name="yaf_action.c" role="src" />
    <file name="yaf_action.h" role="src" />
    <file name="yaf_application.c" role="src" />
@@ -92,6 +92,25 @@
    <dir name="views">
     <file name="interface.c" role="src" />
     <file name="simple.c" role="src" />
+   </dir>
+   <dir name="tests">
+    <file name="001.phpt" role="test" />
+    <file name="002.phpt" role="test" />
+    <file name="003.phpt" role="test" />
+    <file name="004.phpt" role="test" />
+    <file name="005.phpt" role="test" />
+    <file name="006.phpt" role="test" />
+    <file name="007.phpt" role="test" />
+    <file name="008.phpt" role="test" />
+    <file name="009.phpt" role="test" />
+    <file name="010.phpt" role="test" />
+    <file name="011.phpt" role="test" />
+    <file name="012.phpt" role="test" />
+    <file name="013.phpt" role="test" />
+    <file name="014.phpt" role="test" />
+    <file name="015.phpt" role="test" />
+    <file name="016.phpt" role="test" />
+    <file name="simple.ini" role="test" />
    </dir>
   </dir> 
  </contents> 
