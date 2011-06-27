@@ -10,7 +10,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Laruence<laruence@yahoo.com.cn>                              |
+  | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
    $Id$
  */
@@ -37,10 +37,6 @@ void yaf_config_unserialize(yaf_config_t *self, HashTable *data TSRMLS_DC);
 /* before php-5.2.4, pestrndup is not defined */
 #define pestrndup(s, length, persistent) ((persistent)?zend_strndup((s),(length)):estrndup((s),(length)))
 #endif
-
-/* ext/standard/php_filestat.h */
-#define YAF_FS_CTIME					7
-extern PHPAPI void php_stat(char * filename, int len, int type, zval * ret TSRMLS_DC);
 
 YAF_STARTUP_FUNCTION(config);
 #endif

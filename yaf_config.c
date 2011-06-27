@@ -10,7 +10,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Laruence<laruence@yahoo.com.cn>                              |
+  | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
    $Id$
  */
@@ -26,6 +26,7 @@
 #include "Zend/zend_exceptions.h"
 #include "Zend/zend_alloc.h"
 #include "ext/standard/php_string.h"
+#include "ext/standard/php_filestat.h"
 
 #include "php_yaf.h"
 #include "yaf_namespace.h"
@@ -56,7 +57,7 @@ static zval * yaf_config_ini_zval_losable(zval *zvalue TSRMLS_DC);
 */
 static int yaf_config_ini_modified(zval * file, long ctime TSRMLS_DC) {
 	zval  n_ctime;
-	php_stat(Z_STRVAL_P(file), Z_STRLEN_P(file) + 1, YAF_FS_CTIME, &n_ctime TSRMLS_CC);
+	php_stat(Z_STRVAL_P(file), Z_STRLEN_P(file) + 1, 7 /*YAF_FS_CTIME*/ , &n_ctime TSRMLS_CC);
 	if (Z_TYPE(n_ctime) != IS_BOOL && ctime != Z_LVAL(n_ctime)) {
 		return Z_LVAL(n_ctime);
 	}	
