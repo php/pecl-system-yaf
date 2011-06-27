@@ -89,12 +89,16 @@ LINK32=link.exe
 
 # Name "yaf - Win32 Release_TS"
 # Name "yaf - Win32 Debug_TS"
-# Begin Group "yaf Source Files"
+# Begin Group "Yaf Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
 SOURCE=.\yaf.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\yaf_application.c
 # End Source File
 # Begin Source File
 
@@ -148,14 +152,22 @@ SOURCE=.\yaf_exception.c
 
 SOURCE=.\yaf_plugin.c
 # End Source File
+# Begin Source File
+
+SOURCE=.\yaf_session.c
+# End Source File
 
 # End Group
-# Begin Group "Ap Header Files"
+# Begin Group "Yaf Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
 SOURCE=.\php_yaf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\yaf_application.h
 # End Source File
 # Begin Source File
 
@@ -196,6 +208,10 @@ SOURCE=.\yaf_exception.h
 # Begin Source File
 
 SOURCE=.\yaf_plugin.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\yaf_session.h
 # End Source File
 # End Group
 # End Target
