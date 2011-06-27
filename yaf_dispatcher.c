@@ -10,7 +10,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Laruence<laruence@yahoo.com.cn>                              |
+  | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
    $Id$
  */
@@ -490,13 +490,16 @@ boolean yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *reque
 
 				executor = icontroller;
 
-				if (fptr->common.num_args) {
-					yaf_dispatcher_get_call_parmaters(request, fptr, &call_args, &count TSRMLS_CC);
+				if (fptr->common.num_args) {	
 					zval *method_name = NULL;
+
+					yaf_dispatcher_get_call_parmaters(request, fptr, &call_args, &count TSRMLS_CC);
 					MAKE_STD_ZVAL(method_name);
 					ZVAL_STRINGL(method_name, func_name, func_name_len, FALSE);
+
 					call_user_function_ex(&(ce)->function_table, &icontroller, 
 							method_name, &ret, count, call_args, TRUE, NULL TSRMLS_CC);
+
 					efree(method_name);
 					efree(call_args);
 				} else {
@@ -537,12 +540,15 @@ boolean yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *reque
 						yaf_update_property(iaction, YAF_CONTROLLER_PROPERTY_NAME_NAME, controller);
 
 						if (fptr->common.num_args) {
-							yaf_dispatcher_get_call_parmaters(request, fptr, &call_args, &count TSRMLS_CC);
 							zval *method_name = NULL;
+
+							yaf_dispatcher_get_call_parmaters(request, fptr, &call_args, &count TSRMLS_CC);
 							MAKE_STD_ZVAL(method_name);
 							ZVAL_STRINGL(method_name, YAF_ACTION_EXECUTOR_NAME, sizeof(YAF_ACTION_EXECUTOR_NAME) - 1, FALSE);
+
 							call_user_function_ex(&(ce)->function_table, &iaction, method_name,
 								   	&ret, count, call_args, TRUE, NULL TSRMLS_CC);
+							
 							efree(method_name);
 							efree(call_args);
 						} else {
