@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="ap" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="yaf" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Dynamic-Link Library" 0x0102
 
-CFG=ap - Win32 Release_TS
+CFG=yaf - Win32 Release_TS
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "ap.mak".
+!MESSAGE NMAKE /f "yaf.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "ap.mak" CFG="ap - Win32 Release_TS"
+!MESSAGE NMAKE /f "yaf.mak" CFG="yaf - Win32 Release_TS"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "ap - Win32 Release_TS" (based on "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "ap - Win32 Debug_TS" (based on "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "yaf - Win32 Release_TS" (based on "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "yaf - Win32 Debug_TS" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE 
 
 # Begin Project
@@ -29,7 +29,7 @@ CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "ap - Win32 Release_TS"
+!IF  "$(CFG)" == "yaf - Win32 Release_TS"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /I "..\.." /I "..\..\..\Zend" /I "..\..\..\bindlib_w32" /I "..\..\..\TSRM" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "COMPILE_DL_YAF" /D ZTS=1 /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\main" /I "..\..\Zend" /I "..\..\..\bindlib_w32" /I "..\..\TSRM" /D ZEND_DEBUG=0 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "AP_EXPORTS" /D "COMPILE_DL_AP" /D ZTS=1 /D "ZEND_WIN32" /D "PHP_WIN32" /D HAVE_AP=1 /D "LIBZEND_EXPORTS" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\main" /I "..\..\Zend" /I "..\..\..\bindlib_w32" /I "..\..\TSRM" /D ZEND_DEBUG=0 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "YAF_EXPORTS" /D "COMPILE_DL_YAF" /D ZTS=1 /D "ZEND_WIN32" /D "PHP_WIN32" /D HAVE_YAF=1 /D "LIBZEND_EXPORTS" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x406 /d "NDEBUG"
@@ -54,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib php5ts.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib php5ts.lib /nologo /dll /machine:I386 /out:"..\..\Release_TS/php_ap.dll" /libpath:"..\..\Release_TS" /libpath:"..\..\Release_TS_Inline"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib php5ts.lib /nologo /dll /machine:I386 /out:"..\..\Release_TS/php_yaf.dll" /libpath:"..\..\Release_TS" /libpath:"..\..\Release_TS_Inline"
 
 !ELSEIF  "$(CFG)" == "ap - Win32 Debug_TS"
 
@@ -87,66 +87,66 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "ap - Win32 Release_TS"
-# Name "ap - Win32 Debug_TS"
-# Begin Group "Ap Source Files"
+# Name "yaf - Win32 Release_TS"
+# Name "yaf - Win32 Debug_TS"
+# Begin Group "yaf Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\ap.c
+SOURCE=.\yaf.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_loader.c
+SOURCE=.\yaf_loader.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_dispatcher.c
+SOURCE=.\yaf_dispatcher.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_bootstrap.c
+SOURCE=.\yaf_bootstrap.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_config.c
+SOURCE=.\yaf_config.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_registry.c
+SOURCE=.\yaf_registry.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_controller.c
+SOURCE=.\yaf_controller.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_action.c
+SOURCE=.\yaf_action.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_view.c
+SOURCE=.\yaf_view.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_request.c
+SOURCE=.\yaf_request.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_response.c
+SOURCE=.\yaf_response.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_router.c
+SOURCE=.\yaf_router.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_exception.c
+SOURCE=.\yaf_exception.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_plugin.c
+SOURCE=.\yaf_plugin.c
 # End Source File
 
 # End Group
@@ -155,31 +155,31 @@ SOURCE=.\ap_plugin.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\php_ap.h
+SOURCE=.\php_yaf.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_autoloader.h
+SOURCE=.\yaf_bootstrap.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_bootstrap.h
+SOURCE=.\yaf_loader.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_config.h
+SOURCE=.\yaf_config.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_registry.h
+SOURCE=.\yaf_registry.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_controller.h
+SOURCE=.\yaf_controller.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_view.h
+SOURCE=.\yaf_view.h
 # End Source File
 # Begin Source File
 
@@ -187,15 +187,15 @@ SOURCE=.\php_request.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_router.h
+SOURCE=.\yaf_router.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_exception.h
+SOURCE=.\yaf_exception.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ap_plugin.h
+SOURCE=.\yaf_plugin.h
 # End Source File
 # End Group
 # End Target

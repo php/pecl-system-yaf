@@ -14,10 +14,10 @@
   </maintainer>
   </maintainers>
  <release>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
   <date>2011-06-27</date>
   <license>PHP</license>
-  <state>stable</state>
+  <state>beta</state>
   <notes>- First release version
   </notes>
   <deps>
