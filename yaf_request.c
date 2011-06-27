@@ -10,7 +10,7 @@
    | obtain it through the world-wide-web, please send a note to          |
    | license@php.net so we can mail you a copy immediately.               |
    +----------------------------------------------------------------------+
-   | Author: Laruence<laruence@yahoo.com.cn>                              |
+   | Author: Xinchen Hui  <laruence@php.net>                              |
    +----------------------------------------------------------------------+
    $Id$
    */
@@ -297,7 +297,7 @@ inline zval * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC) {
 				while( *(seg) == ' ') seg++ ;
 				/* Accept-Language: da, en-gb;q=0.8, en;q=0.7 */
 				if ((qvalue = strstr(seg, "q="))) {
-					float qval = zend_string_to_double(qvalue + 2, seg - qvalue + 2);
+					float qval = (float)zend_string_to_double(qvalue + 2, seg - qvalue + 2);
 					if (qval > max_qvlaue) {
 						max_qvlaue = qval;
 						if (prefer) {
