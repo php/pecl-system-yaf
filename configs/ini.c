@@ -10,7 +10,7 @@
    | obtain it through the world-wide-web, please send a note to          |
    | license@php.net so we can mail you a copy immediately.               |
    +----------------------------------------------------------------------+
-   | Author: Laruence<laruence@yahoo.com.cn>                              |
+   | Author: Xinchen Hui  <laruence@php.net>                              |
    +----------------------------------------------------------------------+
    $Id$
 */
