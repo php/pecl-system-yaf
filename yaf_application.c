@@ -10,7 +10,7 @@
    | obtain it through the world-wide-web, please send a note to          |
    | license@php.net so we can mail you a copy immediately.               |
    +----------------------------------------------------------------------+
-   | Author: Laruence<laruence@yahoo.com.cn>                              |
+   | Author: Xinchen Hui  <laruence@php.net>                              |
    +----------------------------------------------------------------------+
    $Id$
    */
@@ -24,6 +24,7 @@
 #include "main/SAPI.h"
 #include "Zend/zend_interfaces.h"
 #include "ext/standard/php_var.h"
+#include "ext/standard/basic_functions.h"
 
 #include "php_yaf.h"
 #include "yaf_namespace.h"
@@ -376,9 +377,84 @@ PHP_METHOD(yaf_application, run) {
 /* }}} */
 
 /** {{{ proto public Yaf_Application::execute(callback $func)
+ * We can not call to zif_call_user_func on windows, since it was not declared with dllexport
 */
 PHP_METHOD(yaf_application, execute) {
-	PHP_FN(call_user_func)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
+    zval *retval_ptr = NULL;
+    zend_fcall_info fci;
+    zend_fcall_info_cache fci_cache;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f*", &fci, &fci_cache, &fci.params, &fci.param_count) == FAILURE) {
+        return;
+    }
+
+    fci.retval_ptr_ptr = &retval_ptr;
+
+    if (zend_call_function(&fci, &fci_cache TSRMLS_CC) == SUCCESS && fci.retval_ptr_ptr && *fci.retval_ptr_ptr) {
+        COPY_PZVAL_TO_ZVAL(*return_value, *fci.retval_ptr_ptr);
+    }
+
+    if (fci.params) {
+        efree(fci.params);
+    }
+#else
+    zval ***params;
+    zval *retval_ptr;
+    char *name;
+    int argc = ZEND_NUM_ARGS();
+
+    if (argc < 1) {
+        WRONG_PARAM_COUNT;
+    }
+
+    params = safe_emalloc(sizeof(zval **), argc, 0);
+
+    if (zend_get_parameters_array_ex(1, params) == FAILURE) {
+        efree(params);
+        RETURN_FALSE;
+    }
+
+    if (Z_TYPE_PP(params[0]) != IS_STRING && Z_TYPE_PP(params[0]) != IS_ARRAY) {
+        SEPARATE_ZVAL(params[0]);
+        convert_to_string_ex(params[0]);
+    }
+
+    if (!zend_is_callable(*params[0], 0, &name)) {
+        php_error_docref1(NULL TSRMLS_CC, name, E_WARNING, "First argument is expected to be a valid callback");
+        efree(name);
+        efree(params);
+        RETURN_NULL();
+    }
+
+    if (zend_get_parameters_array_ex(argc, params) == FAILURE) {
+        efree(params);
+        RETURN_FALSE;
+    }
+
+    if (call_user_function_ex(EG(function_table), NULL, *params[0], &retval_ptr, argc-1, params+1, 0, NULL TSRMLS_CC) == SUCCESS) {
+        if (retval_ptr) {
+            COPY_PZVAL_TO_ZVAL(*return_value, retval_ptr);
+        }
+    } else {
+        if (argc > 1) {
+            SEPARATE_ZVAL(params[1]);
+            convert_to_string_ex(params[1]);
+            if (argc > 2) {
+                SEPARATE_ZVAL(params[2]);
+                convert_to_string_ex(params[2]);
+                php_error_docref1(NULL TSRMLS_CC, name, E_WARNING, "Unable to call %s(%s,%s)", name, Z_STRVAL_PP(params[1]), Z_STRVAL_PP(params[2]));
+            } else {
+                php_error_docref1(NULL TSRMLS_CC, name, E_WARNING, "Unable to call %s(%s)", name, Z_STRVAL_PP(params[1]));
+            }
+        } else {
+            php_error_docref1(NULL TSRMLS_CC, name, E_WARNING, "Unable to call %s()", name);
+        }
+    }
+
+    efree(name);
+    efree(params);
+#endif
 }
 /* }}} */
 

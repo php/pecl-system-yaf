@@ -10,7 +10,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author: Laruence<laruence@yahoo.com.cn>                              |
+  | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
    $Id$
  */
@@ -28,7 +28,6 @@
 extern zend_class_entry *yaf_application_ce;
 
 boolean yaf_application_is_module_name(char *name, int len TSRMLS_DC);
-PHP_FUNCTION(call_user_func);
 
 YAF_STARTUP_FUNCTION(application);
 #endif
