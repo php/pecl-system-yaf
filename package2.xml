@@ -22,7 +22,10 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  - First release version
+- Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
+- Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
+- Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
+- Corrected some broken C89 statements
  </notes>
  <contents> 
   <dir name="/"> 
@@ -139,6 +142,7 @@
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
 - Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
+- Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
 - Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
 - Corrected some broken C89 statements
    </notes> 

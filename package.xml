@@ -18,7 +18,10 @@
   <date>2011-06-28</date>
   <license>PHP</license>
   <state>beta</state>
-  <notes>- First release version
+  <notes>- Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
+- Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
+- Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
+- Corrected some broken C89 statements
   </notes>
   <deps>
    <dep type="php" rel="ge" version="5.1.0"/>
