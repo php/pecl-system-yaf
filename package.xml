@@ -15,7 +15,7 @@
   </maintainers>
  <release>
   <version>2.0.1</version>
-  <date>2011-06-27</date>
+  <date>2011-06-28</date>
   <license>PHP</license>
   <state>beta</state>
   <notes>- First release version
@@ -77,12 +77,10 @@
    <file role="src" name="yaf.c"/>
    <file role="src" name="yaf.dsp"/>
    <file role="src" name="yaf.php"/>
-   <file role="src" name="yaf.sln"/>
    <file role="src" name="yaf_action.c"/>
    <file role="src" name="yaf_action.h"/>
    <file role="src" name="yaf_application.c"/>
    <file role="src" name="yaf_application.h"/>
-   <file role="src" name="yaf_autoloader.c"/>
    <file role="src" name="yaf_bootstrap.c"/>
    <file role="src" name="yaf_bootstrap.h"/>
    <file role="src" name="yaf_config.c"/>

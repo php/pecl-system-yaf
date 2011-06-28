@@ -10,8 +10,8 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2011-06-26</date>
- <time>02:41:25</time>
+ <date>2011-06-28</date>
+ <time>11:48:25</time>
  <version>
   <release>2.0.1</release>
   <api>2.0.1</api>
@@ -31,7 +31,6 @@
    <file name="yaf_action.h" role="src" />
    <file name="yaf_application.c" role="src" />
    <file name="yaf_application.h" role="src" />
-   <file name="yaf_autoloader.c" role="src" />
    <file name="yaf_bootstrap.c" role="src" />
    <file name="yaf_bootstrap.h" role="src" />
    <file name="yaf.c" role="src" />
@@ -61,7 +60,6 @@
    <file name="yaf_router.h" role="src" />
    <file name="yaf_session.c" role="src" />
    <file name="yaf_session.h" role="src" />
-   <file name="yaf.sln" role="src" />
    <file name="yaf_view.c" role="src" />
    <file name="yaf_view.h" role="src" />
    <dir name="configs">
@@ -128,6 +126,23 @@
  <providesextension>yaf</providesextension>
  <extsrcrelease />
  <changelog> 
+  <release> 
+   <date>2011-06-28</date> 
+   <version> 
+    <release>2.0.1</release> 
+    <api>2.0.1</api> 
+   </version> 
+   <stability> 
+    <release>stable</release> 
+    <api>stable</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes> 
+- Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
+- Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
+- Corrected some broken C89 statements
+   </notes> 
+  </release> 
   <release> 
    <date>2011-06-24</date> 
    <version> 
