@@ -177,7 +177,6 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	zend_bool 	cache_config;
 	zend_bool   action_prefer;
 	zend_bool	name_suffix;
-	zend_bool	st_compatible;
 	zend_bool  	autoload_started;
 	zend_bool  	running;
 	zend_bool  	in_exception;
