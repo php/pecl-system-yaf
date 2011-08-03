@@ -162,7 +162,6 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 	ALLOC_HASHTABLE(ret);
 	zend_hash_init(ret, 128, NULL, NULL, FALSE);
 
-
 	for(zend_hash_internal_pointer_reset(ht);
 			zend_hash_has_more_elements(ht) == SUCCESS;
 			zend_hash_move_forward(ht)) {
