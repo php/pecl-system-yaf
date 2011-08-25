@@ -20,9 +20,9 @@ zend_class_entry * yaf_route_map_ce;
 #define YAF_ROUTE_MAP_VAR_NAME_DELIMETER		"_delimeter"
 #define YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER	"_ctl_router"
 
-/** {{{ boolean yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
+/** {{{ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 */
-boolean yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
+int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	zval    *ctl_prefer    = NULL;
 	zval    *delimer	   = NULL;
 	zval	*zuri		   = NULL;
@@ -97,7 +97,7 @@ boolean yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC
 
 	efree(req_uri);
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
@@ -114,7 +114,7 @@ PHP_METHOD(yaf_route_map, route) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Route_Simple::__construct(boolean $controller_prefer=FALSE, string $delimer = '#!')
+/** {{{ proto public Yaf_Route_Simple::__construct(int $controller_prefer=0, string $delimer = '#!')
 */
 PHP_METHOD(yaf_route_map, __construct) {
 	long controller_prefer 	= 0;
@@ -128,7 +128,7 @@ PHP_METHOD(yaf_route_map, __construct) {
 
 	if (controller_prefer) {
 		zend_update_property_bool(yaf_route_map_ce, getThis(),
-				YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), TRUE TSRMLS_CC);
+				YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 1 TSRMLS_CC);
 	}
 
 	if (delim && delim_len) {
@@ -158,7 +158,7 @@ YAF_STARTUP_FUNCTION(route_map) {
 
 	yaf_route_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_property_bool(yaf_route_map_ce, YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), FALSE, ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_route_map_ce, YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 0, ZEND_ACC_PROTECTED TSRMLS_CC);
 	zend_declare_property_null(yaf_route_map_ce, YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER),  ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	return SUCCESS;

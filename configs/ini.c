@@ -160,7 +160,7 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 	HashTable 	*ret		= NULL;
 
 	ALLOC_HASHTABLE(ret);
-	zend_hash_init(ret, 128, NULL, NULL, FALSE);
+	zend_hash_init(ret, 128, NULL, NULL, 0);
 
 	for(zend_hash_internal_pointer_reset(ht);
 			zend_hash_has_more_elements(ht) == SUCCESS;
@@ -238,7 +238,7 @@ static zval *yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSR
 			array_init(section);
 		}
 
-		zend_hash_merge(Z_ARRVAL_P(section), Z_ARRVAL_PP(ppzval), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), FALSE);
+		zend_hash_merge(Z_ARRVAL_P(section), Z_ARRVAL_PP(ppzval), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 0);
 
 		if ((buf = strstr(key, ":"))) {
 			char *parent_section = NULL;
@@ -260,7 +260,7 @@ static zval *yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSR
 				parent = yaf_config_ini_parse_section(ht, parent_section, parent_len TSRMLS_CC);
 				zend_hash_set_pointer(ht, &position);
 				if (parent) {
-					zend_hash_merge(Z_ARRVAL_P(parent), Z_ARRVAL_P(section), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), TRUE);
+					zend_hash_merge(Z_ARRVAL_P(parent), Z_ARRVAL_P(section), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 1);
 					section = parent;
 					parent  = NULL;
 				}
@@ -299,14 +299,14 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 		zval *params[2] 		= {0};
 
 		MAKE_STD_ZVAL(process_section);
-		ZVAL_TRUE(process_section);
+		ZVAL_1(process_section);
 
 		params[0] = filename;
 		params[1] = process_section;
 
-		ZVAL_STRING(&function, "parse_ini_file", FALSE);
+		ZVAL_STRING(&function, "parse_ini_file", 0);
 		MAKE_STD_ZVAL(ini_entries);
-		ZVAL_FALSE(ini_entries);
+		ZVAL_0(ini_entries);
 		/**
 		 * cause config need section parse
 		 * so it's difficult to call zend_parse_ini_file directly
@@ -336,7 +336,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 			efree(ini_entries);
 		} else {
 			int			len	 = 0;
-			int		section  = FALSE;
+			int		section  = 0;
 			long		idx	 = 0;
 			char		*key = NULL;
 			char 		*tmp = NULL;
@@ -372,7 +372,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 				}
 
 				if (Z_TYPE_PP(ppzv) == IS_ARRAY) {
-					section = TRUE;
+					section = 1;
 					zend_hash_get_pointer(ht, &pot);
 					sec = yaf_config_ini_parse_section(ht, key, len TSRMLS_CC);
 					zend_hash_set_pointer(ht, &pot);

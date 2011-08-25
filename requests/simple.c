@@ -15,12 +15,12 @@
    $Id$
  */
 
-static zend_class_entry * yaf_request_simple_ce;
+static zend_class_entry *yaf_request_simple_ce;
 
 /** {{{ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *module, zval *controller, zval *action, zval *method, zval *params TSRMLS_DC)
 */
 yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *module, zval *controller, zval *action, zval *method, zval *params TSRMLS_DC) {
-	yaf_request_t 	*instance 		= NULL;
+	yaf_request_t *instance;
 
 	if (!method) {
 		MAKE_STD_ZVAL(method);
@@ -42,40 +42,38 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 		object_init_ex(instance, yaf_request_simple_ce);
 	}
 
-	yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_METHOD, method);
+	zend_update_property(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_METHOD), method TSRMLS_CC);
 
 	if (module || controller || action) {
-		if (!module
-				|| Z_TYPE_P(module) != IS_STRING) {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE),
-				   	YAF_G(default_module) TSRMLS_CC);
+		if (!module || Z_TYPE_P(module) != IS_STRING) {
+			zend_update_property_string(yaf_request_simple_ce, instance,
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), YAF_G(default_module) TSRMLS_CC);
 		} else {
-			yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_MODULE, module);
+			zend_update_property(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
 		}
 
-		if (!controller
-				|| Z_TYPE_P(controller) != IS_STRING) {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), 
-					YAF_G(default_controller) TSRMLS_CC);
+		if (!controller || Z_TYPE_P(controller) != IS_STRING) {
+			zend_update_property_string(yaf_request_simple_ce, instance,
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), YAF_G(default_controller) TSRMLS_CC);
 		} else {
-			yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_CONTROLLER, controller);
+			zend_update_property_string(yaf_request_simple_ce, instance, 
+					ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
 		}
 
-		if (!action
-				|| Z_TYPE_P(action) != IS_STRING) {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION),
-				   	YAF_G(default_action) TSRMLS_CC);
+		if (!action || Z_TYPE_P(action) != IS_STRING) {
+			zend_update_property_string(yaf_request_simple_ce, instance,
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), YAF_G(default_action) TSRMLS_CC);
 		} else {
-			yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_ACTION, action);
+			zend_update_property_string(yaf_request_simple_ce, instance,
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
 		}
 
-		zend_update_property_bool(yaf_request_simple_ce, instance, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ROUTED), TRUE TSRMLS_CC);
+		zend_update_property_bool(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ROUTED), 1 TSRMLS_CC);
 	} else {
-		zval *argv 		= NULL;
-		char *query		= NULL;
-		zval **ppzval	= NULL;
-		argv = yaf_request_query(YAF_GLOBAL_VARS_SERVER, YAF_STRL("argv") TSRMLS_CC);
+		zval *argv, **ppzval;
+		char *query = NULL;
 
+		argv = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("argv") TSRMLS_CC);
 		if (IS_ARRAY == Z_TYPE_P(argv)) {
 			for(zend_hash_internal_pointer_reset(Z_ARRVAL_P(argv));
 					zend_hash_has_more_elements(Z_ARRVAL_P(argv)) == SUCCESS;
@@ -96,21 +94,20 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 		}
 
 		if (query) {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_URI), query TSRMLS_CC);
+			zend_update_property_string(Z_OBJCE_P(instance), instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), query TSRMLS_CC);
 		} else {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_URI), "" TSRMLS_CC);
+			zend_update_property_string(Z_OBJCE_P(instance), instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), "" TSRMLS_CC);
 		}
 	}
 
-	if (!params
-			|| IS_ARRAY != Z_TYPE_P(params)) {
+	if (!params || IS_ARRAY != Z_TYPE_P(params)) {
 		MAKE_STD_ZVAL(params);
 		array_init(params);
 	} else {
 		Z_ADDREF_P(params);
 	}
 
-	yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_PARAMS, params);
+	zend_update_property(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_PARAMS), params TSRMLS_CC);
 
 	return instance;
 }
@@ -127,11 +124,11 @@ PHP_METHOD(yaf_request_simple, __construct) {
 	zval *self 		 = getThis();
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|zzzzz", &method, &module, &controller, &action, &params) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	} else {
 		if ((params && IS_ARRAY != Z_TYPE_P(params))) {
 			yaf_trigger_error(YAF_ERR_TYPE_ERROR, 
-				   	"%s::__construct expects the params is an array", yaf_request_simple_ce->name);
+				   	"Expects the params is an array", yaf_request_simple_ce->name);
 			RETURN_FALSE;
 		}
 
@@ -168,7 +165,7 @@ YAF_REQUEST_METHOD(yaf_request_simple, Cookie, 	YAF_GLOBAL_VARS_COOKIE);
 /** {{{ proto public Yaf_Request_Simple::isXmlHttpRequest() 
 */
 PHP_METHOD(yaf_request_simple, isXmlHttpRequest) {
-	zval * header = yaf_request_query(YAF_GLOBAL_VARS_SERVER, YAF_STRL("X-Requested-With") TSRMLS_CC);
+	zval * header = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("X-Requested-With") TSRMLS_CC);
 	if (Z_TYPE_P(header) == IS_STRING
 			&& strncasecmp("XMLHttpRequest", Z_STRVAL_P(header), Z_STRLEN_P(header)) == 0) {
 		RETURN_TRUE;
@@ -253,8 +250,8 @@ YAF_STARTUP_FUNCTION(request_simple){
 	yaf_request_simple_ce = zend_register_internal_class_ex(&ce, yaf_request_ce, NULL TSRMLS_CC);
 	yaf_request_simple_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_class_constant_string(yaf_request_simple_ce, YAF_STRL("SCHEME_HTTP"),  "http" TSRMLS_CC);
-	zend_declare_class_constant_string(yaf_request_simple_ce, YAF_STRL("SCHEME_HTTPS"), "https" TSRMLS_CC);
+	zend_declare_class_constant_string(yaf_request_simple_ce, ZEND_STRL("SCHEME_HTTP"),  "http" TSRMLS_CC);
+	zend_declare_class_constant_string(yaf_request_simple_ce, ZEND_STRL("SCHEME_HTTPS"), "https" TSRMLS_CC);
 
 	return SUCCESS;
 }

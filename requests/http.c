@@ -21,10 +21,8 @@ static zend_class_entry * yaf_request_http_ce;
 /** {{{ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request_uri, char *base_uri TSRMLS_DC)
 */
 yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request_uri, char *base_uri TSRMLS_DC) {
-	yaf_request_t 	*instance 		= NULL;
-	zval 			*method			= NULL;
-	zval 			*params			= NULL;
-	zval 			*settled_uri 	= NULL;
+	zval *methods, *params, *settled_uri;
+	yaf_request_t *instance;
 
 	if (this_ptr) {
 		instance = this_ptr;
@@ -35,23 +33,21 @@ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request
 
     MAKE_STD_ZVAL(method);
     if (SG(request_info).request_method) {
-        ZVAL_STRING(method, (char *)SG(request_info).request_method, TRUE);
+        ZVAL_STRING(method, (char *)SG(request_info).request_method, 1);
     } else if (strncasecmp(sapi_module.name, "cli", 3)) {
-        ZVAL_STRING(method, "Unknow", TRUE);
+        ZVAL_STRING(method, "Unknow", 1);
     } else {
-        ZVAL_STRING(method, "Cli", TRUE);
+        ZVAL_STRING(method, "Cli", 1);
     }
 
-	yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_METHOD, method);
+	zend_update_property(yaf_request_http_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_METHOD), method TSRMLS_CC);
 
 	if (request_uri) {
 		MAKE_STD_ZVAL(settled_uri);
 		ZVAL_STRING(settled_uri, request_uri, 1);
 	} else {
-
-		zval *uri 			= NULL;
+		zval *uri;
 		do {
-
 #ifdef PHP_WIN32
 			/* check this first so IIS will catch */
 			uri = yaf_request_query(YAF_GLOBAL_VARS_SERVER, YAF_STRL("HTTP_X_REWRITE_URL") TSRMLS_CC);
@@ -89,7 +85,7 @@ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request
 
 					if (url_info && url_info->path) {
 						MAKE_STD_ZVAL(settled_uri);
-						ZVAL_STRING(settled_uri, url_info->path, TRUE);
+						ZVAL_STRING(settled_uri, url_info->path, 1);
 					}
 
 					php_url_free(url_info);
@@ -97,7 +93,7 @@ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request
 					char *pos  = NULL;
 					if ((pos = strstr(Z_STRVAL_P(uri), "?"))) {
 						MAKE_STD_ZVAL(settled_uri);
-						ZVAL_STRINGL(settled_uri, Z_STRVAL_P(uri), pos - Z_STRVAL_P(uri), TRUE);
+						ZVAL_STRINGL(settled_uri, Z_STRVAL_P(uri), pos - Z_STRVAL_P(uri), 1);
 					} else {
 						settled_uri = uri;
 					}
@@ -119,14 +115,14 @@ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request
 	}
 
 	if (settled_uri) {
-		yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_URI, settled_uri);
-		yaf_request_set_base_uri(instance, base_uri, Z_STRVAL_P(settled_uri) TSRMLS_CC);
+		zend_update_property(yaf_request_http_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), settled_uri TSRMLS_CC);
+		yaf_request_set_base_uri(yaf_request_http_ce, instance, base_uri, Z_STRVAL_P(settled_uri) TSRMLS_CC);
 	}
 
 	MAKE_STD_ZVAL(params);
 	array_init(params);
 
-	yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_PARAMS, params);
+	zend_update_property(yaf_request_http_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_PARAMS), params TSRMLS_CC);
 
 	return instance;
 }
@@ -225,7 +221,7 @@ PHP_METHOD(yaf_request_http, __construct) {
 
 	yaf_request_t *self = getThis();
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ss", &request_uri, &rlen, &base_uri, &blen) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}
 
 	(void)yaf_request_http_instance(self, request_uri, base_uri TSRMLS_CC);

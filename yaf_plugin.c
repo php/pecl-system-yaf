@@ -35,17 +35,17 @@
 
 zend_class_entry * yaf_plugin_ce;
 
-/** {{{ YAF_ARG_INFO
+/** {{{ ARG_INFO
  */
-YAF_BEGIN_ARG_INFO_EX(plugin_arg, 0, 0, 2)
-	YAF_ARG_OBJ_INFO(0, request, Yaf_Request_Abstract, 0)
-	YAF_ARG_OBJ_INFO(0, response, Yaf_Response_Abstract, 0)
+ZEND_BEGIN_ARG_INFO_EX(plugin_arg, 0, 0, 2)
+	ZEND_ARG_OBJ_INFO(0, request, Yaf_Request_Abstract, 0)
+	ZEND_ARG_OBJ_INFO(0, response, Yaf_Response_Abstract, 0)
 ZEND_END_ARG_INFO()
 
 #ifdef YAF_HAVE_NAMESPACE
-YAF_BEGIN_ARG_INFO_EX(plugin_arg_ns, 0, 0, 2)
-	YAF_ARG_OBJ_INFO(0, request, Yaf\\Request_Abstract, 0)
-	YAF_ARG_OBJ_INFO(0, response, Yaf\\Response_Abstract, 0)
+ZEND_BEGIN_ARG_INFO_EX(plugin_arg_ns, 0, 0, 2)
+	ZEND_ARG_OBJ_INFO(0, request, Yaf\\Request_Abstract, 0)
+	ZEND_ARG_OBJ_INFO(0, response, Yaf\\Response_Abstract, 0)
 ZEND_END_ARG_INFO()
 #endif
 /* }}} */

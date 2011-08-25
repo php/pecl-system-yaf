@@ -46,8 +46,6 @@
 
 ZEND_DECLARE_MODULE_GLOBALS(yaf);
 
-static int le_yaf;
-
 /* {{{ yaf_functions[]
 */
 zend_function_entry yaf_functions[] = {
@@ -135,8 +133,6 @@ PHP_MINIT_FUNCTION(yaf)
 	}
 #endif
 
-	le_yaf = zend_register_list_destructors_ex(NULL, php_yaf_rsc_dtor, "Yaf Resource Destructor", module_number);
-
 	/* startup components */
 	YAF_STARTUP(application);
 	YAF_STARTUP(bootstrap);
@@ -166,7 +162,7 @@ PHP_MSHUTDOWN_FUNCTION(yaf)
 
 	if (YAF_G(configs)) {
 		zend_hash_destroy(YAF_G(configs));
-		pefree(YAF_G(configs), TRUE);
+		pefree(YAF_G(configs), 1);
 	}
 
 	return SUCCESS;
@@ -177,10 +173,10 @@ PHP_MSHUTDOWN_FUNCTION(yaf)
 */
 PHP_RINIT_FUNCTION(yaf)
 {
-	YAF_G(running)  			= FALSE;
-	YAF_G(in_exception) 		= FALSE;
-	YAF_G(throw_exception)   = TRUE;
-	YAF_G(catch_exception)   = FALSE;
+	YAF_G(running)  			= 0;
+	YAF_G(in_exception) 		= 0;
+	YAF_G(throw_exception)   = 1;
+	YAF_G(catch_exception)   = 0;
 	YAF_G(directory)			= NULL;
 	YAF_G(bootstrap)			= NULL;
 	YAF_G(library_directory) = NULL;
@@ -223,12 +219,6 @@ PHP_MINFO_FUNCTION(yaf)
 	php_info_print_table_end();
 
 	DISPLAY_INI_ENTRIES();
-}
-/* }}} */
-
-/** {{{ ZEND_RSRC_DTOR_FUNC
-*/
-ZEND_RSRC_DTOR_FUNC(php_yaf_rsc_dtor) {
 }
 /* }}} */
 

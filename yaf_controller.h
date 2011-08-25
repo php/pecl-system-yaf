@@ -22,15 +22,14 @@
 #define YAF_CONTROLLER_PROPERTY_NAME_NAME		"_name"
 #define YAF_CONTROLLER_PROPERTY_NAME_SCRIPT		"_script_path"
 #define YAF_CONTROLLER_PROPERTY_NAME_RESPONSE	"_response"
-#define YAF_CONTROLLER_PROPERTY_NAME_REQUEST		"_request"
+#define YAF_CONTROLLER_PROPERTY_NAME_REQUEST	"_request"
 #define YAF_CONTROLLER_PROPERTY_NAME_ARGS		"_invoke_args"
-#define YAF_CONTROLLER_PROPERTY_NAME_ACTIONS		"actions"	
+#define YAF_CONTROLLER_PROPERTY_NAME_ACTIONS	"actions"	
 #define YAF_CONTROLLER_PROPERTY_NAME_VIEW		"_view"
 
-extern zend_class_entry * yaf_controller_ce;
-
-boolean yaf_controller_construct(yaf_controller_t *self, yaf_request_t *request, yaf_response_t *response, yaf_view_t *view, zval *args TSRMLS_DC);
-
+extern zend_class_entry *yaf_controller_ce;
+int yaf_controller_construct(zend_class_entry *ce, yaf_controller_t *self, 
+		yaf_request_t *request, yaf_response_t *response, yaf_view_t *view, zval *args TSRMLS_DC);
 YAF_STARTUP_FUNCTION(controller);
 #endif
 /*

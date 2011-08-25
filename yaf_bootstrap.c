@@ -26,7 +26,7 @@
 #include "yaf_namespace.h"
 #include "yaf_bootstrap.h"
 
-zend_class_entry * yaf_bootstrap_ce;
+zend_class_entry *yaf_bootstrap_ce;
 
 /** {{{ yaf_bootstrap_methods 
 */

@@ -19,9 +19,9 @@
 
 zend_class_entry * yaf_route_supervar_ce;
 
-/** {{{ boolean yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
+/** {{{ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
  */
-boolean yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
+int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	zval *varname 	 = NULL;
 	zval *zuri	  	 = NULL;
 	zval *params	 = NULL;
@@ -36,7 +36,7 @@ boolean yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRM
 	zuri = yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(varname), Z_STRLEN_P(varname) TSRMLS_CC);
 
 	if (!zuri || ZVAL_IS_NULL(zuri)) {
-		return FALSE;
+		return 0;
 	}
 
 	req_uri = estrndup(Z_STRVAL_P(zuri), Z_STRLEN_P(zuri));
@@ -147,7 +147,7 @@ boolean yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRM
 		efree(rest);
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 

@@ -33,7 +33,7 @@ yaf_config_t * yaf_config_simple_instance(yaf_config_t *this_ptr, zval *values, 
 			}
 			yaf_update_property(instance, YAF_CONFIG_PROPERT_NAME, values);
 			if (readonly) {
-				convert_to_boolean(readonly);
+				convert_to_int(readonly);
 				yaf_update_property(instance, YAF_CONFIG_PROPERT_NAME_READONLY, readonly);
 			}
 			return instance;

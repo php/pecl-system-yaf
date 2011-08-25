@@ -53,7 +53,7 @@ zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
 	pcre_cache_entry *pce_regexp = NULL;
 
 	if (!len) {
-		return FALSE;
+		return 0;
 	}
 	
 	match 	 = yaf_read_property(route, YAF_ROUTE_PROPETY_NAME_MATCH);
@@ -116,9 +116,9 @@ zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ boolean yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC)
+/** {{{ int yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC)
  */
-boolean yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC) {
+int yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC) {
 	char *request_uri = NULL;
 	zval *args		  = NULL;
 	zval *base_uri	  = NULL;
@@ -136,7 +136,7 @@ boolean yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS
 	}
 
 	if (!(args = yaf_route_regex_match(router, request_uri, strlen(request_uri) TSRMLS_CC))) {
-		return FALSE;
+		return 0;
 	} else {
 		zval **module 		= NULL;
 		zval **controller 	= NULL;
@@ -159,7 +159,7 @@ boolean yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS
 		(void)yaf_request_set_params_multi(request, args TSRMLS_CC);
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
@@ -171,7 +171,7 @@ PHP_METHOD(yaf_route_regex, route) {
 
 	route = getThis();
 
-	RETVAL_FALSE;
+	RETVAL_0;
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &request) == FAILURE) {
 		WRONG_PARAM_COUNT;
 	}

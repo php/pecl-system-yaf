@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+ 
+/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,12 +33,17 @@
 #include "yaf_controller.h"
 #include "yaf_action.h"
 
-zend_class_entry * yaf_action_ce;
+zend_class_entry *yaf_action_ce;
+
+/** {{{ ARG_INFO 
+ */
+
+/* }}} */
 
 /** {{{ proto public Yaf_Action_Abstract::getController(void)
 */
 PHP_METHOD(yaf_action, getController) {
-	yaf_controller_t *controller = yaf_read_property(getThis(), YAF_ACTION_PROPERTY_NAME_CTRL);
+	yaf_controller_t *controller = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_ACTION_PROPERTY_NAME_CTRL), 0 TSRMLS_CC);
 	RETURN_ZVAL(controller, 1, 0);
 }
 /* }}} */

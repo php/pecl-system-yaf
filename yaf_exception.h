@@ -46,13 +46,6 @@
 
 #if defined(PHP_WIN32) && (_MSC_VER > 1400)
 
-#define yaf_trigger_error(type, format, ...) \
-	if (YAF_G(throw_exception)) {\
-		yaf_throw_exception(type TSRMLS_CC, format, __VA_ARGS__);\
-	} else { \
-		php_error(YAF_ERR_ERROR, "[%d]"format, type, __VA_ARGS__); \
-	}
-
 #define yaf_error(format, ...) \
  		php_error(YAF_ERR_ERROR, format, __VA_ARGS__);
 
@@ -66,13 +59,6 @@
 		php_error(YAF_ERR_NOTICE, format,  __VA_ARGS__);
 
 #elif defined(__GNUC__) 
-
-#define yaf_trigger_error(type, format, arg...) \
-	if (YAF_G(throw_exception)) {\
-		yaf_throw_exception(type TSRMLS_CC, format, ##arg);\
-	} else { \
-		php_error(YAF_ERR_ERROR, "[%d]"format, type, ##arg); \
-	}
 
 #define yaf_error(format, arg...) \
  		php_error(YAF_ERR_ERROR, format, ##arg);
@@ -109,7 +95,7 @@
 	} while(0)
 
 
-void yaf_throw_exception(long code TSRMLS_DC, char *format, ...);
+void yaf_throw_exception(long code, char *message TSRMLS_DC);
 extern zend_class_entry * yaf_ce_RuntimeException;
 extern zend_class_entry * yaf_exception_ce;
 

@@ -34,6 +34,9 @@
 #include "yaf_config.h"
 
 zend_class_entry * yaf_config_ce;
+#ifdef HAVE_SPL
+extern PHPAPI zend_class_entry * spl_ce_Countable;
+#endif
 
 /* {{{ YAF_ARG_INFO
  */
@@ -71,8 +74,8 @@ static int yaf_config_ini_modified(zval * file, long ctime TSRMLS_DC) {
 static void yaf_config_cache_dtor(yaf_config_cache **cache) {
 	if (*cache) {
 		zend_hash_destroy((*cache)->data);
-		pefree((*cache)->data, TRUE);
-		pefree(*cache, TRUE);
+		pefree((*cache)->data, 1);
+		pefree(*cache, 1);
 	}
 }
 /* }}} */
@@ -85,14 +88,14 @@ static void yaf_config_zval_dtor(zval **value) {
 			case IS_STRING:
 			case IS_CONSTANT:
 				CHECK_ZVAL_STRING(*value);
-				pefree((*value)->value.str.val, TRUE);
-				pefree(*value, TRUE);
+				pefree((*value)->value.str.val, 1);
+				pefree(*value, 1);
 				break;
 			case IS_ARRAY:
 			case IS_CONSTANT_ARRAY: {
 				zend_hash_destroy((*value)->value.ht);
-				pefree((*value)->value.ht, TRUE);
-				pefree(*value, TRUE);
+				pefree((*value)->value.ht, 1);
+				pefree(*value, 1);
 			}
 			break;
 		}
@@ -173,7 +176,7 @@ static void yaf_config_copy_losable(HashTable *ldst, HashTable *src TSRMLS_DC) {
  */
 static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC) {
 	zval *new = NULL;
-	new = (zval *)pemalloc(sizeof(zval), TRUE);
+	new = (zval *)pemalloc(sizeof(zval), 1);
 	INIT_PZVAL(new);
 	switch (zvalue->type) {
 		case IS_RESOURCE:
@@ -187,7 +190,7 @@ static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC) {
 		case IS_STRING:
 				CHECK_ZVAL_STRING(zvalue);
 				Z_TYPE_P(new) = IS_STRING;
-				new->value.str.val = pestrndup(zvalue->value.str.val, zvalue->value.str.len, TRUE);
+				new->value.str.val = pestrndup(zvalue->value.str.val, zvalue->value.str.len, 1);
 				new->value.str.len = zvalue->value.str.len;
 			break;
 		case IS_ARRAY:
@@ -195,12 +198,12 @@ static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC) {
 				HashTable *original_ht = zvalue->value.ht;
 				HashTable *tmp_ht = NULL;
 
-				tmp_ht = (HashTable *)pemalloc(sizeof(HashTable), TRUE);
+				tmp_ht = (HashTable *)pemalloc(sizeof(HashTable), 1);
 				if (!tmp_ht) {
 					return NULL;
 				}
 
-				zend_hash_init(tmp_ht, zend_hash_num_elements(original_ht), NULL, (dtor_func_t)yaf_config_zval_dtor, TRUE);
+				zend_hash_init(tmp_ht, zend_hash_num_elements(original_ht), NULL, (dtor_func_t)yaf_config_zval_dtor, 1);
 				yaf_config_copy_persistent(tmp_ht, original_ht TSRMLS_CC);
 				Z_TYPE_P(new) = IS_ARRAY;
 				new->value.ht = tmp_ht;
@@ -228,7 +231,7 @@ static zval * yaf_config_ini_zval_losable(zval *zvalue TSRMLS_DC) {
 		case IS_CONSTANT:
 		case IS_STRING:
 				CHECK_ZVAL_STRING(zvalue);
-				ZVAL_STRINGL(new, zvalue->value.str.val, zvalue->value.str.len, TRUE);
+				ZVAL_STRINGL(new, zvalue->value.str.val, zvalue->value.str.len, 1);
 			break;
 		case IS_ARRAY:
 		case IS_CONSTANT_ARRAY: {
@@ -286,27 +289,27 @@ static void yaf_config_ini_serialize(yaf_config_t *this_ptr, zval *filename, zva
 	int	 			len 		= 0;
 
 	if (!YAF_G(configs)) {
-		YAF_G(configs) = (HashTable *)pemalloc(sizeof(HashTable), TRUE);
+		YAF_G(configs) = (HashTable *)pemalloc(sizeof(HashTable), 1);
 		if (!YAF_G(configs)) {
 			return;
 		}
-		zend_hash_init(YAF_G(configs), 8, NULL, (dtor_func_t) yaf_config_cache_dtor, TRUE);
+		zend_hash_init(YAF_G(configs), 8, NULL, (dtor_func_t) yaf_config_cache_dtor, 1);
 	}
 
-	cache = (yaf_config_cache *)pemalloc(sizeof(yaf_config_cache), TRUE);
+	cache = (yaf_config_cache *)pemalloc(sizeof(yaf_config_cache), 1);
 	
 	if (!cache) {
 		return;
 	}
 
-	persistent = (HashTable *)pemalloc(sizeof(HashTable), TRUE);
+	persistent = (HashTable *)pemalloc(sizeof(HashTable), 1);
 	if (!persistent) {
 		return;
 	}
 
 	configs = yaf_read_property(this_ptr, YAF_CONFIG_PROPERT_NAME);
 
-	zend_hash_init(persistent, zend_hash_num_elements(Z_ARRVAL_P(configs)), NULL, (dtor_func_t) yaf_config_zval_dtor, TRUE);
+	zend_hash_init(persistent, zend_hash_num_elements(Z_ARRVAL_P(configs)), NULL, (dtor_func_t) yaf_config_zval_dtor, 1);
 
 	yaf_config_copy_persistent(persistent, Z_ARRVAL_P(configs) TSRMLS_CC);
 

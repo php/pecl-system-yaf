@@ -64,9 +64,9 @@ yaf_registry_t *yaf_registry_instance(yaf_registry_t *this_ptr TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ boolean yaf_registry_is_set(char *name, int len TSRMLS_DC)
+/** {{{ int yaf_registry_is_set(char *name, int len TSRMLS_DC)
  */
-boolean yaf_registry_is_set(char *name, int len TSRMLS_DC) {
+int yaf_registry_is_set(char *name, int len TSRMLS_DC) {
 	yaf_registry_t 	*registry = NULL;
 	zval 			*entrys = NULL;
 

@@ -64,13 +64,13 @@ yaf_response_t * yaf_response_instance(yaf_response_t *this_ptr, char *sapi_name
 }
 /* }}} */
 
-/** {{{ boolean yaf_response_set_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len TSRMLS_DC)
+/** {{{ int yaf_response_set_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len TSRMLS_DC)
  */
-boolean yaf_response_set_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len TSRMLS_DC) {
+int yaf_response_set_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len TSRMLS_DC) {
 	zval *zbody = NULL;
 
 	if (!body_len) {
-		return TRUE;
+		return 1;
 	}
 
 	zbody = yaf_read_property(response, YAF_RESPONSE_PROPERTY_NAME_BODY);
@@ -81,22 +81,22 @@ boolean yaf_response_set_body(yaf_response_t *response, char *name, int name_len
 	zbody = NULL;
 	MAKE_STD_ZVAL(zbody);
 
-	ZVAL_STRINGL(zbody, body, body_len, TRUE);
+	ZVAL_STRINGL(zbody, body, body_len, 1);
 
 	yaf_update_property(response, YAF_RESPONSE_PROPERTY_NAME_BODY, zbody);
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, boolean prepend TSRMLS_DC)
+/** {{{ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int prepend TSRMLS_DC)
  */
-boolean yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, boolean prepend TSRMLS_DC) {
+int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int prepend TSRMLS_DC) {
 	zval *zbody = NULL;
 	char *obody	= NULL;
 
 	if (!body_len) {
-		return TRUE;
+		return 1;
 	}
 
 	zbody = yaf_read_property(response, YAF_RESPONSE_PROPERTY_NAME_BODY);
@@ -110,40 +110,37 @@ boolean yaf_response_alter_body(yaf_response_t *response, char *name, int name_l
 
 	efree(obody);
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_response_clear_body(yaf_response_t *response TSRMLS_DC)
+/** {{{ int yaf_response_clear_body(yaf_response_t *response TSRMLS_DC)
  */
-boolean yaf_response_clear_body(yaf_response_t *response TSRMLS_DC) {
+int yaf_response_clear_body(yaf_response_t *response TSRMLS_DC) {
 	zend_update_property_string(Z_OBJCE_P(response), response, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), "" TSRMLS_CC);
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_response_set_redirect(yaf_response_t *response, char *url, int len TSRMLS_DC)
+/** {{{ int yaf_response_set_redirect(yaf_response_t *response, char *url, int len TSRMLS_DC)
  */
-boolean yaf_response_set_redirect(yaf_response_t *response, char *url, int len TSRMLS_DC) {
-
+int yaf_response_set_redirect(yaf_response_t *response, char *url, int len TSRMLS_DC) {
 	sapi_header_line ctr = {0};
 
 	ctr.line_len 		= spprintf(&(ctr.line), 0, "%s %s", "Location:", url);
 	ctr.response_code 	= 0;
-
 	if (sapi_header_op(SAPI_HEADER_REPLACE, &ctr TSRMLS_CC) == SUCCESS) {
 		efree(ctr.line);
-		return TRUE;
+		return 1;
 	}
-
 	efree(ctr.line);
-	return FALSE;
+	return 0;
 }
 /* }}} */
 
-/** {{{ boolean yaf_response_send(yaf_response_t *response TSRMLS_DC)
+/** {{{ int yaf_response_send(yaf_response_t *response TSRMLS_DC)
  */
-boolean yaf_response_send(yaf_response_t *response TSRMLS_DC) {
+int yaf_response_send(yaf_response_t *response TSRMLS_DC) {
 	zval *body = NULL;
 	
 	body = yaf_read_property(response, YAF_RESPONSE_PROPERTY_NAME_BODY);
@@ -151,11 +148,11 @@ boolean yaf_response_send(yaf_response_t *response TSRMLS_DC) {
 	if (IS_STRING == Z_TYPE_P(body)
 			&& Z_STRLEN_P(body) > 0) {
 		if (php_write(Z_STRVAL_P(body), Z_STRLEN_P(body) TSRMLS_CC) == FAILURE) {
-			return FALSE;
+			return 0;
 		}
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
@@ -195,7 +192,7 @@ PHP_METHOD(yaf_response, appendBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, FALSE TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, 0 TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 
@@ -218,7 +215,7 @@ PHP_METHOD(yaf_response, prependBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, TRUE TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, 1 TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 
@@ -226,7 +223,7 @@ PHP_METHOD(yaf_response, prependBody) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Response_Abstract::setHeader($name, $value, $replace = FALSE)
+/** {{{ proto public Yaf_Response_Abstract::setHeader($name, $value, $replace = 0)
 */
 PHP_METHOD(yaf_response, setHeader) {
 }
@@ -283,7 +280,7 @@ PHP_METHOD(yaf_response, setBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, FALSE TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, 0 TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 

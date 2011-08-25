@@ -143,9 +143,9 @@ static int yaf_view_simple_valid_var_name(char *var_name, int len) /* {{{ */
 }
 /* }}} */
 
-/** {{{ static boolean yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) 
+/** {{{ static int yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) 
 */
-static boolean yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
+static int yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
 	zval **entry	= NULL;
 	char *var_name  = NULL;
 	long num_key	= 0;
@@ -155,7 +155,7 @@ static boolean yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
 	if (!EG(active_symbol_table)) {
 		/*zend_rebuild_symbol_table(TSRMLS_C);*/
-		return TRUE;
+		return 1;
 	}
 #endif
 
@@ -179,7 +179,7 @@ static boolean yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
 
 			if (yaf_view_simple_valid_var_name(var_name, var_name_len - 1)) {
 				ZEND_SET_SYMBOL_WITH_LENGTH(EG(active_symbol_table), var_name, var_name_len, 
-						*entry, Z_REFCOUNT_P(*entry) + 1, FALSE /**PZVAL_IS_REF(*entry)*/);
+						*entry, Z_REFCOUNT_P(*entry) + 1, 0 /**PZVAL_IS_REF(*entry)*/);
 			}
 		}
 	}
@@ -203,12 +203,12 @@ static boolean yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
 
 			if (yaf_view_simple_valid_var_name(var_name, var_name_len - 1)) {
 				ZEND_SET_SYMBOL_WITH_LENGTH(EG(active_symbol_table), var_name, var_name_len, 
-						*entry, Z_REFCOUNT_P(*entry) + 1, FALSE /**PZVAL_IS_REF(*entry)*/);
+						*entry, Z_REFCOUNT_P(*entry) + 1, 0 /**PZVAL_IS_REF(*entry)*/);
 			}
 		}
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
@@ -239,9 +239,9 @@ yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *opt
 }
 /* }}} */
 
-/** {{{ boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
+/** {{{ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
 */
-boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC) {
+int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC) {
 	zval *tpl_vars = NULL;
 	char *script   = NULL;
 	int  len 	   = 0;
@@ -268,7 +268,7 @@ boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *r
 	if (IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl), Z_STRLEN_P(tpl))) {
 		script 	= Z_STRVAL_P(tpl);
 		len 	= Z_STRLEN_P(tpl);
-		if (yaf_loader_compose(script, len + 1, FALSE TSRMLS_CC) == FALSE) {
+		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
 			if (calling_symbol_table) {
 				zend_hash_destroy(EG(active_symbol_table));
@@ -277,7 +277,7 @@ boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *r
 			}
 
 			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s", script);
-			return FALSE;
+			return 0;
 		}
 	} else {
 		zval *tpl_dir = yaf_read_property(view, YAF_VIEW_PROPERTY_NAME_TPLDIR);
@@ -294,12 +294,12 @@ boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *r
 			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW,
 				   	"could not determine the view script path, you should call %s::setScriptPath to specific it", 
 					yaf_view_simple_ce->name);
-			return FALSE;
+			return 0;
 		}
 
 		len = spprintf(&script, 0, "%s%c%s", Z_STRVAL_P(tpl_dir), DEFAULT_SLASH, Z_STRVAL_P(tpl));
 
-		if (yaf_loader_compose(script, len + 1, FALSE TSRMLS_CC) == FALSE) {
+		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
 
 			if (calling_symbol_table) {
@@ -310,7 +310,7 @@ boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *r
 
 			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s" , script);
 			efree(script);
-			return FALSE;
+			return 0;
 		}
 		efree(script);
 	}
@@ -322,18 +322,18 @@ boolean yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *r
 	}
 
 	if (buffer->len) {
-		ZVAL_STRINGL(ret, buffer->buffer, buffer->len, TRUE);
+		ZVAL_STRINGL(ret, buffer->buffer, buffer->len, 1);
 	}
 
 	YAF_RESTORE_OUTPUT_BUFFER(buffer);
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
+/** {{{ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
 */
-boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret TSRMLS_DC) {
+int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret TSRMLS_DC) {
 	zval *tpl_vars = NULL;
 	char *script   = NULL;
 	int  len 	   = 0;
@@ -360,7 +360,7 @@ boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *r
 	if (IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl), Z_STRLEN_P(tpl))) {
 		script 	= Z_STRVAL_P(tpl);
 		len 	= Z_STRLEN_P(tpl);
-		if (yaf_loader_compose(script, len + 1, FALSE TSRMLS_CC) == FALSE) {
+		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
 			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s" , script);
 			EG(scope) = old_scope;
 			if (calling_symbol_table) {
@@ -368,7 +368,7 @@ boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *r
 				FREE_HASHTABLE(EG(active_symbol_table));
 				EG(active_symbol_table) = calling_symbol_table;
 			}
-			return FALSE;
+			return 0;
 		}
 	} else {
 		zval *tpl_dir = yaf_read_property(view, YAF_VIEW_PROPERTY_NAME_TPLDIR);
@@ -381,11 +381,11 @@ boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *r
 				FREE_HASHTABLE(EG(active_symbol_table));
 				EG(active_symbol_table) = calling_symbol_table;
 			}
-			return FALSE;
+			return 0;
 		}
 
 		len = spprintf(&script, 0, "%s%c%s", Z_STRVAL_P(tpl_dir), DEFAULT_SLASH, Z_STRVAL_P(tpl));
-		if (yaf_loader_compose(script, len + 1, FALSE TSRMLS_CC) == FALSE) {
+		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
 			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s" , script);
 			efree(script);
 			EG(scope) = old_scope;
@@ -394,7 +394,7 @@ boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *r
 				FREE_HASHTABLE(EG(active_symbol_table));
 				EG(active_symbol_table) = calling_symbol_table;
 			}
-			return FALSE;
+			return 0;
 		}
 		efree(script);
 	}
@@ -406,7 +406,7 @@ boolean yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *r
 		EG(active_symbol_table) = calling_symbol_table;
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 

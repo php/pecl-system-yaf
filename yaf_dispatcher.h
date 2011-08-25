@@ -18,7 +18,7 @@
 #ifndef PHP_YAF_DISPATCHER_H
 #define PHP_YAF_DISPATCHER_H
 
-#define YAF_DISPATCHER_PROPERTY_NAME_REQUEST		"_request"
+#define YAF_DISPATCHER_PROPERTY_NAME_REQUEST	"_request"
 #define YAF_DISPATCHER_PROPERTY_NAME_VIEW		"_view"
 #define YAF_DISPATCHER_PROPERTY_NAME_ROUTER		"_router"
 #define YAF_DISPATCHER_PROPERTY_NAME_RESPONSE	"_response"
@@ -32,8 +32,8 @@
 #define YAF_DISPATCHER_PROPERTY_NAME_CONTROLLER	"_default_controller"
 #define YAF_DISPATCHER_PROPERTY_NAME_ACTION		"_default_action"
 
-#define YAF_ERROR_CONTROLLER						"Error"
-#define YAF_ERROR_ACTION							"error"
+#define YAF_ERROR_CONTROLLER					"Error"
+#define YAF_ERROR_ACTION						"error"
 
 #define YAF_DISPATCHER_PROPERTY_NAME_PLUGINS		"_plugins"
 
@@ -65,8 +65,7 @@ extern zend_class_entry *yaf_dispatcher_ce;
 
 yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC);
 yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC);
-boolean yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC);
-yaf_view_t * yaf_dispatcher_init_view(yaf_dispatcher_t *dispatcher, zval *tpl_dir, zval *options TSRMLS_DC);
+int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC);
 
 PHP_METHOD(yaf_application, app);
 PHP_FUNCTION(set_error_handler);

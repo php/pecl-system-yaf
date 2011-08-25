@@ -32,6 +32,9 @@
 #include "yaf_exception.h"
 
 zend_class_entry * yaf_session_ce;
+#ifdef HAVE_SPL
+extern PHPAPI zend_class_entry * spl_ce_Countable;
+#endif
 
 /* {{{ YAF_ARG_INFO
  */
@@ -45,19 +48,19 @@ YAF_BEGIN_ARG_INFO_EX(yaf_setter_arg, 0, 0, 2)
 YAF_END_ARG_INFO()
 /* }}} */
 
-/** {{{ inline boolean yaf_session_start(yaf_session_t *session TSRMLS_DC) 
+/** {{{ inline int yaf_session_start(yaf_session_t *session TSRMLS_DC) 
  */
-inline boolean yaf_session_start(yaf_session_t *session TSRMLS_DC) {
+inline int yaf_session_start(yaf_session_t *session TSRMLS_DC) {
 	zval *status = NULL;
 
 	status  = yaf_read_property(session, YAF_SESSION_PROPERTY_NAME_STATUS);
 	if (Z_BVAL_P(status)) {
-		return TRUE;
+		return 1;
 	}
 
 	php_session_start(TSRMLS_C);
-	zend_update_property_bool(yaf_session_ce, session, YAF_STRL(YAF_SESSION_PROPERTY_NAME_STATUS), TRUE TSRMLS_CC);
-	return TRUE;
+	zend_update_property_bool(yaf_session_ce, session, YAF_STRL(YAF_SESSION_PROPERTY_NAME_STATUS), 1 TSRMLS_CC);
+	return 1;
 }
 /* }}} */
 
@@ -92,7 +95,7 @@ yaf_session_t *yaf_session_instance(yaf_session_t *this_ptr TSRMLS_DC) {
 
 		obj = zend_objects_get_address(instance TSRMLS_CC);
 
-		property_info = zend_get_property_info(obj->ce, member, TRUE TSRMLS_CC);
+		property_info = zend_get_property_info(obj->ce, member, 1 TSRMLS_CC);
 
 		Z_ADDREF_P(*sess);
 		/** This is ugly , because we can't set a ref property through the stadard APIs */
@@ -420,7 +423,7 @@ YAF_STARTUP_FUNCTION(session) {
 
 	zend_declare_property_null(yaf_session_ce, YAF_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), ZEND_ACC_PROTECTED|ZEND_ACC_STATIC TSRMLS_CC);
 	zend_declare_property_null(yaf_session_ce, YAF_STRL(YAF_SESSION_PROPERTY_NAME_SESSION),  ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_bool(yaf_session_ce, YAF_STRL(YAF_SESSION_PROPERTY_NAME_STATUS),   FALSE, ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_session_ce, YAF_STRL(YAF_SESSION_PROPERTY_NAME_STATUS),   0, ZEND_ACC_PROTECTED TSRMLS_CC);
 	
 	return SUCCESS;
 }

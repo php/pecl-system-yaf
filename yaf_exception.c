@@ -38,6 +38,23 @@ zend_class_entry * yaf_exception_ce;
 
 static zend_class_entry * yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];
 
+static inline void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
+	va_list args;
+
+	if (YAF_G(throw_exception)) {
+		char *message;
+		va_start(args, format);
+		vspprintf(&message, 0, format, args); 
+		va_end(args);    
+		yaf_throw_exception(type, message TSRMLS_CC);
+		efree(message); 
+	} else { 
+		va_start(args, format);
+		php_verror(NULL, "", E_WARNING, format, args TSRMLS_CC);
+		va_end(args);
+	} 
+}
+
 /** {{{ zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) 
 */
 zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) {
@@ -64,17 +81,10 @@ zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{  void yaf_throw_exception(long code TSRMLS_DC, char * format, ...)
+/** {{{  void yaf_throw_exception(long code TSRMLS_DC, char * format, char *message)
 */
-void yaf_throw_exception(long code TSRMLS_DC, char * format, ...) {
-	va_list 		 arg;
-	char 			 *message		 = NULL;    
+void yaf_throw_exception(long code, char *message TSRMLS_CC) {
 	zend_class_entry *base_exception = NULL;
-
-	va_start(arg, format);
-	vspprintf(&message, 0, format, arg); 
-	va_end(arg);    
-
 	base_exception = yaf_exception_ce;
 
 	if ((code & YAF_ERR_BASE) == YAF_ERR_BASE
@@ -83,7 +93,6 @@ void yaf_throw_exception(long code TSRMLS_DC, char * format, ...) {
 	}
 
 	zend_throw_exception(base_exception, message, code TSRMLS_CC);
-	efree(message); 
 }
 /* }}} */
 

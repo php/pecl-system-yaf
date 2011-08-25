@@ -35,9 +35,9 @@
 
 zend_class_entry *yaf_loader_ce;
 
-/** {{{ boolean yaf_loader_register(TSRMLS_D)
+/** {{{ int yaf_loader_register(TSRMLS_D)
 */
-boolean yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
+int yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 	zval *ret 		= NULL;
 	zval *autoload	= NULL;
 	zval *method	= NULL;
@@ -72,7 +72,7 @@ boolean yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 
 		if (zend_call_function(&fci, NULL TSRMLS_CC) == FAILURE) {
 			yaf_trigger_error(YAF_ERR_STARTUP_FAILED, "cant not register autoload function %s", YAF_AUTOLOAD_FUNC_NAME);
-			return FALSE;
+			return 0;
 		}
 
 		/*{{{ no use anymore
@@ -116,36 +116,36 @@ boolean yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 		}}} */
 
 	} while (0);
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ inline boolean yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC)
+/** {{{ inline int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC)
  */
-inline boolean yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC) {
+inline int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC) {
 	uint separator_len = strlen(YAF_G(name_separator));
 
 	if (YAF_G(name_suffix)) {
 		if (strncmp(class + class_len - category_len, category, category_len) == 0) {
 			if (!separator_len || strncmp(class + class_len - category_len - separator_len, YAF_G(name_separator), separator_len) == 0) {
-				return TRUE;
+				return 1;
 			}
 		}
 	} else {
 		if (strncmp(class, category, category_len) == 0) {
 			if (!separator_len || strncmp(class + category_len, YAF_G(name_separator), separator_len) == 0) {
-				return TRUE;
+				return 1;
 			}
 		}
 	}
 
-	return FALSE;
+	return 0;
 }
 /* }}} */
 
-/** {{{ boolean yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC)
+/** {{{ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC)
  */
-boolean yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC) {
+int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC) {
 	char *pos		 = NULL;
 	char *ns		 = NULL;
 	char *prefix	 = NULL;
@@ -153,7 +153,7 @@ boolean yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, in
 	zval *namespaces = yaf_read_property(loader, YAF_LOADER_PROPERTY_NAME_NAMESPACE);
 
 	if (ZVAL_IS_NULL(namespaces)) {
-		return FALSE;
+		return 0;
 	}
 
 	pos = Z_STRVAL_P(namespaces);
@@ -172,21 +172,21 @@ boolean yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, in
 #endif 
 
 	if (!prefix_len) {
-		return FALSE;
+		return 0;
 	}
 
 	while ((pos = strstr(ns, prefix))) {
 		if ((pos == ns) && *(pos + prefix_len) == DEFAULT_DIR_SEPARATOR) {
 			efree(prefix);
-			return TRUE;
+			return 1;
 		} else if (*(pos - 1) == DEFAULT_DIR_SEPARATOR && *(pos + prefix_len) == DEFAULT_DIR_SEPARATOR) {
 			efree(prefix);
-			return TRUE;
+			return 1;
 		}
 		ns = pos + prefix_len;
 	}
 
-	return FALSE;
+	return 0;
 }
 /* }}} */
 
@@ -221,18 +221,18 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 	if (library_path && global_path) {
 		MAKE_STD_ZVAL(glibrary);
 		MAKE_STD_ZVAL(library);
-		ZVAL_STRING(glibrary, global_path, TRUE);
-		ZVAL_STRING(library, library_path, TRUE);
+		ZVAL_STRING(glibrary, global_path, 1);
+		ZVAL_STRING(library, library_path, 1);
 		yaf_update_property(instance, YAF_LOADER_PROPERTY_NAME_LIBRARY, library);
 		yaf_update_property(instance, YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB, glibrary);
 	} else if (!global_path) {
 		MAKE_STD_ZVAL(library);
-		ZVAL_STRING(library, library_path, TRUE);
+		ZVAL_STRING(library, library_path, 1);
 		yaf_update_property(instance, YAF_LOADER_PROPERTY_NAME_LIBRARY, library);
 		yaf_update_property(instance, YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB, library);
 	} else {
 		MAKE_STD_ZVAL(glibrary);
-		ZVAL_STRING(glibrary, global_path, TRUE);
+		ZVAL_STRING(glibrary, global_path, 1);
 		yaf_update_property(instance, YAF_LOADER_PROPERTY_NAME_LIBRARY, glibrary);
 		yaf_update_property(instance, YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB, glibrary);
 	}
@@ -247,9 +247,9 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 }
 /* }}} */
 
-/** {{{ boolean yaf_loader_compose(char *path, int lenA, boolean use_path TSRMLS_DC)
+/** {{{ int yaf_loader_compose(char *path, int lenA, int use_path TSRMLS_DC)
 */
-boolean yaf_loader_compose(char *path, int len, boolean use_path TSRMLS_DC) {
+int yaf_loader_compose(char *path, int len, int use_path TSRMLS_DC) {
 
 	zend_file_handle file_handle;
 
@@ -301,16 +301,16 @@ boolean yaf_loader_compose(char *path, int len, boolean use_path TSRMLS_DC) {
 			YAF_RESTORE_EG_ENVIRON();
 		}
 	} else {
-		return FALSE;
+		return 0;
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_loader_import(char *path, int len, boolean use_path TSRMLS_DC)
+/** {{{ int yaf_loader_import(char *path, int len, int use_path TSRMLS_DC)
 */
-boolean yaf_loader_import(char *path, int len, boolean use_path TSRMLS_DC) {
+int yaf_loader_import(char *path, int len, int use_path TSRMLS_DC) {
 
 	zend_file_handle file_handle;
 
@@ -360,16 +360,16 @@ boolean yaf_loader_import(char *path, int len, boolean use_path TSRMLS_DC) {
 			YAF_RESTORE_EG_ENVIRON();
 		}
 	} else {
-		return FALSE;
+		return 0;
 	}
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_internal_autoload(char * file_name, uint name_len, char **directory TSRMLS_DC)
+/** {{{ int yaf_internal_autoload(char * file_name, uint name_len, char **directory TSRMLS_DC)
  */
-boolean yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRMLS_DC) {
+int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRMLS_DC) {
 	zval 		*library_dir    = NULL;
 	zval 		*global_dir		= NULL;
 	char 		*ext			= YAF_G(ext);
@@ -379,7 +379,7 @@ boolean yaf_internal_autoload(char *file_name, uint name_len, char **directory T
 	int			seg_len			= 0;
 	int			directory_len   = 0;
 	smart_str	buf				= {0};
-	boolean		status			= FALSE;
+	int		status			= 0;
 
 	if (NULL == *directory) {
 		char *library_path 		= NULL;
@@ -391,7 +391,7 @@ boolean yaf_internal_autoload(char *file_name, uint name_len, char **directory T
 		if (!loader) {
 			/* since only call from userspace can cause loader is NULL, exception throw will works well */
 			yaf_trigger_error(YAF_ERR_STARTUP_FAILED, "%s need to be initialize first", yaf_loader_ce->name);
-			return FALSE;
+			return 0;
 		} else {
 			library_dir  = yaf_read_property(loader, YAF_LOADER_PROPERTY_NAME_LIBRARY);
 			global_dir	 = yaf_read_property(loader, YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB);
@@ -407,7 +407,7 @@ boolean yaf_internal_autoload(char *file_name, uint name_len, char **directory T
 
 		if (NULL == library_path) {
 			yaf_trigger_error(YAF_ERR_STARTUP_FAILED, "%s requires %s(which set the library_directory) to be initialized first", yaf_loader_ce->name, yaf_application_ce->name);
-			return FALSE; 
+			return 0; 
 		}
 
 		smart_str_appendl(&buf, library_path, library_path_len);
@@ -449,19 +449,19 @@ boolean yaf_internal_autoload(char *file_name, uint name_len, char **directory T
 		*(directory) = estrndup(buf.c, buf.len);
 	}
 
-	status = yaf_loader_import(buf.c, buf.len, FALSE TSRMLS_CC);
+	status = yaf_loader_import(buf.c, buf.len, 0 TSRMLS_CC);
 	smart_str_free(&buf);
 
 	if (!status) 
-	   	return FALSE;
+	   	return 0;
 	
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRMLS_DC)
+/** {{{ int yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRMLS_DC)
  */
-boolean yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRMLS_DC) {
+int yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRMLS_DC) {
 	zval *namespaces 	= NULL;
 	smart_str buf 		= {NULL, 0, 0};
 
@@ -480,13 +480,13 @@ boolean yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix 
 
 	smart_str_free(&buf);
 	
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
-/** {{{ boolean yaf_loader_register_namespace_multi(yaf_loader_t *loader, zval *prefixes TSRMLS_DC)
+/** {{{ int yaf_loader_register_namespace_multi(yaf_loader_t *loader, zval *prefixes TSRMLS_DC)
  */
-boolean yaf_loader_register_namespace_multi(yaf_loader_t *loader, zval *prefixes TSRMLS_DC) {
+int yaf_loader_register_namespace_multi(yaf_loader_t *loader, zval *prefixes TSRMLS_DC) {
 	zval *namespaces 	= NULL;
 	smart_str buf 		= {0};
 	HashTable *ht		= NULL;
@@ -513,11 +513,11 @@ boolean yaf_loader_register_namespace_multi(yaf_loader_t *loader, zval *prefixes
 		} 
 	}
 
-	ZVAL_STRINGL(namespaces, buf.c, buf.len, TRUE);
+	ZVAL_STRINGL(namespaces, buf.c, buf.len, 1);
 
 	smart_str_free(&buf);
 
-	return TRUE;
+	return 1;
 }
 /* }}} */
 
@@ -639,7 +639,7 @@ PHP_METHOD(yaf_loader, import) {
 			RETURN_TRUE;
 		}
 
-		RETURN_BOOL(yaf_loader_import(file, len, FALSE TSRMLS_CC));
+		RETURN_BOOL(yaf_loader_import(file, len, 0 TSRMLS_CC));
 	}
 }
 /* }}} */
