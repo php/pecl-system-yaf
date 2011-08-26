@@ -305,14 +305,13 @@ static inline void yaf_dispatcher_fix_default(yaf_dispatcher_t *dispatcher, zend
 }
 /* }}} */
 
-/** {{{ int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC)
+/** {{{ static int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC)
 */
-int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC) {
+static int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC) {
 	if (request) {
-		yaf_update_property(dispatcher, YAF_DISPATCHER_PROPERTY_NAME_REQUEST, request);
+		zend_update_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_REQUEST), request TSRMLS_CC);
 		return 1;
 	}
-
 	return 0;
 }
 /* }}} */
@@ -605,7 +604,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 						yaf_controller_construct(ce, iaction, request, response, view, NULL TSRMLS_CC);
 						executor = iaction;
 
-						yaf_update_property(iaction, YAF_CONTROLLER_PROPERTY_NAME_NAME, controller);
+						zend_update_property(ce, iaction, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), controller TSRMLS_CC);
 
 						if (fptr->common.num_args) {
 							zval *method_name = NULL;
@@ -876,7 +875,7 @@ PHP_METHOD(yaf_dispatcher, setErrorHandler) {
 
 	ZVAL_STRING(&function, "set_error_handler", 0);
 	if (call_user_function(EG(function_table), NULL, &function, return_value, ZEND_NUM_ARGS(), params TSRMLS_CC) == FAILURE) {
-		yaf_trigger_error(YAF_ERR_ERROR TSRMLS_CC, "call to set_error_handler failed");
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Call to set_error_handler failed");
 	}
 }
 /* }}} */
@@ -966,13 +965,13 @@ PHP_METHOD(yaf_dispatcher, setRequest) {
 		return;
 	}
 
-	if (!request || IS_OBJECT != Z_TYPE_P(request)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "%s::dispatch expects a %s instance", yaf_dispatcher_ce->name, yaf_request_ce->name);
+	if (IS_OBJECT != Z_TYPE_P(request) 
+		   || !instanceof_function(Z_OBJCE_P(request), yaf_request_ce TSRMLS_CC))	{
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expects a %s instance", yaf_request_ce->name);
 		RETURN_FALSE;
 	} 
 	
 	self = getThis();
-
 	if (yaf_dispatcher_set_request(self, request TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}

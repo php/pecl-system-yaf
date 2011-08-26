@@ -32,23 +32,6 @@
 #include "yaf_loader.h"
 #include "yaf_view.h"
 
-/* {{{ YAF_ARG_INFO
- */
-YAF_BEGIN_ARG_INFO_EX(yaf_2op1_arg,0, 0, 1)
-	YAF_ARG_INFO(0, argc)
-	{"argv", sizeof("argv")-1, NULL, 0, 0, 1, 0, 0, 0 },
-YAF_END_ARG_INFO();
-
-YAF_BEGIN_ARG_INFO_EX(yaf_getter_arg, 0, 0, 1)
-	YAF_ARG_INFO(0, property_name)
-YAF_END_ARG_INFO()
-
-YAF_BEGIN_ARG_INFO_EX(yaf_setter_arg, 0, 0, 2)
-	YAF_ARG_INFO(0, property_name)
-	YAF_ARG_INFO(0, property_value)
-YAF_END_ARG_INFO()
-/* }}} */
-
 #include "views/interface.c"
 #include "views/simple.c"
 

@@ -33,12 +33,14 @@
 #include "yaf_namespace.h"
 #include "yaf_exception.h"
 
-zend_class_entry * yaf_ce_RuntimeException;
-zend_class_entry * yaf_exception_ce;
+zend_class_entry *yaf_ce_RuntimeException;
+zend_class_entry *yaf_exception_ce;
 
 static zend_class_entry * yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];
 
-static inline void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
+/** {{{void yaf_trigger_error(int type TSRMLS_DC, char *format, ...)
+ */
+void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
 	va_list args;
 
 	if (YAF_G(throw_exception)) {
@@ -50,10 +52,11 @@ static inline void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
 		efree(message); 
 	} else { 
 		va_start(args, format);
-		php_verror(NULL, "", E_WARNING, format, args TSRMLS_CC);
+		php_verror(NULL, "", E_ERROR, format, args TSRMLS_CC);
 		va_end(args);
 	} 
 }
+/* }}} */
 
 /** {{{ zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) 
 */

@@ -32,7 +32,7 @@ zend_class_entry *yaf_view_simple_ce;
 
 typedef int(*yaf_body_write_func)(const char *str, uint str_length TSRMLS_DC);
 
-/** {{{ MACROS for Yaf_View_Simple
+/** {{{ MACROS
  */
 #define YAF_REDIRECT_OUTPUT_BUFFER(seg) \
 	do { \
@@ -56,7 +56,7 @@ typedef int(*yaf_body_write_func)(const char *str, uint str_length TSRMLS_DC);
 		YAF_G(buffer)  		= seg->prev; \
 		if (!(--YAF_G(buf_nesting))) { \
 			if (YAF_G(buffer)) { \
-				yaf_error("Yaf output buffer was collapsed"); \
+				php_error_docref(NULL TSRMLS_CC, E_ERROR, "Yaf output buffer collapsed"); \
 			} else { \
 				YAF_G(owrite_handler) = NULL; \
 			} \
@@ -69,16 +69,33 @@ typedef int(*yaf_body_write_func)(const char *str, uint str_length TSRMLS_DC);
 /* }}} */
 
 /** {{{ ARG_INFO */
-YAF_BEGIN_ARG_INFO_EX(yaf_view_simple_assign_by_ref_arg, 0, 0, 2)
-YAF_ARG_INFO(0, property_name)
-YAF_ARG_INFO(1, value)
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_construct_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, tempalte_dir)
+	ZEND_ARG_ARRAY_INFO(0, options, 1)
+ZEND_END_ARG_INFO();
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_get_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO();
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_isset_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO();
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_assign_by_ref_arginfo, 0, 0, 2)
+	ZEND_ARG_INFO(0, name)
+	ZEND_ARG_INFO(1, value)
 ZEND_END_ARG_INFO();
 /* }}} */
 
 /** {{{ static int yaf_view_simple_render_write(const char *str, uint str_length TSRMLS_DC)
 */
 static int yaf_view_simple_render_write(const char *str, uint str_length TSRMLS_DC) {
-	char *target  = NULL;
+	char *target;
 	yaf_view_simple_buffer *buffer = YAF_G(buffer);
 
 	if (!buffer->size) {
@@ -87,17 +104,17 @@ static int yaf_view_simple_render_write(const char *str, uint str_length TSRMLS_
 		buffer->buffer = emalloc(buffer->size);
 		target = buffer->buffer;
 	} else {
-		unsigned long len = buffer->len + str_length;
+		size_t len = buffer->len + str_length;
 
 		if (buffer->size < len + 1) {
 			buffer->size   = (len | VIEW_BUFFER_SIZE_MASK) + 1;
 			buffer->buffer = erealloc(buffer->buffer, buffer->size);
 			if (!buffer->buffer) {
-				yaf_error("Yaf output buffer collapsed");
+				php_error_docref(NULL TSRMLS_CC, E_ERROR, "Yaf output buffer collapsed");
 			}
 		}
 		
-		target 		= buffer->buffer + buffer->len;
+		target = buffer->buffer + buffer->len;
 		buffer->len = len;
 	}
 
@@ -146,11 +163,11 @@ static int yaf_view_simple_valid_var_name(char *var_name, int len) /* {{{ */
 /** {{{ static int yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) 
 */
 static int yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
-	zval **entry	= NULL;
-	char *var_name  = NULL;
-	long num_key	= 0;
-	uint var_name_len = 0;
-	HashPosition  pos = {0};
+	zval **entry;
+	char *var_name;
+	long num_key;
+	uint var_name_len;
+	HashPosition pos;
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
 	if (!EG(active_symbol_table)) {
@@ -215,11 +232,9 @@ static int yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
 /** {{{ yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *options TSRMLS_DC)
 */
 yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *options TSRMLS_DC) {
-	zval * instance = NULL;
-	zval * tpl_vars = NULL;
+	zval *instance, *tpl_vars;
 
 	instance = view;
-
 	if (!instance) {
 		MAKE_STD_ZVAL(instance);
 		object_init_ex(instance, yaf_view_simple_ce);
@@ -228,11 +243,9 @@ yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *opt
 	MAKE_STD_ZVAL(tpl_vars);
 	array_init(tpl_vars);
 
-	yaf_update_property(instance, YAF_VIEW_PROPERTY_NAME_TPLVARS, tpl_vars);
-
-	if (tpl_dir && Z_TYPE_P(tpl_dir) == IS_STRING 
-			&& IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl_dir), Z_STRLEN_P(tpl_dir))) {
-		yaf_update_property(instance, YAF_VIEW_PROPERTY_NAME_TPLDIR, tpl_dir);
+	zend_update_property(yaf_view_simple_ce, instance, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), tpl_vars TSRMLS_CC);
+	if (tpl_dir && Z_TYPE_P(tpl_dir) == IS_STRING && IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl_dir), Z_STRLEN_P(tpl_dir))) {
+		zend_update_property(yaf_view_simple_ce, instance, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), tpl_dir TSRMLS_CC);
 	}
 
 	return instance;
@@ -242,18 +255,17 @@ yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *opt
 /** {{{ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
 */
 int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC) {
-	zval *tpl_vars = NULL;
-	char *script   = NULL;
-	int  len 	   = 0;
+	zval *tpl_vars;
+	char *script; 
+	uint len; 
 
-	zend_class_entry *old_scope 	= NULL;
-	HashTable *calling_symbol_table = NULL;
-	yaf_view_simple_buffer *buffer	= NULL;
+	zend_class_entry *old_scope;
+	HashTable *calling_symbol_table;
+	yaf_view_simple_buffer *buffer;
 
 	ZVAL_NULL(ret);
 
-	tpl_vars = yaf_read_property(view, YAF_VIEW_PROPERTY_NAME_TPLVARS);
-
+	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (EG(active_symbol_table)) {
 		calling_symbol_table = EG(active_symbol_table);
 	}
@@ -276,11 +288,11 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 				EG(active_symbol_table) = calling_symbol_table;
 			}
 
-			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s", script);
+			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC, "Unable to find template %s", script);
 			return 0;
 		}
 	} else {
-		zval *tpl_dir = yaf_read_property(view, YAF_VIEW_PROPERTY_NAME_TPLDIR);
+		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
 
 		if (ZVAL_IS_NULL(tpl_dir)) {
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
@@ -291,8 +303,8 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 				EG(active_symbol_table) = calling_symbol_table;
 			}
 
-			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW,
-				   	"could not determine the view script path, you should call %s::setScriptPath to specific it", 
+			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC,
+				   	"Could not determine the view script path, you should call %s::setScriptPath to specific it", 
 					yaf_view_simple_ce->name);
 			return 0;
 		}
@@ -308,7 +320,7 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 				EG(active_symbol_table) = calling_symbol_table;
 			}
 
-			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s" , script);
+			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC, "Unable to find template %s" , script);
 			efree(script);
 			return 0;
 		}
@@ -334,17 +346,16 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 /** {{{ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
 */
 int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret TSRMLS_DC) {
-	zval *tpl_vars = NULL;
-	char *script   = NULL;
-	int  len 	   = 0;
+	zval *tpl_vars;
+	char *script;
+	uint len;
 
-	zend_class_entry *old_scope 	= NULL;
-	HashTable *calling_symbol_table = NULL;
+	zend_class_entry *old_scope;
+	HashTable *calling_symbol_table;
 
 	ZVAL_NULL(ret);
 
-	tpl_vars = yaf_read_property(view, YAF_VIEW_PROPERTY_NAME_TPLVARS);
-
+	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (EG(active_symbol_table)) {
 		calling_symbol_table = EG(active_symbol_table);
 	}
@@ -361,7 +372,7 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 		script 	= Z_STRVAL_P(tpl);
 		len 	= Z_STRLEN_P(tpl);
 		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
-			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s" , script);
+			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC, "Unable to find template %s" , script);
 			EG(scope) = old_scope;
 			if (calling_symbol_table) {
 				zend_hash_destroy(EG(active_symbol_table));
@@ -371,10 +382,11 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 			return 0;
 		}
 	} else {
-		zval *tpl_dir = yaf_read_property(view, YAF_VIEW_PROPERTY_NAME_TPLDIR);
+		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
 
 		if (ZVAL_IS_NULL(tpl_dir)) {
-			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not determine the view script path, you should call %s::setScriptPath to specific it", yaf_view_simple_ce->name);
+			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC, 
+					"Could not determine the view script path, you should call %s::setScriptPath to specific it", yaf_view_simple_ce->name);
 			EG(scope) = old_scope;
 			if (calling_symbol_table) {
 				zend_hash_destroy(EG(active_symbol_table));
@@ -386,7 +398,7 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 
 		len = spprintf(&script, 0, "%s%c%s", Z_STRVAL_P(tpl_dir), DEFAULT_SLASH, Z_STRVAL_P(tpl));
 		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
-			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW, "could not find view script %s" , script);
+			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC, "Unable to find template %s", script);
 			efree(script);
 			EG(scope) = old_scope;
 			if (calling_symbol_table) {
@@ -413,11 +425,10 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 /** {{{ proto public Yaf_View_Simple::__construct(string $tpl_dir, array $options = NULL) 
 */
 PHP_METHOD(yaf_view_simple, __construct) {
-	zval *tpl_dir = NULL;
-	zval *options = NULL;
+	zval *tpl_dir, *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &tpl_dir, &options) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}
 
 	yaf_view_simple_instance(getThis(), tpl_dir, options TSRMLS_CC);
@@ -427,12 +438,12 @@ PHP_METHOD(yaf_view_simple, __construct) {
 /** {{{ proto public Yaf_View_Simple::__isset($name)
 */
 PHP_METHOD(yaf_view_simple, __isset) {
-	char 	*name 	= NULL;
-	int 	len		= 0;
+	char *name;
+	uint len;
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &len) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	} else {
-		zval *tpl_vars = yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLVARS);
+		zval *tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 		RETURN_BOOL(zend_hash_exists(Z_ARRVAL_P(tpl_vars), name, len + 1)); 
 	}
 }
@@ -441,16 +452,14 @@ PHP_METHOD(yaf_view_simple, __isset) {
 /** {{{ proto public Yaf_View_Simple::setScriptPath(string $tpl_dir)
 */
 PHP_METHOD(yaf_view_simple, setScriptPath) {
-	zval *tpl_dir = NULL;
+	zval *tpl_dir;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &tpl_dir) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}
 
-	if (tpl_dir && Z_TYPE_P(tpl_dir) == IS_STRING
-			&& IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl_dir), Z_STRLEN_P(tpl_dir))) {
-
-		yaf_update_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLDIR, tpl_dir);
+	if (Z_TYPE_P(tpl_dir) == IS_STRING && IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl_dir), Z_STRLEN_P(tpl_dir))) {
+		zend_update_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), tpl_dir TSRMLS_CC);
 		RETURN_ZVAL(getThis(), 1, 0);
 	}
 
@@ -461,7 +470,7 @@ PHP_METHOD(yaf_view_simple, setScriptPath) {
 /** {{{ proto public Yaf_View_Simple::getScriptPath(void)
 */
 PHP_METHOD(yaf_view_simple, getScriptPath) {
-	zval *tpl_dir = yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLDIR);
+	zval *tpl_dir = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
 	RETURN_ZVAL(tpl_dir, 1, 0);
 }
 /* }}} */
@@ -469,11 +478,11 @@ PHP_METHOD(yaf_view_simple, getScriptPath) {
 /** {{{ proto public Yaf_View_Simple::compose(string $script, zval *args)
 */
 PHP_METHOD(yaf_view_simple, compose) {
-	char *script = NULL;
-	int  len	 = 0;
+	char *script;
+	uint len;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &script, &len) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}
 
 	if (!len) {
@@ -486,25 +495,25 @@ PHP_METHOD(yaf_view_simple, compose) {
 /** {{{ proto public Yaf_View_Simple::assign(mixed $value, mixed $value = null)
 */
 PHP_METHOD(yaf_view_simple, assign) {
-	uint argc		= ZEND_NUM_ARGS();
-	zval *tpl_vars 	= yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLVARS);
-
+	uint argc = ZEND_NUM_ARGS();
+	zval *tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (argc == 1) {
-		zval *value = NULL;
+		zval *value;
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
-			WRONG_PARAM_COUNT;
-		}     
-		if (value && Z_TYPE_P(value) == IS_ARRAY) {
+			return;
+		}    
+
+		if (Z_TYPE_P(value) == IS_ARRAY) {
 			zend_hash_copy(Z_ARRVAL_P(tpl_vars), Z_ARRVAL_P(value), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 			RETURN_TRUE;
 		} 
 		RETURN_FALSE;
 	} else if (argc == 2) {
-		zval 	*value	= NULL;
-		char 	*name	= NULL;
-		int 	len		= 0;
+		zval *value;
+		char *name;
+		uint len;
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sz", &name, &len, &value) == FAILURE) {
-			WRONG_PARAM_COUNT;
+			return;
 		}     
 
 		Z_ADDREF_P(value);
@@ -528,7 +537,7 @@ PHP_METHOD(yaf_view_simple, assignRef) {
 		WRONG_PARAM_COUNT;
 	} 
 
-	tpl_vars = yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLVARS);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 
 	Z_ADDREF_P(value);
 	if (zend_hash_update(Z_ARRVAL_P(tpl_vars), name, len + 1, &value, sizeof(zval *), NULL) == SUCCESS) {
@@ -541,16 +550,15 @@ PHP_METHOD(yaf_view_simple, assignRef) {
 /** {{{ proto public Yaf_View_Simple::get($name)
 */
 PHP_METHOD(yaf_view_simple, get) {
-	char	*name		= NULL;
-	int		len			= 0;
-	zval 	*tpl_vars	= NULL;
-	zval 	**ret		= NULL;
+	char *name;
+	uint len;
+	zval *tpl_vars, **ret;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &len) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}    
 
-	tpl_vars = yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLVARS);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 
 	if (tpl_vars && Z_TYPE_P(tpl_vars) == IS_ARRAY) {
 		if (zend_hash_find(Z_ARRVAL_P(tpl_vars), name, len + 1, (void **) &ret) == SUCCESS) {
@@ -562,34 +570,16 @@ PHP_METHOD(yaf_view_simple, get) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_View_Simple::__get($name)
-*/
-PHP_METHOD(yaf_view_simple, __get) {
-	ZEND_MN(yaf_view_simple_get)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
-}
-/* }}} */
-
-/** {{{ proto public Yaf_View_Simple::__set(mixed $value, mixed $value)
-*/
-PHP_METHOD(yaf_view_simple, __set) {
-	ZEND_MN(yaf_view_simple_assign)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
-}
-/* }}} */
-
 /** {{{ proto public Yaf_View_Simple::render(string $tpl, array $vars = NULL)
 */
 PHP_METHOD(yaf_view_simple, render) {
-	zval *tpl  		= NULL;
-	zval *vars 		= NULL;
-	zval *tpl_vars	= NULL;
+	zval *tpl, *vars = NULL, *tpl_vars;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z"
-				,&tpl, &vars) == FAILURE) {
-		WRONG_PARAM_COUNT;
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &tpl, &vars) == FAILURE) {
+		return;
 	}
 
-	tpl_vars = yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLVARS);
-
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (!yaf_view_simple_render(getThis(), tpl, vars, return_value TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -599,17 +589,13 @@ PHP_METHOD(yaf_view_simple, render) {
 /** {{{ proto public Yaf_View_Simple::display(string $tpl, array $vars = NULL)
 */
 PHP_METHOD(yaf_view_simple, display) {
-	zval *tpl  		= NULL;
-	zval *vars 		= NULL;
-	zval *tpl_vars	= NULL;
+	zval *tpl, *tpl_vars, *vars = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z"
-				,&tpl, &vars) == FAILURE) {
-		WRONG_PARAM_COUNT;
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &tpl, &vars) == FAILURE) {
+		return;
 	}
 
-	tpl_vars = yaf_read_property(getThis(), YAF_VIEW_PROPERTY_NAME_TPLVARS);
-
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (!yaf_view_simple_display(getThis(), tpl, vars, return_value TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -621,17 +607,17 @@ PHP_METHOD(yaf_view_simple, display) {
 /** {{{ yaf_view_simple_methods 
 */
 zend_function_entry yaf_view_simple_methods[] = {
-	PHP_ME(yaf_view_simple, __construct, NULL, 	ZEND_ACC_CTOR | ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, __set, 		yaf_setter_arg,	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, __get,		yaf_getter_arg, 	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, __isset,		yaf_getter_arg,	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, get,			yaf_getter_arg, 	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, assign,		yaf_2op1_arg, 	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, render, 		yaf_2op1_arg, 	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, display, 	yaf_2op1_arg, 	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, assignRef, 	yaf_view_simple_assign_by_ref_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, setScriptPath,yaf_getter_arg,	ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_view_simple, getScriptPath,NULL,			ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, __construct, yaf_view_simple_construct_arginfo, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, __isset, yaf_view_simple_isset_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, get, yaf_view_simple_get_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, assign, yaf_view_assign_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, render, yaf_view_render_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, display, yaf_view_display_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, assignRef, yaf_view_simple_assign_by_ref_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, setScriptPath, yaf_view_setpath_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, getScriptPath, yaf_view_getpath_arginfo, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(yaf_view_simple, __get, get, yaf_view_simple_get_arginfo, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(yaf_view_simple, __set, assign, yaf_view_assign_arginfo, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 /* }}} */

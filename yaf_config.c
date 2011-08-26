@@ -33,21 +33,16 @@
 #include "yaf_exception.h"
 #include "yaf_config.h"
 
-zend_class_entry * yaf_config_ce;
+zend_class_entry *yaf_config_ce;
 #ifdef HAVE_SPL
-extern PHPAPI zend_class_entry * spl_ce_Countable;
+extern PHPAPI zend_class_entry *spl_ce_Countable;
 #endif
 
-/* {{{ YAF_ARG_INFO
+/* {{{ ARG_INFO
  */
-YAF_BEGIN_ARG_INFO_EX(yaf_getter_arg, 0, 0, 1)
-	YAF_ARG_INFO(0, property_name)
-YAF_END_ARG_INFO()
-
-YAF_BEGIN_ARG_INFO_EX(yaf_setter_arg, 0, 0, 2)
-	YAF_ARG_INFO(0, property_name)
-	YAF_ARG_INFO(0, property_value)
-YAF_END_ARG_INFO()
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_config_void_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
 /* }}} */
 
 #include "configs/ini.c"
@@ -64,7 +59,6 @@ static int yaf_config_ini_modified(zval * file, long ctime TSRMLS_DC) {
 	if (Z_TYPE(n_ctime) != IS_BOOL && ctime != Z_LVAL(n_ctime)) {
 		return Z_LVAL(n_ctime);
 	}	
-
 	return 0;
 }
 /* }}} */
@@ -106,17 +100,17 @@ static void yaf_config_zval_dtor(zval **value) {
 /** {{{ static void yaf_config_copy_persistent(HashTable *pdst, HashTable *src TSRMLS_DC)
  */
 static void yaf_config_copy_persistent(HashTable *pdst, HashTable *src TSRMLS_DC) {
-	zval **ppzval = NULL;
-	char *key    = NULL;
-	int  keylen  = 0;
-	long idx     = 0;
+	zval **ppzval;
+	char *key;
+	uint keylen;
+	long idx;
 
 	for(zend_hash_internal_pointer_reset(src);
 			zend_hash_has_more_elements(src) == SUCCESS;
 			zend_hash_move_forward(src)) {
 
 		if (zend_hash_get_current_key_ex(src, &key, &keylen, &idx, 0, NULL) == HASH_KEY_IS_LONG) {
-			zval *tmp = NULL;
+			zval *tmp;
 			if (zend_hash_get_current_data(src, (void**)&ppzval) == FAILURE) {
 				continue;
 			}
@@ -126,7 +120,7 @@ static void yaf_config_copy_persistent(HashTable *pdst, HashTable *src TSRMLS_DC
 			zend_hash_index_update(pdst, idx, (void **)&tmp, sizeof(zval *), NULL);
 			
 		} else {
-			zval *tmp = NULL;
+			zval *tmp;
 			if (zend_hash_get_current_data(src, (void**)&ppzval) == FAILURE) {
 				continue;
 			}
@@ -142,11 +136,10 @@ static void yaf_config_copy_persistent(HashTable *pdst, HashTable *src TSRMLS_DC
 /** {{{ static void yaf_config_copy_losable(HashTable *ldst, HashTable *src TSRMLS_DC)
  */
 static void yaf_config_copy_losable(HashTable *ldst, HashTable *src TSRMLS_DC) {
-	zval **ppzval = NULL;
-	char *key    = NULL;
-	int  keylen  = 0;
-	long idx     = 0;
-	zval *tmp    = NULL;
+	zval **ppzval, *tmp;
+	char *key;  
+	long idx; 
+	uint keylen;
 
 	for(zend_hash_internal_pointer_reset(src);
 			zend_hash_has_more_elements(src) == SUCCESS;
@@ -175,9 +168,8 @@ static void yaf_config_copy_losable(HashTable *ldst, HashTable *src TSRMLS_DC) {
 /** {{{ static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC)
  */
 static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC) {
-	zval *new = NULL;
-	new = (zval *)pemalloc(sizeof(zval), 1);
-	INIT_PZVAL(new);
+	zval *ret = (zval *)pemalloc(sizeof(zval), 1);
+	INIT_PZVAL(ret);
 	switch (zvalue->type) {
 		case IS_RESOURCE:
 		case IS_OBJECT:
@@ -189,15 +181,13 @@ static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC) {
 		case IS_CONSTANT:
 		case IS_STRING:
 				CHECK_ZVAL_STRING(zvalue);
-				Z_TYPE_P(new) = IS_STRING;
-				new->value.str.val = pestrndup(zvalue->value.str.val, zvalue->value.str.len, 1);
-				new->value.str.len = zvalue->value.str.len;
+				Z_TYPE_P(ret) = IS_STRING;
+				ret->value.str.val = pestrndup(zvalue->value.str.val, zvalue->value.str.len, 1);
+				ret->value.str.len = zvalue->value.str.len;
 			break;
 		case IS_ARRAY:
 		case IS_CONSTANT_ARRAY: {
-				HashTable *original_ht = zvalue->value.ht;
-				HashTable *tmp_ht = NULL;
-
+				HashTable *tmp_ht, *original_ht = zvalue->value.ht;
 				tmp_ht = (HashTable *)pemalloc(sizeof(HashTable), 1);
 				if (!tmp_ht) {
 					return NULL;
@@ -205,21 +195,21 @@ static zval * yaf_config_ini_zval_persistent(zval *zvalue TSRMLS_DC) {
 
 				zend_hash_init(tmp_ht, zend_hash_num_elements(original_ht), NULL, (dtor_func_t)yaf_config_zval_dtor, 1);
 				yaf_config_copy_persistent(tmp_ht, original_ht TSRMLS_CC);
-				Z_TYPE_P(new) = IS_ARRAY;
-				new->value.ht = tmp_ht;
+				Z_TYPE_P(ret) = IS_ARRAY;
+				ret->value.ht = tmp_ht;
 			}
 			break;
 	}
 
-	return new;
+	return ret;
 }
 /* }}} */
 
 /** {{{ static zval * yaf_config_ini_zval_losable(zval *zvalue TSRMLS_DC)
  */
 static zval * yaf_config_ini_zval_losable(zval *zvalue TSRMLS_DC) {
-	zval *new = NULL;
-	MAKE_STD_ZVAL(new);
+	zval *ret;
+	MAKE_STD_ZVAL(ret);
 	switch (zvalue->type) {
 		case IS_RESOURCE:
 		case IS_OBJECT:
@@ -231,27 +221,27 @@ static zval * yaf_config_ini_zval_losable(zval *zvalue TSRMLS_DC) {
 		case IS_CONSTANT:
 		case IS_STRING:
 				CHECK_ZVAL_STRING(zvalue);
-				ZVAL_STRINGL(new, zvalue->value.str.val, zvalue->value.str.len, 1);
+				ZVAL_STRINGL(ret, zvalue->value.str.val, zvalue->value.str.len, 1);
 			break;
 		case IS_ARRAY:
 		case IS_CONSTANT_ARRAY: {
 				HashTable *original_ht = zvalue->value.ht;
-				array_init(new);
-				yaf_config_copy_losable(Z_ARRVAL_P(new), original_ht TSRMLS_CC);
+				array_init(ret);
+				yaf_config_copy_losable(Z_ARRVAL_P(ret), original_ht TSRMLS_CC);
 			}
 			break;
 	}
 
-	return new;
+	return ret;
 }
 /* }}} */
 
 /** {{{ static yaf_config_t * yaf_config_ini_unserialize(yaf_config_t *this_ptr, zval *filename, zval *section TSRMLS_DC)
  */
 static yaf_config_t * yaf_config_ini_unserialize(yaf_config_t *this_ptr, zval *filename, zval *section TSRMLS_DC) {
-	char *key 	  			 = NULL;
-	int	 len  	  			 = 0;
-	yaf_config_cache **ppval  = NULL;
+	char *key;
+	uint len;
+	yaf_config_cache **ppval;
 
 	if (!YAF_G(configs)) {
 		return NULL;
@@ -264,7 +254,8 @@ static yaf_config_t * yaf_config_ini_unserialize(yaf_config_t *this_ptr, zval *f
 			efree(key);
 			return NULL;
 		} else {
-			zval *props = NULL;
+			zval *props;
+
 			MAKE_STD_ZVAL(props);
 			array_init(props);
 			yaf_config_copy_losable(Z_ARRVAL_P(props), (*ppval)->data TSRMLS_CC);
@@ -281,12 +272,12 @@ static yaf_config_t * yaf_config_ini_unserialize(yaf_config_t *this_ptr, zval *f
 /** {{{ static void yaf_config_ini_serialize(yaf_config_t *this_ptr, zval *filename, zval *section TSRMLS_DC)
  */
 static void yaf_config_ini_serialize(yaf_config_t *this_ptr, zval *filename, zval *section TSRMLS_DC) {
-	HashTable 		*persistent	= NULL;
-	zval 	 		*configs	= NULL;
-	yaf_config_cache *cache  	= NULL;
-	long			ctime		= 0;
-	char			*key		= NULL;
-	int	 			len 		= 0;
+	char *key;
+	uint len;
+	long ctime;
+	zval *configs;
+	HashTable *persistent;
+	yaf_config_cache *cache;
 
 	if (!YAF_G(configs)) {
 		YAF_G(configs) = (HashTable *)pemalloc(sizeof(HashTable), 1);
@@ -307,7 +298,7 @@ static void yaf_config_ini_serialize(yaf_config_t *this_ptr, zval *filename, zva
 		return;
 	}
 
-	configs = yaf_read_property(this_ptr, YAF_CONFIG_PROPERT_NAME);
+	configs = zend_read_property(yaf_config_ini_ce, this_ptr, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 0 TSRMLS_CC);
 
 	zend_hash_init(persistent, zend_hash_num_elements(Z_ARRVAL_P(configs)), NULL, (dtor_func_t) yaf_config_zval_dtor, 1);
 
@@ -327,7 +318,8 @@ static void yaf_config_ini_serialize(yaf_config_t *this_ptr, zval *filename, zva
 /** {{{ yaf_config_t * yaf_config_instance(yaf_config_t *this_ptr, zval *arg1, zval *arg2 TSRMLS_DC)
  */
 yaf_config_t * yaf_config_instance(yaf_config_t *this_ptr, zval *arg1, zval *arg2 TSRMLS_DC) {
-	yaf_config_t *instance 	= NULL;
+	yaf_config_t *instance;
+
 	if (!arg1) {
 		return NULL;
 	}
@@ -355,7 +347,8 @@ yaf_config_t * yaf_config_instance(yaf_config_t *this_ptr, zval *arg1, zval *arg
 	}
 
 	if (Z_TYPE_P(arg1) == IS_ARRAY) {
-		zval *readonly = NULL;
+		zval *readonly;
+
 		MAKE_STD_ZVAL(readonly);
 		ZVAL_BOOL(readonly, 1);
 
@@ -363,7 +356,7 @@ yaf_config_t * yaf_config_instance(yaf_config_t *this_ptr, zval *arg1, zval *arg
 		return instance;
 	}
 
-	yaf_trigger_error(YAF_ERR_TYPE_ERROR, "Yaf_Config_Abstract::__construct expects a string or an array as parameter");
+	yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects a string or an array as parameter");
 	return instance;
 }
 /* }}} */

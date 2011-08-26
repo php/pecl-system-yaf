@@ -50,54 +50,54 @@ yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC)
 		return NULL;
 	}
 
-	if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("type"), (void **)&ppzval) == FAILURE
+	if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("type"), (void **)&ppzval) == FAILURE
 			|| IS_STRING != Z_TYPE_PP(ppzval)) {
 		return NULL;
 	}
 
 	if (strncasecmp(Z_STRVAL_PP(ppzval), "rewrite", sizeof("rewrite") - 1) == 0) {
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("route"), (void **)&match) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("route"), (void **)&match) == FAILURE
 				|| Z_TYPE_PP(match) != IS_STRING) {
 			return NULL;
 		}	
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("default"), (void **)&def) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("default"), (void **)&def) == FAILURE
 				|| Z_TYPE_PP(def) != IS_ARRAY) {
 			return NULL;
 		}	
 
 		instance = yaf_route_rewrite_instance(NULL, *match, *def, NULL TSRMLS_CC); 
 	} else if (strncasecmp(Z_STRVAL_PP(ppzval), "regex", sizeof("regex") - 1) == 0) {
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("route"), (void **)&match) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("route"), (void **)&match) == FAILURE
 				|| Z_TYPE_PP(match) != IS_STRING) {
 			return NULL;
 		}	
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("default"), (void **)&def) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("default"), (void **)&def) == FAILURE
 				|| Z_TYPE_PP(def) != IS_ARRAY) {
 			return NULL;
 		}	
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("map"), (void **)&map) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("map"), (void **)&map) == FAILURE
 				|| Z_TYPE_PP(map) != IS_ARRAY) {
 			return NULL;
 		}	
 
 		instance = yaf_route_regex_instance(NULL, *match, *def, *map, NULL TSRMLS_CC); 
 	} else if (strncasecmp(Z_STRVAL_PP(ppzval), "simple", sizeof("simple") - 1) == 0) {
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("module"), (void **)&match) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("module"), (void **)&match) == FAILURE
 				|| Z_TYPE_PP(match) != IS_STRING) {
 			return NULL;
 		}	
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("controller"), (void **)&def) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("controller"), (void **)&def) == FAILURE
 				|| Z_TYPE_PP(def) != IS_STRING) {
 			return NULL;
 		}	
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("action"), (void **)&map) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("action"), (void **)&map) == FAILURE
 				|| Z_TYPE_PP(map) != IS_STRING) {
 			return NULL;
 		}	
 
 		instance = yaf_route_simple_instance(NULL, *match, *def, *map TSRMLS_CC); 
 	} else if (strncasecmp(Z_STRVAL_PP(ppzval), "supervar", sizeof("supervar") - 1) == 0) {
-		if (zend_hash_find(Z_ARRVAL_P(config), YAF_STRS("varname"), (void **)&match) == FAILURE
+		if (zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("varname"), (void **)&match) == FAILURE
 				|| Z_TYPE_PP(match) != IS_STRING) {
 			return NULL;
 		}	

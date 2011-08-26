@@ -213,7 +213,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 
 		if (zend_hash_find(Z_ARRVAL_PP(ppzval), YAF_STRS("throwException"), (void **)&ppsval) == SUCCESS) {
 			zval_add_ref(ppsval);
-			convert_to_int_ex(ppsval);
+			convert_to_boolean_ex(ppsval);
 			YAF_G(throw_exception) = Z_BVAL_PP(ppsval);
 		}
 
@@ -538,8 +538,8 @@ PHP_METHOD(yaf_application, environ) {
 /** {{{ proto public Yaf_Application::bootstrap(void) 
 */
 PHP_METHOD(yaf_application, bootstrap) {
-	char 			  	*bootstrap_path;
-	uint 			  	len, retval;
+	char *bootstrap_path;
+	uint len, retval = 0;
 	zend_class_entry	**ce;
 	yaf_application_t	*self = getThis();
 

@@ -12,19 +12,50 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+ 
+/* $Id$ */
 
-zend_class_entry * yaf_view_interface_ce;
+zend_class_entry *yaf_view_interface_ce;
+
+/* {{{ ARG_INFO
+ */
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_assign_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, name)
+	ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_display_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, tpl)
+	ZEND_ARG_ARRAY_INFO(0, tpl_vars, 1)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_render_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, tpl)
+	ZEND_ARG_ARRAY_INFO(0, tpl_vars, 1)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_setpath_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, template_dir)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_getpath_arginfo, 0, 0, 1)
+ZEND_END_ARG_INFO()
+/* }}} */
 
 /** {{{ yaf_view_interface_methods 
  */
 zend_function_entry yaf_view_interface_methods[] = {
-	ZEND_ABSTRACT_ME(yaf_view, assign,  yaf_2op1_arg)
-	ZEND_ABSTRACT_ME(yaf_view, display, yaf_2op1_arg)
-	ZEND_ABSTRACT_ME(yaf_view, render,  yaf_2op1_arg)
-	ZEND_ABSTRACT_ME(yaf_view, setScriptPath,  yaf_getter_arg)
-	ZEND_ABSTRACT_ME(yaf_view, getScriptPath,  NULL)
+	ZEND_ABSTRACT_ME(yaf_view, assign,  yaf_view_assign_arginfo)
+	ZEND_ABSTRACT_ME(yaf_view, display, yaf_view_display_arginfo)
+	ZEND_ABSTRACT_ME(yaf_view, render, yaf_view_render_arginfo)
+	ZEND_ABSTRACT_ME(yaf_view, setScriptPath, yaf_view_setpath_arginfo)
+	ZEND_ABSTRACT_ME(yaf_view, getScriptPath, yaf_view_getpath_arginfo)
 	{NULL, NULL, NULL}
 };
 /* }}} */
