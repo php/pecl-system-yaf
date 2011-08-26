@@ -36,24 +36,26 @@ zend_class_entry * yaf_session_ce;
 extern PHPAPI zend_class_entry * spl_ce_Countable;
 #endif
 
-/* {{{ YAF_ARG_INFO
+/* {{{ ARG_INFO
  */
-YAF_BEGIN_ARG_INFO_EX(yaf_getter_arg, 0, 0, 1)
-	YAF_ARG_INFO(0, property_name)
-YAF_END_ARG_INFO()
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_getter_arg, 0, 0, 1)
+	ZEND_ARG_INFO(0, property_name)
+ZEND_END_ARG_INFO()
 
-YAF_BEGIN_ARG_INFO_EX(yaf_setter_arg, 0, 0, 2)
-	YAF_ARG_INFO(0, property_name)
-	YAF_ARG_INFO(0, property_value)
-YAF_END_ARG_INFO()
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_setter_arg, 0, 0, 2)
+	ZEND_ARG_INFO(0, property_name)
+	ZEND_ARG_INFO(0, property_value)
+ZEND_END_ARG_INFO()
 /* }}} */
 
 /** {{{ inline int yaf_session_start(yaf_session_t *session TSRMLS_DC) 
  */
 inline int yaf_session_start(yaf_session_t *session TSRMLS_DC) {
-	zval *status = NULL;
+	zval *status;
 
-	status  = yaf_read_property(session, YAF_SESSION_PROPERTY_NAME_STATUS);
+	status = zend_read_property(yaf_session_ce, session, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_STATUS), 0 TSRMLS_CC);
 	if (Z_BVAL_P(status)) {
 		return 1;
 	}
@@ -67,25 +69,23 @@ inline int yaf_session_start(yaf_session_t *session TSRMLS_DC) {
 /** {{{ yaf_session_t *yaf_session_instance(yaf_session_t *this_ptr TSRMLS_DC)
 */
 yaf_session_t *yaf_session_instance(yaf_session_t *this_ptr TSRMLS_DC) {
-	yaf_session_t *instance = yaf_read_static_property(yaf_session_ce, YAF_SESSION_PROPERTY_NAME_INSTANCE);
+	yaf_session_t *instance = zend_read_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), 0 TSRMLS_CC);
 	
-	if (Z_TYPE_P(instance) != IS_OBJECT
-			|| !instanceof_function(Z_OBJCE_P(instance), yaf_session_ce TSRMLS_CC)) {
-		zval **sess 	 = NULL;
-		zval *member     = NULL;
-		zend_object *obj = NULL;
-		zend_property_info *property_info = NULL;;
+	if (Z_TYPE_P(instance) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(instance), yaf_session_ce TSRMLS_CC)) {
+		zval **sess, *member;
+		zend_object *obj; 
+		zend_property_info *property_info;
 
 		MAKE_STD_ZVAL(instance);
 		object_init_ex(instance, yaf_session_ce);
 
-		yaf_update_static_property(yaf_session_ce, YAF_SESSION_PROPERTY_NAME_INSTANCE, instance);
+		zend_update_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
 
 		yaf_session_start(instance TSRMLS_CC);
 
 		if (zend_hash_find(&EG(symbol_table), YAF_STRS("_SESSION"), (void **)&sess) == FAILURE
 				|| Z_TYPE_PP(sess) != IS_ARRAY) {
-			yaf_trigger_error(YAF_ERR_STARTUP_FAILED, "start session failed");
+			yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "Attempt to start session failed");
 			return NULL;
 		}
 

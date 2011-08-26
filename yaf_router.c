@@ -72,7 +72,7 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 	HashTable 	*ht;
 	yaf_route_t	**route;
 
-	routers = zend_read_property(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS) TSRMLS_CC);
+	routers = zend_read_property(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), 0 TSRMLS_CC);
 
 	ht = Z_ARRVAL_P(routers);
 	for(zend_hash_internal_pointer_end(ht);
@@ -83,7 +83,7 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 			continue;
 		}
 
-		zend_call_method_with_1_params(route, router_ce, NULL, "route", &ret, request);
+		zend_call_method_with_1_params(route, yaf_router_ce, NULL, "route", &ret, request);
 
 		if (IS_BOOL != Z_TYPE_P(ret) || !Z_BVAL_P(ret)) {
 			continue;

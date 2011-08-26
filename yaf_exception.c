@@ -84,8 +84,7 @@ zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) {
 /** {{{  void yaf_throw_exception(long code TSRMLS_DC, char * format, char *message)
 */
 void yaf_throw_exception(long code, char *message TSRMLS_CC) {
-	zend_class_entry *base_exception = NULL;
-	base_exception = yaf_exception_ce;
+	zend_class_entry *base_exception = yaf_exception_ce;
 
 	if ((code & YAF_ERR_BASE) == YAF_ERR_BASE
 			&& yaf_buildin_exceptions[YAF_EXCEPTION_OFFSET(code)]) {
@@ -100,15 +99,13 @@ void yaf_throw_exception(long code, char *message TSRMLS_CC) {
 /** {{{ proto Yaf_Exception::__construct($mesg = 0, $code = 0, Exception $previous = NULL) 
 */
 PHP_METHOD(yaf_exception, __construct) {
-	char  	*message 	= NULL;
-	long   	code 		= 0;
-	zval  	*object		= NULL;
-   	zval 	*previous 	= NULL;
-	int 	message_len	= 0;
-	int    	argc 		= ZEND_NUM_ARGS();
+	char  	*message = NULL;
+	zval  	*object, *previous = NULL;
+	int 	message_len, code = 0;
+	int    	argc = ZEND_NUM_ARGS();
 
 	if (zend_parse_parameters_ex(ZEND_PARSE_PARAMS_QUIET, argc TSRMLS_CC, "|slO!", &message, &message_len, &code, &previous, yaf_get_exception_base(0 TSRMLS_CC)) == FAILURE) {
-		zend_error(E_ERROR, "Wrong parameters for Exception([string $exception [, long $code [, Exception $previous = NULL]]])");
+		php_error_docref(NULL TSRMLS_CC, E_ERROR, "Wrong parameters for Exception([string $exception [, long $code [, Exception $previous = NULL]]])");
 	}
 
 	object = getThis();
@@ -122,7 +119,7 @@ PHP_METHOD(yaf_exception, __construct) {
 	}
 
 	if (previous) {
-		yaf_update_property(object, "previous", previous);
+		zend_update_property(Z_OBJCE_P(object), object, ZEND_STRL("previous"), previous TSRMLS_CC);
 	}
 }
 /* }}} */
@@ -130,7 +127,7 @@ PHP_METHOD(yaf_exception, __construct) {
 /** {{{ proto Yaf_Exception::getPrevious(void)
 */
 PHP_METHOD(yaf_exception, getPrevious) {
-	zval * prev = yaf_read_property(getThis(), "previous");
+	zval *prev = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL("previous"), 0 TSRMLS_CC);
 	RETURN_ZVAL(prev, 1, 0);
 }
 /* }}} */

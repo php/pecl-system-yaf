@@ -12,39 +12,41 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+
+/* $Id$ */
 
 #define YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR "_var_name"
 
-zend_class_entry * yaf_route_supervar_ce;
+zend_class_entry *yaf_route_supervar_ce;
+
+/** {{{ ARG_INFO
+ */
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_route_supervar_construct_arginfo, 0, 0, 1)
+    ZEND_ARG_INFO(0, supervar_name)
+ZEND_END_ARG_INFO()
+/* }}} */
 
 /** {{{ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
  */
 int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
-	zval *varname 	 = NULL;
-	zval *zuri	  	 = NULL;
-	zval *params	 = NULL;
-	char *req_uri 	 = NULL;
-	char *module  	 = NULL;
-	char *controller = NULL;
-	char *action 	 = NULL;
-	char *rest		 = NULL;	
+	zval *varname, *zuir, *params;
+	char *req_uri, *module, *controller, *action, *rest;
 
-	varname = yaf_read_property(route, YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR);
+	varname = zend_read_property(yaf_route_supervar_ce, route, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), 0 TSRMLS_CC);
 	
-	zuri = yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(varname), Z_STRLEN_P(varname) TSRMLS_CC);
+	zuir = yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(varname), Z_STRLEN_P(varname) TSRMLS_CC);
 
-	if (!zuri || ZVAL_IS_NULL(zuri)) {
+	if (!zuir || ZVAL_IS_NULL(zuir)) {
 		return 0;
 	}
 
-	req_uri = estrndup(Z_STRVAL_P(zuri), Z_STRLEN_P(zuri));
-
+	req_uri = estrndup(Z_STRVAL_P(zuir), Z_STRLEN_P(zuir));
 	do {
 		char *s, *p;
 		char *uri;
-		int request_uri_len = Z_STRLEN_P(zuri);
+		int request_uri_len = Z_STRLEN_P(zuir);
 
 		if (request_uri_len == 0
 				|| (request_uri_len == 1 && *req_uri == '/')) {
@@ -154,7 +156,8 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 /** {{{ yaf_route_t * yaf_route_supervar_instance(yaf_route_t *this_ptr, zval *name TSRMLS_DC)
  */
 yaf_route_t * yaf_route_supervar_instance(yaf_route_t *this_ptr, zval *name TSRMLS_DC) {
-	yaf_route_t *instance = NULL;
+	yaf_route_t *instance;
+
 	if (!name || IS_STRING != Z_TYPE_P(name) || !Z_STRLEN_P(name)) {
 		return NULL;
 	}
@@ -167,7 +170,7 @@ yaf_route_t * yaf_route_supervar_instance(yaf_route_t *this_ptr, zval *name TSRM
 	}
 
 	Z_ADDREF_P(name);
-	yaf_update_property(instance, YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR, name);
+	zend_update_property(yaf_route_supervar_ce, instance, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), name TSRMLS_CC);
 
 	return instance;
 }
@@ -176,10 +179,10 @@ yaf_route_t * yaf_route_supervar_instance(yaf_route_t *this_ptr, zval *name TSRM
 /** {{{ proto public Yaf_Route_Supervar::route(string $uri)
  */
 PHP_METHOD(yaf_route_supervar, route) {
-	yaf_request_t *request = NULL;
+	yaf_request_t *request;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &request) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	} else {
 		RETURN_BOOL(yaf_route_supervar_route(getThis(), request TSRMLS_CC));
 	}                                    
@@ -189,25 +192,26 @@ PHP_METHOD(yaf_route_supervar, route) {
 /** {{{ proto public Yaf_Route_Supervar::__construct(string $varname)
  */
 PHP_METHOD(yaf_route_supervar, __construct) {
-	zval 		*var 		= NULL;
+	zval *var;
+
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &var) ==   FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}
 	
-	if (!var || Z_TYPE_P(var) != IS_STRING || !Z_STRLEN_P(var)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR, "%s::__construct expects a string super var name", yaf_route_supervar_ce->name);
+	if (Z_TYPE_P(var) != IS_STRING || !Z_STRLEN_P(var)) {
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects a string super var name", yaf_route_supervar_ce->name);
 		RETURN_FALSE;
 	}
 
-	yaf_update_property(getThis(), YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR, var);
+	zend_update_property(yaf_route_supervar_ce, getThis(), ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), var TSRMLS_CC);
 }
 /** }}} */
  
 /** {{{ yaf_route_supervar_methods
  */
 zend_function_entry yaf_route_supervar_methods[] = {
-	PHP_ME(yaf_route_supervar, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-	PHP_ME(yaf_route_supervar, route,		  yaf_getter_arg, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_route_supervar, __construct, yaf_route_supervar_construct_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+	PHP_ME(yaf_route_supervar, route, yaf_route_route_arginfo, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
 /* }}} */

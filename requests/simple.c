@@ -56,7 +56,7 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 			zend_update_property_string(yaf_request_simple_ce, instance,
 				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), YAF_G(default_controller) TSRMLS_CC);
 		} else {
-			zend_update_property_string(yaf_request_simple_ce, instance, 
+			zend_update_property(yaf_request_simple_ce, instance, 
 					ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
 		}
 
@@ -64,7 +64,7 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 			zend_update_property_string(yaf_request_simple_ce, instance,
 				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), YAF_G(default_action) TSRMLS_CC);
 		} else {
-			zend_update_property_string(yaf_request_simple_ce, instance,
+			zend_update_property(yaf_request_simple_ce, instance,
 				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
 		}
 

@@ -22,6 +22,16 @@ zend_class_entry *yaf_route_simple_ce;
 #define	YAF_ROUTE_SIMPLE_VAR_NAME_CONTROLLER 	"controller"
 #define YAF_ROUTE_SIMPLE_VAR_NAME_ACTION		"action"
 
+/** {{{ ARG_INFO
+ */
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_route_simple_construct_arginfo, 0, 0, 3)
+	ZEND_ARG_INFO(0, module_name)
+    ZEND_ARG_INFO(0, controller_name)
+    ZEND_ARG_INFO(0, action_name)
+ZEND_END_ARG_INFO()
+/* }}} */
+
 /** {{{ int yaf_route_simple_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
  */
 int yaf_route_simple_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
@@ -108,8 +118,8 @@ PHP_METHOD(yaf_route_simple, __construct) {
 /** {{{ yaf_route_simple_methods
  */
 zend_function_entry yaf_route_simple_methods[] = {
-	PHP_ME(yaf_route_simple, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-	PHP_ME(yaf_route_simple, route, yaf_getter_arg, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_route_simple, __construct, yaf_route_simple_construct_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+	PHP_ME(yaf_route_simple, route, yaf_route_route_arginfo, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 /* }}} */

@@ -21,7 +21,7 @@ static zend_class_entry * yaf_request_http_ce;
 /** {{{ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request_uri, char *base_uri TSRMLS_DC)
 */
 yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request_uri, char *base_uri TSRMLS_DC) {
-	zval *methods, *params, *settled_uri;
+	zval *method, *params, *settled_uri;
 	yaf_request_t *instance;
 
 	if (this_ptr) {
@@ -116,7 +116,7 @@ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request
 
 	if (settled_uri) {
 		zend_update_property(yaf_request_http_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), settled_uri TSRMLS_CC);
-		yaf_request_set_base_uri(yaf_request_http_ce, instance, base_uri, Z_STRVAL_P(settled_uri) TSRMLS_CC);
+		yaf_request_set_base_uri(instance, base_uri, Z_STRVAL_P(settled_uri) TSRMLS_CC);
 	}
 
 	MAKE_STD_ZVAL(params);

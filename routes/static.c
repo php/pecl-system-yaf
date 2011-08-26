@@ -17,6 +17,14 @@
 
 zend_class_entry * yaf_route_static_ce;
 
+/** {{{ ARG_INFO
+ */
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_route_static_match_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, uri)
+ZEND_END_ARG_INFO()
+/* }}} */
+
 /** {{{ int yaf_route_static_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
  */
 int yaf_route_static_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
@@ -170,8 +178,8 @@ PHP_METHOD(yaf_route_static, match) {
 /** {{{ yaf_route_static_methods
  */
 zend_function_entry yaf_route_static_methods[] = {
-	PHP_ME(yaf_route_static, match, yaf_getter_arg, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_route_static, route, yaf_getter_arg, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_route_static, match, yaf_route_static_match_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_route_static, route, yaf_route_route_arginfo, 		ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 /* }}} */

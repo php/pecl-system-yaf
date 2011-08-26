@@ -16,18 +16,18 @@
  */
 #include "ext/standard/php_smart_str.h"
 
-#define YAF_ROUTE_PROPETY_NAME_MATCH  "_route"
-#define YAF_ROUTE_PROPETY_NAME_ROUTE  "_default"
-#define YAF_ROUTE_PROPETY_NAME_MAP	 "_maps"
-#define YAF_ROUTE_PROPETY_NAME_VERIFY "_verify"
+#define YAF_ROUTE_PROPETY_NAME_MATCH  	"_route"
+#define YAF_ROUTE_PROPETY_NAME_ROUTE  	"_default"
+#define YAF_ROUTE_PROPETY_NAME_MAP	 	"_maps"
+#define YAF_ROUTE_PROPETY_NAME_VERIFY 	"_verify"
 
 #define YAF_ROUTER_URL_DELIMIETER  	 "/"
 #define YAF_ROUTE_REGEX_DILIMITER  	 '#'
 
 /* {{{ YAF_ARG_INFO
  */
-YAF_BEGIN_ARG_INFO_EX(yaf_getter_arg, 0, 0, 1)
-	YAF_ARG_INFO(0, property_name)
+YAF_BEGIN_ARG_INFO_EX(yaf_route_route_arginfo, 0, 0, 1)
+	YAF_ARG_INFO(0, request)
 YAF_END_ARG_INFO()
 /* }}} */
 
@@ -43,11 +43,8 @@ zend_class_entry *yaf_route_ce;
 /* {{{ yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC) 
  */
 yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC) {
-	yaf_route_t 	*instance 	= NULL;
-	zval 		**match		= NULL;
-	zval		**def 		= NULL;
-	zval 		**map		= NULL;
-	zval 		**ppzval	= NULL;
+	yaf_route_t *instance;
+	zval **match, **def, **map, **ppzval;
 
 	if (!config || IS_ARRAY != Z_TYPE_P(config)) {
 		return NULL;
@@ -115,7 +112,7 @@ yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC)
 /** {{{ yaf_route_methods
  */
 zend_function_entry yaf_route_methods[] = {
-	PHP_ABSTRACT_ME(yaf_route, route, yaf_getter_arg)
+	PHP_ABSTRACT_ME(yaf_route, route, yaf_route_route_arginfo)
     {NULL, NULL, NULL}
 };
 /* }}} */

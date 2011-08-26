@@ -12,36 +12,41 @@
    +----------------------------------------------------------------------+
    | Author: Xinchen Hui  <laruence@php.net>                              |
    +----------------------------------------------------------------------+
-   $Id$
-   */
+*/
 
-zend_class_entry * yaf_route_map_ce;
+/* $Id$*/
 
-#define YAF_ROUTE_MAP_VAR_NAME_DELIMETER		"_delimeter"
+zend_class_entry *yaf_route_map_ce;
+
+#define YAF_ROUTE_MAP_VAR_NAME_DELIMETER	"_delimeter"
 #define YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER	"_ctl_router"
+
+/** {{{ ARG_INFO
+ */
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_route_map_construct_arginfo, 0, 0, 0)
+    ZEND_ARG_INFO(0, controller_prefer)
+	ZEND_ARG_INFO(0, delimiter)
+ZEND_END_ARG_INFO()
+/* }}} */
 
 /** {{{ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 */
 int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
-	zval    *ctl_prefer    = NULL;
-	zval    *delimer	   = NULL;
-	zval	*zuri		   = NULL;
-	zval 	*base_uri	   = NULL;
-	zval 	*params	 	   = NULL;
-	char 	*req_uri	   = NULL;
-	char 	*query_str	   = NULL;
-	char    *tmp		   = NULL;
-	char 	*rest		   = NULL;
-	char    *ptrptr		   = NULL;
-	char    *seg		   = NULL;
-	uint    seg_len		   = 0;
+	zval *ctl_prefer, *delimer, *zuri, *base_uri, *params;
+	char *req_uri, *query_str, *tmp, *rest, *ptrptr, *seg;
+	uint seg_len = 0;
+	zend_class_entry *request_ce;
+
 	smart_str route_result = {0};
 
-	zuri 	 = yaf_read_property(request, YAF_REQUEST_PROPERTY_NAME_URI);
-	base_uri = yaf_read_property(request, YAF_REQUEST_PROPERTY_NAME_BASE);
+	request_ce = Z_OBJCE_P(request);
 
-	ctl_prefer = yaf_read_property(route, YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER);
-	delimer	   = yaf_read_property(route, YAF_ROUTE_MAP_VAR_NAME_DELIMETER);
+	zuri 	 = zend_read_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), 0 TSRMLS_CC);
+	base_uri = zend_read_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_BASE), 0 TSRMLS_CC);
+
+	ctl_prefer = zend_read_property(yaf_route_map_ce, route, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 0 TSRMLS_CC);
+	delimer	   = zend_read_property(yaf_route_map_ce, route, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), 0 TSRMLS_CC);
 
 	if (base_uri && IS_STRING == Z_TYPE_P(base_uri)
 			&& strstr(Z_STRVAL_P(zuri), Z_STRVAL_P(base_uri)) == Z_STRVAL_P(zuri)) {
@@ -82,9 +87,9 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 
 	if (route_result.len) {
 		if (Z_BVAL_P(ctl_prefer)) {
-			zend_update_property_stringl(Z_OBJCE_P(request), request,  YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), route_result.c, route_result.len - 1 TSRMLS_CC);
+			zend_update_property_stringl(request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), route_result.c, route_result.len - 1 TSRMLS_CC);
 		} else {
-			zend_update_property_stringl(Z_OBJCE_P(request), request,  YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), route_result.c, route_result.len - 1 TSRMLS_CC);
+			zend_update_property_stringl(request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), route_result.c, route_result.len - 1 TSRMLS_CC);
 		}
 		efree(route_result.c);
 	}
@@ -104,10 +109,10 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 /** {{{ proto public Yaf_Route_Simple::route(Yaf_Request $req)
 */
 PHP_METHOD(yaf_route_map, route) {
-	yaf_request_t *request = NULL;
+	yaf_request_t *request;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &request) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	} else {
 		RETURN_BOOL(yaf_route_map_route(getThis(), request TSRMLS_CC));
 	}
@@ -123,7 +128,7 @@ PHP_METHOD(yaf_route_map, __construct) {
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ls",
 			   	&controller_prefer, &delim, &delim_len) == FAILURE) {
-		WRONG_PARAM_COUNT;
+		return;
 	}
 
 	if (controller_prefer) {
@@ -141,8 +146,8 @@ PHP_METHOD(yaf_route_map, __construct) {
 /** {{{ yaf_route_map_methods
 */
 zend_function_entry yaf_route_map_methods[] = {
-	PHP_ME(yaf_route_map, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-	PHP_ME(yaf_route_map, route, yaf_getter_arg, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_route_map, __construct, yaf_route_map_construct_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+	PHP_ME(yaf_route_map, route, yaf_route_route_arginfo, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 /* }}} */
