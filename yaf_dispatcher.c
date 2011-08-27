@@ -191,7 +191,7 @@ static void yaf_dispatcher_get_call_parmaters(zend_class_entry *request_ce, yaf_
 
 	arg_info  = fptr->common.arg_info;
 	*params   = safe_emalloc(sizeof(zval **), fptr->common.num_args, 0);
-	for (;current < fptr->common.num_args; current++, arg_info++) {
+	for (current = 0;current < fptr->common.num_args; current++, arg_info++) {
 		if (zend_hash_find(params_ht, arg_info->name, arg_info->name_len + 1, (void **)&arg) == SUCCESS) {
 			(*params)[current] = arg;
 			(*count)++;
@@ -305,9 +305,9 @@ static inline void yaf_dispatcher_fix_default(yaf_dispatcher_t *dispatcher, zend
 }
 /* }}} */
 
-/** {{{ static int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC)
+/** {{{int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC)
 */
-static int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC) {
+int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC) {
 	if (request) {
 		zend_update_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_REQUEST), request TSRMLS_CC);
 		return 1;

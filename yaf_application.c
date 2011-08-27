@@ -219,7 +219,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 
 		if (zend_hash_find(Z_ARRVAL_PP(ppzval), YAF_STRS("catchException"), (void **)&ppsval) == SUCCESS) {
 			zval_add_ref(ppsval);
-			convert_to_int_ex(ppsval);
+			convert_to_boolean_ex(ppsval);
 			YAF_G(catch_exception) = Z_BVAL_PP(ppsval);
 		}
 	}

@@ -43,8 +43,8 @@ zend_class_entry *yaf_route_ce;
 /* {{{ yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC) 
  */
 yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC) {
-	yaf_route_t *instance;
 	zval **match, **def, **map, **ppzval;
+	yaf_route_t *instance = NULL;
 
 	if (!config || IS_ARRAY != Z_TYPE_P(config)) {
 		return NULL;

@@ -29,7 +29,7 @@ ZEND_END_ARG_INFO()
  */
 int yaf_route_static_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	zval *zuri, *base_uri, *params;
-	char *req_uri, *module, *controller, *action, *rest;
+	char *req_uri, *module = NULL, *controller = NULL, *action = NULL, *rest = NULL;
 	zend_class_entry *request_ce;
 
 	request_ce = Z_OBJCE_P(request);

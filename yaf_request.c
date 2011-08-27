@@ -105,8 +105,8 @@ yaf_request_t * yaf_request_instance(yaf_request_t *this_ptr, char *other TSRMLS
 /** {{{ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *request_uri TSRMLS_DC)
 */
 int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *request_uri TSRMLS_DC) {
-	char *basename;
-	int  basename_len;
+	char *basename = NULL;
+	uint basename_len = 0;
 
 	if (!base_uri) {
 		zval 	*script_filename;
@@ -310,7 +310,12 @@ inline yaf_request_t * yaf_request_get_method(yaf_request_t *request TSRMLS_DC) 
 /** {{{ inline yaf_request_t * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC)
 */
 inline zval * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC) {
-	yaf_request_t *lang = zend_read_property(Z_OBJCE_P(instance), instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_LANG), 0 TSRMLS_CC);
+	zend_class_entry *request_ce;
+	zval *lang;
+
+	request_ce = Z_OBJCE_P(instance);
+
+	lang = zend_read_property(request_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_LANG), 0 TSRMLS_CC);
 
 	if (IS_STRING != Z_TYPE_P(lang)) {
 		zval * accept_langs = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_ACCEPT_LANGUAGE") TSRMLS_CC);
@@ -318,9 +323,10 @@ inline zval * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC) {
 		if (IS_STRING != Z_TYPE_P(accept_langs) || !Z_STRLEN_P(accept_langs)) {
 			return lang;
 		} else {
-			double	max_qvlaue;
-			uint	prefer_len;
-			char  	*prefer, *ptrptr, *seg;
+			char  	*ptrptr, *seg;
+			uint	prefer_len = 0;
+			double	max_qvlaue = 0;
+			char 	*prefer = NULL;
 			char  	*langs = estrndup(Z_STRVAL_P(accept_langs), Z_STRLEN_P(accept_langs));
 
 			seg = php_strtok_r(langs, ",", &ptrptr);
@@ -353,7 +359,7 @@ inline zval * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC) {
 				zval *accept_language;
 				MAKE_STD_ZVAL(accept_language);
 				ZVAL_STRINGL(accept_language,  prefer, prefer_len, 1);
-				yaf_update_property(instance, YAF_REQUEST_PROPERTY_NAME_LANG, accept_language);
+				zend_update_property(request_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_LANG), accept_language TSRMLS_CC);
 				efree(prefer);
 				efree(langs);
 				return accept_language;
@@ -611,7 +617,7 @@ PHP_METHOD(yaf_request, setParam) {
 PHP_METHOD(yaf_request, getParam) {
 	char *name;
 	uint len;
-	zval *def;
+	zval *def = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|z", &name, &len, &def) == FAILURE) {
 		return;

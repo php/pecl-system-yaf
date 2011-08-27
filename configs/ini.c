@@ -34,6 +34,16 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_get_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static
+ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_rget_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_unset_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+static
 ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_set_arginfo, 0, 0, 2)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, value)
@@ -41,11 +51,6 @@ ZEND_END_ARG_INFO()
 
 static
 ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_isset_arginfo, 0, 0, 1)
-	ZEND_ARG_INFO(0, name)
-ZEND_END_ARG_INFO()
-
-static
-ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_unset_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 /* }}} */
@@ -105,8 +110,8 @@ static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, i
 	char *key;
 	uint keylen;
 	long idx;
-	zval **ppzval, *ret;
 	HashPointer position;
+	zval **ppzval, *ret = NULL;
 	int  found = 0;
 
 	for(zend_hash_internal_pointer_reset(ht);
@@ -227,11 +232,12 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 /** {{{static zval *yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSRMLS_DC) 
 */
 static zval *yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSRMLS_DC)  {
-	zval *section, *parent, **ppzval;
+	zval *parent, **ppzval;
 	char *key, *buf;
 	long idx;
 	uint keylen;
 	HashPointer position;
+	zval *section = NULL;
 
 	for(zend_hash_internal_pointer_reset(ht);
 			zend_hash_has_more_elements(ht) == SUCCESS;
@@ -634,7 +640,6 @@ zend_function_entry yaf_config_ini_methods[] = {
 	PHP_ME(yaf_config_ini, get,	yaf_config_ini_get_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, set, yaf_config_ini_set_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, count, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_config_ini, offsetUnset, yaf_config_ini_unset_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, rewind, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, current, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, next, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
@@ -642,7 +647,8 @@ zend_function_entry yaf_config_ini_methods[] = {
 	PHP_ME(yaf_config_ini, key, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, toArray, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_config_ini, readonly, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
-	PHP_MALIAS(yaf_config_ini, offsetGet, get, yaf_config_ini_get_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_config_ini, offsetUnset, yaf_config_ini_unset_arginfo, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(yaf_config_ini, offsetGet, get, yaf_config_ini_rget_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_ini, offsetExists, __isset, yaf_config_ini_isset_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_ini, offsetSet, set, yaf_config_ini_set_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_ini, __get, get, yaf_config_ini_get_arginfo, ZEND_ACC_PUBLIC)

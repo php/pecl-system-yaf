@@ -65,6 +65,7 @@ extern zend_class_entry *yaf_dispatcher_ce;
 
 yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC);
 yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC);
+int yaf_dispatcher_set_request(yaf_dispatcher_t *dispatcher, yaf_request_t *request TSRMLS_DC);
 
 PHP_METHOD(yaf_application, app);
 PHP_FUNCTION(set_error_handler);

@@ -21,8 +21,8 @@ static zend_class_entry * yaf_request_http_ce;
 /** {{{ yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request_uri, char *base_uri TSRMLS_DC)
 */
 yaf_request_t * yaf_request_http_instance(yaf_request_t *this_ptr, char *request_uri, char *base_uri TSRMLS_DC) {
-	zval *method, *params, *settled_uri;
 	yaf_request_t *instance;
+	zval *method, *params, *settled_uri = NULL;
 
 	if (this_ptr) {
 		instance = this_ptr;

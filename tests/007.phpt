@@ -94,8 +94,6 @@ array(3) {
 }
 
 Warning: %s
-
-Warning: %s
 bool(false)
 bool(false)
 int(1)

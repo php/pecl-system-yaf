@@ -66,6 +66,7 @@ yaf_response_t * yaf_response_instance(yaf_response_t *this_ptr, char *sapi_name
 
 /** {{{ static int yaf_response_set_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len TSRMLS_DC)
  */
+#if 0
 static int yaf_response_set_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len TSRMLS_DC) {
 	zval *zbody;
 	zend_class_entry *response_ce;
@@ -88,6 +89,7 @@ static int yaf_response_set_body(yaf_response_t *response, char *name, int name_
 
 	return 1;
 }
+#endif
 /* }}} */
 
 /** {{{ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int prepend TSRMLS_DC)

@@ -357,7 +357,7 @@ yaf_config_t * yaf_config_instance(yaf_config_t *this_ptr, zval *arg1, zval *arg
 	}
 
 	yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects a string or an array as parameter");
-	return instance;
+	return NULL;
 }
 /* }}} */
 

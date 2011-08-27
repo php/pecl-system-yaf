@@ -345,7 +345,7 @@ zend_function_entry yaf_session_methods[] = {
 	PHP_MALIAS(yaf_session, offsetUnset, del, yaf_session_del_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_session, __get, get, yaf_session_get_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_session, __isset, has, yaf_session_has_arginfo, ZEND_ACC_PUBLIC)
-	PHP_MALIAS(yaf_session, __set, has, yaf_session_set_arginfo, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(yaf_session, __set, set, yaf_session_set_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_session, __unset, del, yaf_session_del_arginfo, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };

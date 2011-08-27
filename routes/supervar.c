@@ -32,7 +32,7 @@ ZEND_END_ARG_INFO()
  */
 int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	zval *varname, *zuir, *params;
-	char *req_uri, *module, *controller, *action, *rest;
+	char *req_uri, *module = NULL, *controller = NULL, *action = NULL, *rest = NULL;
 
 	varname = zend_read_property(yaf_route_supervar_ce, route, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), 0 TSRMLS_CC);
 	

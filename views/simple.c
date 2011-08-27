@@ -260,14 +260,16 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 	uint len; 
 
 	zend_class_entry *old_scope;
-	HashTable *calling_symbol_table;
 	yaf_view_simple_buffer *buffer;
+	HashTable *calling_symbol_table;
 
 	ZVAL_NULL(ret);
 
 	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (EG(active_symbol_table)) {
 		calling_symbol_table = EG(active_symbol_table);
+	} else {
+		calling_symbol_table = NULL;
 	}
 
 	ALLOC_HASHTABLE(EG(active_symbol_table));
@@ -358,6 +360,8 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
 	if (EG(active_symbol_table)) {
 		calling_symbol_table = EG(active_symbol_table);
+	} else {
+		calling_symbol_table = NULL;
 	}
 
 	ALLOC_HASHTABLE(EG(active_symbol_table));

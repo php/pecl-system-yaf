@@ -69,8 +69,8 @@ yaf_router_t * yaf_router_instance(yaf_router_t *this_ptr TSRMLS_DC) {
 */
 int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 	zval 		*routers, *ret;
-	HashTable 	*ht;
 	yaf_route_t	**route;
+	HashTable 	*ht;
 
 	routers = zend_read_property(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), 0 TSRMLS_CC);
 
@@ -83,7 +83,7 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 			continue;
 		}
 
-		zend_call_method_with_1_params(route, yaf_router_ce, NULL, "route", &ret, request);
+		zend_call_method_with_1_params(route, Z_OBJCE_PP(route), NULL, "route", &ret, request);
 
 		if (IS_BOOL != Z_TYPE_P(ret) || !Z_BVAL_P(ret)) {
 			continue;

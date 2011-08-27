@@ -34,10 +34,11 @@ ZEND_END_ARG_INFO()
 */
 int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	zval *ctl_prefer, *delimer, *zuri, *base_uri, *params;
-	char *req_uri, *query_str, *tmp, *rest, *ptrptr, *seg;
+	char *req_uri, *tmp, *rest, *ptrptr, *seg;
+	char *query_str = NULL;
 	uint seg_len = 0;
-	zend_class_entry *request_ce;
 
+	zend_class_entry *request_ce;
 	smart_str route_result = {0};
 
 	request_ce = Z_OBJCE_P(request);

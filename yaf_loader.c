@@ -143,8 +143,8 @@ inline int yaf_loader_is_category(char *class, uint class_len, char *category, u
 /** {{{ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC)
  */
 int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC) {
-	char *pos, *ns, *prefix;
-	int	 prefix_len;
+	char *pos, *ns, *prefix = NULL;
+	uint prefix_len = 0;
 	zval *namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 0 TSRMLS_CC);
 
 	if (ZVAL_IS_NULL(namespaces)) {
@@ -629,11 +629,11 @@ PHP_METHOD(yaf_loader, import) {
 /** {{{ proto public Yaf_Loader::autoload($class_name)
 */
 PHP_METHOD(yaf_loader, autoload) {
-	char *class_name, *file_name, *directory;
+	char *class_name, *directory = NULL, *file_name = NULL;
 #ifdef YAF_HAVE_NAMESPACE
 	char *origin_lcname;
 #endif
-	uint separator_len, class_name_len, file_name_len;
+	uint separator_len, class_name_len, file_name_len = 0;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &class_name, &class_name_len) == FAILURE) {
 		return;

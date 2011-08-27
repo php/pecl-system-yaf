@@ -31,6 +31,11 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_config_simple_get_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
 static
+ZEND_BEGIN_ARG_INFO_EX(yaf_config_simple_rget_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, name)
+ZEND_END_ARG_INFO()
+
+static
 ZEND_BEGIN_ARG_INFO_EX(yaf_config_simple_set_arginfo, 0, 0, 2)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, value)
@@ -63,7 +68,7 @@ yaf_config_t * yaf_config_simple_instance(yaf_config_t *this_ptr, zval *values, 
 			}
 			zend_update_property(yaf_config_simple_ce, instance, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), values TSRMLS_CC);
 			if (readonly) {
-				convert_to_int(readonly);
+				convert_to_boolean(readonly);
 				zend_update_property(yaf_config_simple_ce, instance, ZEND_STRL(YAF_CONFIG_PROPERT_NAME_READONLY), readonly TSRMLS_CC);
 			}
 			return instance;
@@ -328,7 +333,7 @@ zend_function_entry yaf_config_simple_methods[] = {
 	PHP_ME(yaf_config_simple, toArray, yaf_config_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_simple, __set, set, yaf_config_simple_set_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_simple, __get, get, yaf_config_simple_get_arginfo, ZEND_ACC_PUBLIC)
-	PHP_MALIAS(yaf_config_simple, offsetGet, get, yaf_config_simple_get_arginfo, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(yaf_config_simple, offsetGet, get, yaf_config_simple_rget_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_simple, offsetExists, __isset, yaf_config_simple_isset_arginfo, ZEND_ACC_PUBLIC)
 	PHP_MALIAS(yaf_config_simple, offsetSet, set, yaf_config_simple_set_arginfo, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}

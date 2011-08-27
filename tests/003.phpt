@@ -24,8 +24,8 @@ try {
 --EXPECTF--
 bool(true)
 
-Warning: could not find script %s/Baidu/Name.php in %s
+Warning: Yaf_Loader::autoload(): Could not find script %s/Baidu/Name.php in %s
 bool(true)
 
-Warning: could not find script %s/global/Global/Name.php in %s
+Warning: Yaf_Loader::autoload(): Could not find script %s/global/Global/Name.php in %s
 bool(true)
