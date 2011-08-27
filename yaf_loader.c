@@ -425,6 +425,11 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 		}
 	}	
 
+	if (YAF_G(lowcase_path)) {
+		/* all path of library is lowercase */
+		zend_str_tolower(buf.c + directory_len, buf.len - directory_len);
+	} 
+
 	smart_str_appendl(&buf, p, strlen(p));
 	smart_str_appendc(&buf, '.');
 	smart_str_appendl(&buf, ext, strlen(ext));

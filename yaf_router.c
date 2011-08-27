@@ -97,6 +97,8 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 			if (len) {
 				zend_update_property_string(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_CURRENT_ROUTE), key TSRMLS_CC);
 			}
+
+			yaf_request_set_routed(yaf_request_ce, request, 1 TSRMLS_CC);
 			return 1;
 		}
 	} 
