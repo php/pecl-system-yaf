@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -84,9 +85,9 @@ zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{  void yaf_throw_exception(long code TSRMLS_DC, char * format, char *message)
+/** {{{ void yaf_throw_exception(long code, char *message TSRMLS_DC)
 */
-void yaf_throw_exception(long code, char *message TSRMLS_CC) {
+void yaf_throw_exception(long code, char *message TSRMLS_DC) {
 	zend_class_entry *base_exception = yaf_exception_ce;
 
 	if ((code & YAF_ERR_BASE) == YAF_ERR_BASE

@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
 
 #ifndef PHP_YAF_APPLICATION_H
 #define PHP_YAF_APPLICATION_H

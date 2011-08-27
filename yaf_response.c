@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +30,7 @@
 #include "yaf_response.h"
 #include "yaf_exception.h"
 
-zend_class_entry * yaf_response_ce;
+zend_class_entry *yaf_response_ce;
 
 #include "response/http.c"
 #include "response/cli.c"

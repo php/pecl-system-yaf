@@ -12,8 +12,10 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
+
 #include "ext/standard/url.h"
 
 static zend_class_entry * yaf_request_http_ce;

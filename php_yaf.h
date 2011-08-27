@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+ 
+/* $Id$ */
 
 #ifndef PHP_YAF_H
 #define PHP_YAF_H
@@ -110,6 +111,9 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	zend_bool  	running;
 	zend_bool  	in_exception;
 	zend_bool  	catch_exception;
+/* {{{ This only effects internally */
+	zend_bool  	st_compatible;
+/* }}} */
 	long		forward_limit;
 	HashTable	*configs;
 	zval 		*modules;

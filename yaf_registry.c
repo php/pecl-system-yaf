@@ -1,9 +1,6 @@
 /*
    +----------------------------------------------------------------------+
-   | Yet Another Framework project                                        |
-   +----------------------------------------------------------------------+
-   | Copyright (c) 2010 laruence		                                  |
-   | http://www.laruence.com/                                             |
+   | Yet Another Framework                                                |
    +----------------------------------------------------------------------+
    | This source file is subject to version 3.01 of the PHP license,      |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -13,8 +10,11 @@
    | obtain it through the world-wide-web, please send a note to          |
    | license@php.net so we can mail you a copy immediately.               |
    +----------------------------------------------------------------------+
-   $Id$ 
-   */
+   | Author: Xinchen Hui  <laruence@php.net>                              |
+   +----------------------------------------------------------------------+
+*/
+  
+/* $Id$  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

@@ -629,7 +629,7 @@ PHP_METHOD(yaf_loader, import) {
 /** {{{ proto public Yaf_Loader::autoload($class_name)
 */
 PHP_METHOD(yaf_loader, autoload) {
-	char *class_name, *directory = NULL, *file_name = NULL;
+	char *class_name, *app_directory, *directory = NULL, *file_name = NULL;
 #ifdef YAF_HAVE_NAMESPACE
 	char *origin_lcname;
 #endif
@@ -640,6 +640,7 @@ PHP_METHOD(yaf_loader, autoload) {
 	} 
 
 	separator_len = strlen(YAF_G(name_separator));
+	app_directory = YAF_G(directory);
 
 	do { 
 		if (!class_name_len) {
@@ -665,7 +666,7 @@ PHP_METHOD(yaf_loader, autoload) {
 
 		if (yaf_loader_is_category(class_name, class_name_len, YAF_LOADER_MODEL, YAF_LOADER_LEN_MODEL TSRMLS_CC)) {
 			/* this is a model class */
-			spprintf(&directory, 0, "%s/%s", YAF_G(directory), YAF_MODEL_DIRECTORY_NAME);
+			spprintf(&directory, 0, "%s/%s", app_directory, YAF_MODEL_DIRECTORY_NAME);
 			file_name_len = class_name_len - separator_len - YAF_LOADER_LEN_MODEL;
 
 			if (YAF_G(name_suffix)) {
@@ -679,7 +680,7 @@ PHP_METHOD(yaf_loader, autoload) {
 
 		if (yaf_loader_is_category(class_name, class_name_len, YAF_LOADER_PLUGIN, YAF_LOADER_LEN_PLUGIN TSRMLS_CC)) {
 			/* this is a plugin class */
-			spprintf(&directory, 0, "%s/%s", YAF_G(directory), YAF_PLUGIN_DIRECTORY_NAME);
+			spprintf(&directory, 0, "%s/%s", app_directory, YAF_PLUGIN_DIRECTORY_NAME);
 			file_name_len = class_name_len - separator_len - YAF_LOADER_LEN_PLUGIN;
 
 			if (YAF_G(name_suffix)) {
@@ -691,10 +692,24 @@ PHP_METHOD(yaf_loader, autoload) {
 			break;
 		} 
 
+/* {{{ This only effects internally */
+		if (YAF_G(st_compatible) && (strncmp(class_name, YAF_LOADER_DAO, YAF_LOADER_LEN_DAO) == 0
+					|| strncmp(class_name, YAF_LOADER_SERVICE, YAF_LOADER_LEN_SERVICE) == 0)) {
+			/* this is a model class */
+			spprintf(&directory, 0, "%s/%s", app_directory, YAF_MODEL_DIRECTORY_NAME);
+		}
+/* }}} */
+
 		file_name_len = class_name_len;
 		file_name     = class_name;
 
 	} while(0);
+
+	if (!app_directory && directory) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, 
+				"Couldn't load a framework MVC class without an %s initializing", yaf_application_ce->name);
+		RETURN_FALSE;
+	}
 
 	if (!YAF_G(use_spl_autoload)) {
 		/** directory might be NULL since we passed a NULL */

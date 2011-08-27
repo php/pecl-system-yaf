@@ -12,8 +12,10 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
+
 #include "ext/standard/php_smart_str.h"
 
 #define YAF_ROUTE_PROPETY_NAME_MATCH  	"_route"

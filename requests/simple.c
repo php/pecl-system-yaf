@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
 
 static zend_class_entry *yaf_request_simple_ce;
 
@@ -127,7 +128,7 @@ PHP_METHOD(yaf_request_simple, __construct) {
 		return;
 	} else {
 		if ((params && IS_ARRAY != Z_TYPE_P(params))) {
-			yaf_trigger_error(YAF_ERR_TYPE_ERROR, 
+			yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, 
 				   	"Expects the params is an array", yaf_request_simple_ce->name);
 			RETURN_FALSE;
 		}

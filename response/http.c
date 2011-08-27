@@ -12,11 +12,11 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
  */
 
+/* $Id$ */
 
-zend_class_entry * yaf_response_http_ce;
+zend_class_entry *yaf_response_http_ce;
 
 /** {{{ yaf_response_methods 
 */

@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
 
 #ifndef YAF_LOADER_H
 #define YAF_LOADER_H
@@ -41,6 +42,13 @@
 #define YAF_LOADER_LEN_PLUGIN				6
 #define YAF_LOADER_RESERVERD				"Yaf_"
 #define YAF_LOADER_LEN_RESERVERD			3
+
+/* {{{ This only effects internally */
+#define YAF_LOADER_DAO						"Dao_"
+#define YAF_LOADER_LEN_DAO					4	
+#define YAF_LOADER_SERVICE					"Service_"
+#define YAF_LOADER_LEN_SERVICE				8
+/* }}} */
 
 #define	YAF_LOADER_PROPERTY_NAME_LIBRARY	"_library"
 #define YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB "_global_library"

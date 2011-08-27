@@ -12,8 +12,9 @@
   +----------------------------------------------------------------------+
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
-   $Id$
- */
+*/
+   
+/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -346,19 +347,19 @@ zend_class_entry * yaf_dispatcher_get_controller(char *app_dir, char *module, ch
 		if (zend_hash_find(EG(class_table), class_lowercase, class_len + 1, (void *)&ce) != SUCCESS) {
 
 			if (!yaf_internal_autoload(controller, len, &directory TSRMLS_CC)) {
-				yaf_trigger_error(YAF_ERR_NOTFOUND_CONTROLLER, "could not find controller script %s", directory);
+				yaf_trigger_error(YAF_ERR_NOTFOUND_CONTROLLER TSRMLS_CC, "Could not find controller script %s", directory);
 				efree(class);
 				efree(class_lowercase);
 				efree(directory);
 				return NULL;
 			} else if (zend_hash_find(EG(class_table), class_lowercase, class_len + 1, (void **) &ce) != SUCCESS)  {
-				yaf_trigger_error(YAF_ERR_AUTOLOAD_FAILED, "could not find class %s in controller script %s", class, directory);
+				yaf_trigger_error(YAF_ERR_AUTOLOAD_FAILED TSRMLS_CC, "Could not find class %s in controller script %s", class, directory);
 				efree(class);
 				efree(class_lowercase);
 				efree(directory);
 				return 0;
 			} else if (!instanceof_function(*ce, yaf_controller_ce TSRMLS_CC)) {
-				yaf_trigger_error(YAF_ERR_TYPE_ERROR, "controller must be an instance of %s", yaf_controller_ce->name);
+				yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Controller must be an instance of %s", yaf_controller_ce->name);
 				efree(class);
 				efree(class_lowercase);
 				efree(directory);
@@ -435,7 +436,86 @@ zend_class_entry * yaf_dispatcher_get_action(char *app_dir, yaf_controller_t *co
 			yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION TSRMLS_CC, "There is no method %s%s in %s::$%s", 
 					action, "Action", Z_OBJCE_P(controller)->name, YAF_CONTROLLER_PROPERTY_NAME_ACTIONS);
 		}
-	} else {
+	} else
+/* {{{ This only effects internally */
+	   	if (YAF_G(st_compatible)) {
+		char *directory, *class, *class_lowercase, *p;
+		uint directory_len, class_len;
+		zend_class_entry **ce;
+		char *action_upper = estrndup(action, len);
+
+		/**
+		 * upper Action Name
+		 * eg: Index_sub -> Index_Sub
+		 */
+		p = action_upper;
+		*(p) = toupper(*p);
+		while (*p != '\0') {
+			if (*p == '_'
+#ifdef YAF_HAVE_NAMESPACE
+					|| *p == '\\'	
+#endif
+			   ) {
+				if (*(p+1) != '\0') {
+					*(p+1) = toupper(*(p+1));
+					p++;
+				}
+			}
+			p++;
+		}
+
+		if (def_module) {
+			directory_len = spprintf(&directory, 0, "%s%c%s", app_dir, DEFAULT_SLASH, "actions");
+		} else {
+			directory_len = spprintf(&directory, 0, "%s%c%s%c%s%c%s", app_dir, DEFAULT_SLASH,
+					"modules", DEFAULT_SLASH, module, DEFAULT_SLASH, "actions");
+		}
+
+		if (YAF_G(name_suffix)) {
+			class_len = spprintf(&class, 0, "%s%s%s", action_upper, YAF_G(name_separator), "Action");
+		} else {
+			class_len = spprintf(&class, 0, "%s%s%s", "Action", YAF_G(name_separator), action_upper);
+		}
+
+		class_lowercase = zend_str_tolower_dup(class, class_len);
+
+		if (zend_hash_find(EG(class_table), class_lowercase, class_len + 1, (void *)&ce) != SUCCESS) {
+			if (!yaf_internal_autoload(action_upper, len, &directory TSRMLS_CC)) {
+				yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION TSRMLS_CC, "Could not find action script %s", directory);
+
+				efree(class);
+				efree(action_upper);
+				efree(class_lowercase);
+				efree(directory);
+				return NULL;
+			} else if (zend_hash_find(EG(class_table), class_lowercase, class_len + 1, (void **) &ce) != SUCCESS)  {
+				yaf_trigger_error(YAF_ERR_AUTOLOAD_FAILED TSRMLS_CC, "Could find class %s in action script %s", class, directory);
+
+				efree(class);
+				efree(action_upper);
+				efree(class_lowercase);
+				efree(directory);
+				return NULL;
+			} else if (!instanceof_function(*ce, yaf_action_ce TSRMLS_CC)) {
+				yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Action must be an instance of %s", yaf_action_ce->name);
+
+				efree(class);
+				efree(action_upper);
+				efree(class_lowercase);
+				efree(directory);
+				return NULL;
+			}
+		}
+
+		efree(class);
+		efree(action_upper);
+		efree(class_lowercase);
+		efree(directory);
+
+		return *ce;
+	} else 
+/* }}} */
+	{
 		yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION TSRMLS_CC, "There is no method %s%s in %s", action, "Action", Z_OBJCE_P(controller)->name);
 	}
 	
@@ -756,7 +836,7 @@ int yaf_dispatcher_route(yaf_dispatcher_t *dispatcher, yaf_request_t *request TS
 			/* user custom router */
 			zval *ret = zend_call_method_with_1_params(&router, router_ce, NULL, "route", &ret, request);
 			if (Z_TYPE_P(ret) == IS_BOOL && Z_BVAL_P(ret) == 0) {
-				yaf_trigger_error(YAF_ERR_ROUTE_FAILED TSRMLS_CC, "Calling for %s::route failed", router_ce->name);
+				yaf_trigger_error(YAF_ERR_ROUTE_FAILED TSRMLS_CC, "Routing request faild");
 				return 0;
 			}
 		}
@@ -781,7 +861,7 @@ yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 	plugins	 = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_PLUGINS), 0 TSRMLS_CC);
 
 	if (!request || IS_OBJECT != Z_TYPE_P(request)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "%s::dispatch expects a %s instance", yaf_dispatcher_ce->name, yaf_request_ce->name);
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expect a %s instance", yaf_request_ce->name);
 		return NULL;
 	}
 
@@ -940,9 +1020,8 @@ PHP_METHOD(yaf_dispatcher, registerPlugin) {
 		return;
 	}
 
-	if (Z_TYPE_P(plugin) != IS_OBJECT
-			|| !instanceof_function(Z_OBJCE_P(plugin), yaf_plugin_ce TSRMLS_CC)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "%s::registerPlugin expects a %s instance", yaf_dispatcher_ce->name, yaf_plugin_ce->name);
+	if (Z_TYPE_P(plugin) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(plugin), yaf_plugin_ce TSRMLS_CC)) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expect a %s instance", yaf_plugin_ce->name);
 		RETURN_FALSE;
 	}
 
