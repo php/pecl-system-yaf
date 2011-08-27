@@ -267,7 +267,7 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 
 	ZVAL_NULL(ret);
 
-	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 	if (EG(active_symbol_table)) {
 		calling_symbol_table = EG(active_symbol_table);
 	} else {
@@ -296,7 +296,7 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 			return 0;
 		}
 	} else {
-		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
+		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 
 		if (ZVAL_IS_NULL(tpl_dir)) {
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
@@ -359,7 +359,7 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 
 	ZVAL_NULL(ret);
 
-	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 	if (EG(active_symbol_table)) {
 		calling_symbol_table = EG(active_symbol_table);
 	} else {
@@ -388,7 +388,7 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 			return 0;
 		}
 	} else {
-		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
+		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 
 		if (ZVAL_IS_NULL(tpl_dir)) {
 			yaf_trigger_error(YAF_ERR_NOTFOUND_VIEW TSRMLS_CC, 
@@ -449,7 +449,7 @@ PHP_METHOD(yaf_view_simple, __isset) {
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &len) == FAILURE) {
 		return;
 	} else {
-		zval *tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+		zval *tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 		RETURN_BOOL(zend_hash_exists(Z_ARRVAL_P(tpl_vars), name, len + 1)); 
 	}
 }
@@ -476,7 +476,7 @@ PHP_METHOD(yaf_view_simple, setScriptPath) {
 /** {{{ proto public Yaf_View_Simple::getScriptPath(void)
 */
 PHP_METHOD(yaf_view_simple, getScriptPath) {
-	zval *tpl_dir = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
+	zval *tpl_dir = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 	RETURN_ZVAL(tpl_dir, 1, 0);
 }
 /* }}} */
@@ -502,7 +502,7 @@ PHP_METHOD(yaf_view_simple, compose) {
 */
 PHP_METHOD(yaf_view_simple, assign) {
 	uint argc = ZEND_NUM_ARGS();
-	zval *tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	zval *tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 	if (argc == 1) {
 		zval *value;
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
@@ -543,7 +543,7 @@ PHP_METHOD(yaf_view_simple, assignRef) {
 		WRONG_PARAM_COUNT;
 	} 
 
-	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 
 	Z_ADDREF_P(value);
 	if (zend_hash_update(Z_ARRVAL_P(tpl_vars), name, len + 1, &value, sizeof(zval *), NULL) == SUCCESS) {
@@ -564,7 +564,7 @@ PHP_METHOD(yaf_view_simple, get) {
 		return;
 	}    
 
-	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 
 	if (tpl_vars && Z_TYPE_P(tpl_vars) == IS_ARRAY) {
 		if (zend_hash_find(Z_ARRVAL_P(tpl_vars), name, len + 1, (void **) &ret) == SUCCESS) {
@@ -585,7 +585,7 @@ PHP_METHOD(yaf_view_simple, render) {
 		return;
 	}
 
-	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 	if (!yaf_view_simple_render(getThis(), tpl, vars, return_value TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -601,7 +601,7 @@ PHP_METHOD(yaf_view_simple, display) {
 		return;
 	}
 
-	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 0 TSRMLS_CC);
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
 	if (!yaf_view_simple_display(getThis(), tpl, vars, return_value TSRMLS_CC)) {
 		RETURN_FALSE;
 	}

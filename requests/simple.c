@@ -95,9 +95,9 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 		}
 
 		if (query) {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), query TSRMLS_CC);
+			zend_update_property_string(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), query TSRMLS_CC);
 		} else {
-			zend_update_property_string(Z_OBJCE_P(instance), instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), "" TSRMLS_CC);
+			zend_update_property_string(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), "" TSRMLS_CC);
 		}
 	}
 

@@ -145,7 +145,7 @@ inline int yaf_loader_is_category(char *class, uint class_len, char *category, u
 int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC) {
 	char *pos, *ns, *prefix = NULL;
 	uint prefix_len = 0;
-	zval *namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 0 TSRMLS_CC);
+	zval *namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 1 TSRMLS_CC);
 
 	if (ZVAL_IS_NULL(namespaces)) {
 		return 0;
@@ -191,7 +191,7 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 	yaf_loader_t *instance;
 	zval *glibrary, *library;
 
-	instance = zend_read_static_property(yaf_loader_ce, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_INSTANCE), 0 TSRMLS_CC);
+	instance = zend_read_static_property(yaf_loader_ce, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_INSTANCE), 1 TSRMLS_CC);
 
 	if (IS_OBJECT == Z_TYPE_P(instance) 
 			&& instanceof_function(Z_OBJCE_P(instance), yaf_loader_ce TSRMLS_CC)) {
@@ -379,8 +379,8 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s need to be initialize first", yaf_loader_ce->name);
 			return 0;
 		} else {
-			library_dir = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), 0 TSRMLS_CC);
-			global_dir	= zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), 0 TSRMLS_CC);
+			library_dir = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), 1 TSRMLS_CC);
+			global_dir	= zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), 1 TSRMLS_CC);
 
 			if (yaf_loader_is_local_namespace(loader, file_name, name_len TSRMLS_CC)) {
 				library_path = Z_STRVAL_P(library_dir);
@@ -456,7 +456,7 @@ int yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRM
 	zval *namespaces;
 	smart_str buf = {NULL, 0, 0};
 
-	namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 0 TSRMLS_CC);
+	namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 1 TSRMLS_CC);
 
 	if (Z_TYPE_P(namespaces) == IS_NULL) {
 		smart_str_appendc(&buf, DEFAULT_DIR_SEPARATOR);
@@ -482,7 +482,7 @@ int yaf_loader_register_namespace_multi(yaf_loader_t *loader, zval *prefixes TSR
 	HashTable *ht;
 	smart_str buf = {0};
 
-	namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 0 TSRMLS_CC);
+	namespaces = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 1 TSRMLS_CC);
 
 	if (Z_TYPE_P(namespaces) == IS_NULL) {
 		smart_str_appendc(&buf, DEFAULT_DIR_SEPARATOR);
@@ -563,7 +563,7 @@ PHP_METHOD(yaf_loader, registerLocalNamespace) {
 /** {{{ proto public Yaf_Loader::getLocalNamespace(void)
 */
 PHP_METHOD(yaf_loader, getLocalNamespace) {
-	zval *namespaces = zend_read_property(yaf_loader_ce, getThis(), ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 0 TSRMLS_CC);
+	zval *namespaces = zend_read_property(yaf_loader_ce, getThis(), ZEND_STRL(YAF_LOADER_PROPERTY_NAME_NAMESPACE), 1 TSRMLS_CC);
 	RETURN_ZVAL(namespaces, 1, 0);
 }
 /* }}} */
@@ -615,7 +615,7 @@ PHP_METHOD(yaf_loader, import) {
 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s need to be initialize first", yaf_loader_ce->name);
 				RETURN_FALSE;
 			} else {
-				zval *library = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), 0 TSRMLS_CC);
+				zval *library = zend_read_property(yaf_loader_ce, loader, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), 1 TSRMLS_CC);
 				len = spprintf(&file, 0, "%s%c%s", Z_STRVAL_P(library), DEFAULT_SLASH, file);
 			}
 		}
@@ -810,9 +810,6 @@ PHP_METHOD(yaf_loader, getInstance) {
 /** {{{ proto private Yaf_Loader::__desctruct(void)
 */
 PHP_METHOD(yaf_loader, __destruct) {
-	/**
-	zend_update_static_property_null(Z_OBJCE_P(getThis()), ZEND_STRL(YAF_LOADER_PROPERTY_NAME_INSTANCE) TSRMLS_CC);
-	*/
 }
 /* }}} */
 

@@ -37,13 +37,10 @@ ZEND_END_ARG_INFO()
 int yaf_route_simple_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	zval *module, *controller, *action;
 	zval *nmodule, *ncontroller, *naction;
-	zend_class_entry *request_ce;
 
-	request_ce = Z_OBJCE_P(request);
-
-	nmodule 	= zend_read_property(yaf_route_simple_ce, route, ZEND_STRL(YAF_ROUTE_SIMPLE_VAR_NAME_MODULE), 0 TSRMLS_CC);
-	ncontroller = zend_read_property(yaf_route_simple_ce, route, ZEND_STRL(YAF_ROUTE_SIMPLE_VAR_NAME_CONTROLLER), 0 TSRMLS_CC);
-	naction 	= zend_read_property(yaf_route_simple_ce, route, ZEND_STRL(YAF_ROUTE_SIMPLE_VAR_NAME_ACTION), 0 TSRMLS_CC);
+	nmodule 	= zend_read_property(yaf_route_simple_ce, route, ZEND_STRL(YAF_ROUTE_SIMPLE_VAR_NAME_MODULE), 1 TSRMLS_CC);
+	ncontroller = zend_read_property(yaf_route_simple_ce, route, ZEND_STRL(YAF_ROUTE_SIMPLE_VAR_NAME_CONTROLLER), 1 TSRMLS_CC);
+	naction 	= zend_read_property(yaf_route_simple_ce, route, ZEND_STRL(YAF_ROUTE_SIMPLE_VAR_NAME_ACTION), 1 TSRMLS_CC);
 
 	/* if there is no expect parameter in supervars, then null will be return */
 	module 		= yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(nmodule), Z_STRLEN_P(nmodule) TSRMLS_CC);
@@ -54,9 +51,9 @@ int yaf_route_simple_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 		return 0;
 	}
 
-	zend_update_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
-	zend_update_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
-	zend_update_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
+	zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
+	zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
+	zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
 
 	return 1;
 }

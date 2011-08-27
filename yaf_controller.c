@@ -85,16 +85,16 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_controller_display_arginfo, 0, 0, 1)
 ZEND_END_ARG_INFO()
 /* }}} */
 
-/** {{{ zval * yaf_controller_render(zend_class_entry *ce, yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC)
+/** {{{ zval * yaf_controller_render(yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC)
  */
-static zval * yaf_controller_render(zend_class_entry *ce, yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC) {
+static zval * yaf_controller_render(yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC) {
 	char 	*path, *view_ext, *self_name, *tmp;
 	zval 	*name, *param, *ret;
 	int 	path_len;
 	yaf_view_t *view;
 
-	view   	  = zend_read_property(ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
-	name	  = zend_read_property(ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 0 TSRMLS_CC);
+	view   	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
+	name	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 1 TSRMLS_CC);
 	view_ext  = YAF_G(view_ext);
 
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
@@ -126,9 +126,9 @@ static zval * yaf_controller_render(zend_class_entry *ce, yaf_controller_t *inst
 	ZVAL_STRING(param, path, 0);
 
 	if (var_array) {
-		zend_call_method_with_2_params(&view, Z_OBJCE_P(view), NULL, "render", &ret, param, var_array);
+		zend_call_method_with_2_params(&view, yaf_view_ce, NULL, "render", &ret, param, var_array);
 	} else {
-		zend_call_method_with_1_params(&view, Z_OBJCE_P(view), NULL, "render", &ret, param);
+		zend_call_method_with_1_params(&view, yaf_view_ce, NULL, "render", &ret, param);
 	}
 
 	zval_dtor(param);
@@ -151,8 +151,8 @@ static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instan
 
 	yaf_view_t	*view;
 
-	view   	  = zend_read_property(ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
-	name	  = zend_read_property(ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 0 TSRMLS_CC);
+	view   	  = zend_read_property(ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
+	name	  = zend_read_property(ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 1 TSRMLS_CC);
 	view_ext  = YAF_G(view_ext);
 		
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
@@ -163,9 +163,9 @@ static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instan
 	ZVAL_STRING(param, path, 0);
 
 	if (var_array) {
-		zend_call_method_with_2_params(&view, Z_OBJCE_P(view), NULL, "display", &ret, param, var_array);
+		zend_call_method_with_2_params(&view, yaf_view_ce, NULL, "display", &ret, param, var_array);
 	} else {
-		zend_call_method_with_1_params(&view, Z_OBJCE_P(view), NULL, "display", &ret, param);
+		zend_call_method_with_1_params(&view, yaf_view_ce, NULL, "display", &ret, param);
 	}
 
 	zval_dtor(param);
@@ -187,7 +187,7 @@ int yaf_controller_construct(zend_class_entry *ce, yaf_controller_t *self, yaf_r
 		zend_update_property(ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), args TSRMLS_CC);
 	}
 
-	module = zend_read_property(Z_OBJCE_P(request), request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), 0 TSRMLS_CC);
+	module = zend_read_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), 1 TSRMLS_CC);
 
 	zend_update_property(ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_REQUEST), request TSRMLS_CC);
 	zend_update_property(ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RESPONSE), response TSRMLS_CC);
@@ -223,7 +223,7 @@ PHP_METHOD(yaf_controller, __construct) {
 				&request, yaf_request_ce, &response, yaf_response_ce, &view, yaf_view_interface_ce, &invoke_arg) == FAILURE) {
 		return;
 	} else	{
-		if(!yaf_controller_construct(Z_OBJCE_P(self), self, request, response, view, invoke_arg TSRMLS_CC)) {
+		if(!yaf_controller_construct(yaf_controller_ce, self, request, response, view, invoke_arg TSRMLS_CC)) {
 			RETURN_FALSE;
 		}
 	}
@@ -233,7 +233,7 @@ PHP_METHOD(yaf_controller, __construct) {
 /** {{{ proto public Yaf_Controller_Abstract::getView(void)
 */
 PHP_METHOD(yaf_controller, getView) {
-	yaf_view_t *view = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
+	yaf_view_t *view = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
 	RETURN_ZVAL(view, 1, 0);
 }
 /* }}} */
@@ -241,7 +241,7 @@ PHP_METHOD(yaf_controller, getView) {
 /** {{{ proto public Yaf_Controller_Abstract::getRequest(void)
 */
 PHP_METHOD(yaf_controller, getRequest) {
-	yaf_request_t *request = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_REQUEST), 0 TSRMLS_CC);
+	yaf_request_t *request = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_REQUEST), 1 TSRMLS_CC);
 	RETURN_ZVAL(request, 1, 0);
 }
 /* }}} */
@@ -249,7 +249,7 @@ PHP_METHOD(yaf_controller, getRequest) {
 /** {{{ proto public Yaf_Controller_Abstract::getResponse(void)
 */
 PHP_METHOD(yaf_controller, getResponse) {
-	yaf_view_t *response = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RESPONSE), 0 TSRMLS_CC);
+	yaf_view_t *response = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RESPONSE), 1 TSRMLS_CC);
 	RETURN_ZVAL(response, 1, 0);
 }
 /* }}} */
@@ -273,7 +273,7 @@ PHP_METHOD(yaf_controller, getInvokeArg) {
 
 	if (len) {
 		zval **ppzval, *args;
-		args = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 0 TSRMLS_CC);
+		args = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 1 TSRMLS_CC);
 
 		if (ZVAL_IS_NULL(args)) {
 			RETURN_NULL();
@@ -290,7 +290,7 @@ PHP_METHOD(yaf_controller, getInvokeArg) {
 /** {{{ proto public Yaf_Controller_Abstract::getInvokeArgs(void)
  */
 PHP_METHOD(yaf_controller, getInvokeArgs) {
-	zval *args = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 0 TSRMLS_CC);
+	zval *args = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 1 TSRMLS_CC);
 	RETURN_ZVAL(args, 1, 0);
 }
 /* }}} */
@@ -298,7 +298,7 @@ PHP_METHOD(yaf_controller, getInvokeArgs) {
 /** {{{ proto public Yaf_Controller_Abstract::getModuleName(void)
  */
 PHP_METHOD(yaf_controller, getModuleName) {
-	zval *module = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_MODULE), 0 TSRMLS_CC);
+	zval *module = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_MODULE), 1 TSRMLS_CC);
 	RETURN_ZVAL(module, 1, 0);
 }
 /* }}} */
@@ -318,8 +318,8 @@ PHP_METHOD(yaf_controller, setViewpath) {
 		RETURN_FALSE;
 	}
 
-	view = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
-	if ((view_ce = Z_OBJCE_P(view)) == yaf_view_simple_ce) {
+	view = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
+	if ((view_ce = yaf_view_ce) == yaf_view_simple_ce) {
 		zend_update_property(view_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), path TSRMLS_CC);
 	} else {
 		zend_call_method_with_1_params(&view, view_ce, NULL, "setscriptpath", NULL, path);
@@ -333,9 +333,9 @@ PHP_METHOD(yaf_controller, setViewpath) {
 */
 PHP_METHOD(yaf_controller, getViewpath) {
 	zend_class_entry *view_ce;
-	zval *view = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
-	if ((view_ce = Z_OBJCE_P(view)) == yaf_view_simple_ce) {
-		zval *tpl_dir = zend_read_property(view_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 0 TSRMLS_CC);
+	zval *view = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
+	if ((view_ce = yaf_view_ce) == yaf_view_simple_ce) {
+		zval *tpl_dir = zend_read_property(view_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 		RETURN_ZVAL(tpl_dir, 1, 0);
 	} else {
 		zval *ret;
@@ -350,7 +350,7 @@ PHP_METHOD(yaf_controller, getViewpath) {
 PHP_METHOD(yaf_controller, forward) {
 	zval *controller, *module, *action, *args, *parameters;
 	yaf_request_t *request;
-	zend_class_entry *ce, *request_ce;
+	zend_class_entry *request_ce;
 
 	yaf_controller_t *self = getThis();
 
@@ -358,10 +358,8 @@ PHP_METHOD(yaf_controller, forward) {
 		return;
 	}	
 
-	ce = Z_OBJCE_P(self);
-
-	request    = zend_read_property(ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_REQUEST), 0 TSRMLS_CC);
-	parameters = zend_read_property(ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 0 TSRMLS_CC);
+	request    = zend_read_property(yaf_controller_ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_REQUEST), 1 TSRMLS_CC);
+	parameters = zend_read_property(yaf_controller_ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 1 TSRMLS_CC);
 
 	if (ZVAL_IS_NULL(parameters)) {
 		MAKE_STD_ZVAL(parameters);
@@ -376,7 +374,7 @@ PHP_METHOD(yaf_controller, forward) {
 	switch (ZEND_NUM_ARGS()) {
 		case 1:
 			if (Z_TYPE_P(module) != IS_STRING) {
-				php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s:forward expects a string action name", ce->name);
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expect a string action name");
 				zval_dtor(parameters);
 				efree(parameters);
 				RETURN_FALSE;
@@ -428,7 +426,7 @@ PHP_METHOD(yaf_controller, forward) {
 			break;
 	}
 
-	(void)yaf_request_set_dispatched(request_ce, request, 0 TSRMLS_CC);
+	(void)yaf_request_set_dispatched(request, 0 TSRMLS_CC);
 	RETURN_TRUE;
 }
 /* }}} */
@@ -445,7 +443,7 @@ PHP_METHOD(yaf_controller, redirect) {
 		return;
 	}	
 
-	response = zend_read_property(Z_OBJCE_P(self), self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RESPONSE), 0 TSRMLS_CC);
+	response = zend_read_property(yaf_controller_ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RESPONSE), 1 TSRMLS_CC);
 
 	(void)yaf_response_set_redirect(response, location, location_len TSRMLS_CC);
 
@@ -463,7 +461,7 @@ PHP_METHOD(yaf_controller, render) {
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|z", &action_name, &action_name_len, &var_array) == FAILURE) {
 		return;
 	} else {
-		zval *output = yaf_controller_render(Z_OBJCE_P(getThis()), getThis(), action_name, action_name_len, var_array TSRMLS_CC);
+		zval *output = yaf_controller_render(getThis(), action_name, action_name_len, var_array TSRMLS_CC);
 		if (output) {
 			RETURN_ZVAL(output, 1, 0);
 		} else {
@@ -483,7 +481,7 @@ PHP_METHOD(yaf_controller, display) {
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|z", &action_name, &action_name_len, &var_array) == FAILURE) {
 		return;
 	} else {
-		RETURN_BOOL(yaf_controller_display(Z_OBJCE_P(getThis()), getThis(), action_name, action_name_len, var_array TSRMLS_CC));
+		RETURN_BOOL(yaf_controller_display(yaf_controller_ce, getThis(), action_name, action_name_len, var_array TSRMLS_CC));
 	}
 }
 /* }}} */

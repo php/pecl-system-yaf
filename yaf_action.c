@@ -43,7 +43,7 @@ zend_class_entry *yaf_action_ce;
 /** {{{ proto public Yaf_Action_Abstract::getController(void)
 */
 PHP_METHOD(yaf_action, getController) {
-	yaf_controller_t *controller = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_ACTION_PROPERTY_NAME_CTRL), 0 TSRMLS_CC);
+	yaf_controller_t *controller = zend_read_property(yaf_action_ce, getThis(), ZEND_STRL(YAF_ACTION_PROPERTY_NAME_CTRL), 1 TSRMLS_CC);
 	RETURN_ZVAL(controller, 1, 0);
 }
 /* }}} */

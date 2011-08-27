@@ -92,12 +92,12 @@ int yaf_application_is_module_name(char *name, int len TSRMLS_DC) {
 	HashTable 			*ht;
 	yaf_application_t 	*app;
 
-	app = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 0 TSRMLS_CC);
+	app = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
 	if (!app || Z_TYPE_P(app) != IS_OBJECT) {
 		return 0;
 	}
 
-	modules = zend_read_property(yaf_application_ce, app, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES), 0 TSRMLS_CC);
+	modules = zend_read_property(yaf_application_ce, app, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES), 1 TSRMLS_CC);
 	if (!modules || Z_TYPE_P(modules) != IS_ARRAY) {
 		return 0;
 	}
@@ -269,7 +269,7 @@ PHP_METHOD(yaf_application, __construct) {
 	zval 				*section, *self;
 
 	self = getThis();
-	app	 = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 0 TSRMLS_CC);
+	app	 = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
 
 #if PHP_YAF_DEBUG
 	php_error_docref(NULL, E_STRICT, "Yaf is running in debug mode");
@@ -297,8 +297,8 @@ PHP_METHOD(yaf_application, __construct) {
 	if  (zconfig == NULL
 			|| Z_TYPE_P(zconfig) != IS_OBJECT
 			|| !instanceof_function(Z_OBJCE_P(zconfig), yaf_config_ce TSRMLS_CC)
-			|| yaf_application_parse_option(zend_read_property(Z_OBJCE_P(zconfig),
-				   	zconfig, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 0 TSRMLS_CC) TSRMLS_CC) == FAILURE) {
+			|| yaf_application_parse_option(zend_read_property(yaf_config_ce,
+				   	zconfig, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC) TSRMLS_CC) == FAILURE) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "Initialization of application config failed");
 		RETURN_FALSE;
 	}
@@ -344,18 +344,15 @@ PHP_METHOD(yaf_application, __construct) {
 		RETURN_FALSE;
 	}
 
-	zend_update_property_bool(Z_OBJCE_P(self), self, 
-			ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_RUN), 0 TSRMLS_CC);
-	zend_update_property_string(Z_OBJCE_P(self), self, 
-			ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ENV), YAF_G(environ) TSRMLS_CC);
+	zend_update_property_bool(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_RUN), 0 TSRMLS_CC);
+	zend_update_property_string(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ENV), YAF_G(environ) TSRMLS_CC);
 
 	if (YAF_G(modules)) {
-		zend_update_property(yaf_application_ce, self, 
-				ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES), YAF_G(modules) TSRMLS_CC);
+		zend_update_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES), YAF_G(modules) TSRMLS_CC);
 		Z_DELREF_P(YAF_G(modules));
 		YAF_G(modules) = NULL;
 	} else {
-		zend_update_property_null(Z_OBJCE_P(self), self, YAF_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES) TSRMLS_CC);
+		zend_update_property_null(yaf_application_ce, self, YAF_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES) TSRMLS_CC);
 	}
  
 	zend_update_static_property(yaf_application_ce, YAF_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), self TSRMLS_CC);
@@ -395,7 +392,7 @@ PHP_METHOD(yaf_application, run) {
 	yaf_response_t	  *response;
 	yaf_application_t *self = getThis();
 
-	running = zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_RUN), 0 TSRMLS_CC);
+	running = zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_RUN), 1 TSRMLS_CC);
 	if (IS_BOOL == Z_TYPE_P(running)
 			&& Z_BVAL_P(running)) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "An application instance already run");
@@ -405,7 +402,7 @@ PHP_METHOD(yaf_application, run) {
 	ZVAL_BOOL(running, 1);
 	zend_update_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_RUN), running TSRMLS_CC);
 
-	dispatcher = zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 0 TSRMLS_CC);
+	dispatcher = zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 1 TSRMLS_CC);
 	if ((response = yaf_dispatcher_dispatch(dispatcher TSRMLS_CC))) {
 		RETURN_ZVAL(response, 1, 0);
 	}
@@ -498,7 +495,7 @@ PHP_METHOD(yaf_application, execute) {
 /** {{{ proto public Yaf_Application::app(void) 
 */
 PHP_METHOD(yaf_application, app) {
-	yaf_application_t *app = zend_read_static_property(yaf_application_ce, YAF_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 0 TSRMLS_CC);
+	yaf_application_t *app = zend_read_static_property(yaf_application_ce, YAF_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
 	RETVAL_ZVAL(app, 1, 0);
 }
 /* }}} */
@@ -506,7 +503,7 @@ PHP_METHOD(yaf_application, app) {
 /** {{{ proto public Yaf_Application::getConfig(void) 
 */
 PHP_METHOD(yaf_application, getConfig) {
-	yaf_config_t *config = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_CONFIG), 0 TSRMLS_CC);
+	yaf_config_t *config = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_CONFIG), 1 TSRMLS_CC);
 	RETVAL_ZVAL(config, 1, 0);
 }
 /* }}} */
@@ -514,7 +511,7 @@ PHP_METHOD(yaf_application, getConfig) {
 /** {{{ proto public Yaf_Application::getDispatcher(void) 
 */
 PHP_METHOD(yaf_application, getDispatcher) {
-	yaf_dispatcher_t *dispatcher = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 0 TSRMLS_CC);
+	yaf_dispatcher_t *dispatcher = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 1 TSRMLS_CC);
 	RETVAL_ZVAL(dispatcher, 1, 0);
 }
 /* }}} */
@@ -522,7 +519,7 @@ PHP_METHOD(yaf_application, getDispatcher) {
 /** {{{ proto public Yaf_Application::getModules(void)
 */
 PHP_METHOD(yaf_application, getModules) {
-	zval *modules = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES), 0 TSRMLS_CC);
+	zval *modules = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES), 1 TSRMLS_CC);
 	RETVAL_ZVAL(modules, 1, 0);
 }
 /* }}} */
@@ -530,7 +527,7 @@ PHP_METHOD(yaf_application, getModules) {
 /** {{{ proto public Yaf_Application::environ(void) 
 */
 PHP_METHOD(yaf_application, environ) {
-	zval *env = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ENV), 0 TSRMLS_CC);
+	zval *env = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ENV), 1 TSRMLS_CC);
 	RETURN_STRINGL(Z_STRVAL_P(env), Z_STRLEN_P(env), 1);
 }
 /* }}} */
@@ -574,7 +571,7 @@ PHP_METHOD(yaf_application, bootstrap) {
 
 		MAKE_STD_ZVAL(bootstrap);
 		object_init_ex(bootstrap, *ce);
-		dispatcher 	= zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 0 TSRMLS_CC);
+		dispatcher 	= zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 1 TSRMLS_CC);
 
 		methods		= &((*ce)->function_table);
 		for(zend_hash_internal_pointer_reset(methods);

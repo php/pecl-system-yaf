@@ -299,7 +299,7 @@ static void yaf_config_ini_serialize(yaf_config_t *this_ptr, zval *filename, zva
 		return;
 	}
 
-	configs = zend_read_property(yaf_config_ini_ce, this_ptr, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 0 TSRMLS_CC);
+	configs = zend_read_property(yaf_config_ini_ce, this_ptr, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
 
 	zend_hash_init(persistent, zend_hash_num_elements(Z_ARRVAL_P(configs)), NULL, (dtor_func_t) yaf_config_zval_dtor, 1);
 

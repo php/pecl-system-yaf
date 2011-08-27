@@ -44,7 +44,7 @@
 
 #define YAF_REQUEST_IS_METHOD(x) \
 PHP_METHOD(yaf_request, is##x) {\
-	zval * method  = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_METHOD), 0 TSRMLS_CC);\
+	zval * method  = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_METHOD), 1 TSRMLS_CC);\
 	if (strncasecmp(#x, Z_STRVAL_P(method), Z_STRLEN_P(method)) == 0) { \
 		RETURN_TRUE; \
 	} \
@@ -83,10 +83,10 @@ inline zval * yaf_request_get_method(yaf_request_t *instance TSRMLS_DC);
 inline zval * yaf_request_get_param(yaf_request_t *instance, char *key, int len TSRMLS_DC);
 inline zval * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC);
 
-inline int yaf_request_is_routed(zend_class_entry *ce, yaf_request_t *request TSRMLS_DC);
-inline int yaf_request_is_dispatched(zend_class_entry *ce, yaf_request_t *request TSRMLS_DC);
-inline int yaf_request_set_dispatched(zend_class_entry *ce, yaf_request_t *request, int flag TSRMLS_DC);
-inline int yaf_request_set_routed(zend_class_entry *ce, yaf_request_t *request, int flag TSRMLS_DC);
+inline int yaf_request_is_routed(yaf_request_t *request TSRMLS_DC);
+inline int yaf_request_is_dispatched(yaf_request_t *request TSRMLS_DC);
+inline int yaf_request_set_dispatched(yaf_request_t *request, int flag TSRMLS_DC);
+inline int yaf_request_set_routed(yaf_request_t *request, int flag TSRMLS_DC);
 inline int yaf_request_set_params_single(yaf_request_t *instance, char *key, int len, zval *value TSRMLS_DC);
 inline int yaf_request_set_params_multi(yaf_request_t *instance, zval *values TSRMLS_DC);
 

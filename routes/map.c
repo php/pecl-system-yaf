@@ -38,16 +38,13 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	char *query_str = NULL;
 	uint seg_len = 0;
 
-	zend_class_entry *request_ce;
 	smart_str route_result = {0};
 
-	request_ce = Z_OBJCE_P(request);
+	zuri 	 = zend_read_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), 1 TSRMLS_CC);
+	base_uri = zend_read_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_BASE), 1 TSRMLS_CC);
 
-	zuri 	 = zend_read_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), 0 TSRMLS_CC);
-	base_uri = zend_read_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_BASE), 0 TSRMLS_CC);
-
-	ctl_prefer = zend_read_property(yaf_route_map_ce, route, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 0 TSRMLS_CC);
-	delimer	   = zend_read_property(yaf_route_map_ce, route, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), 0 TSRMLS_CC);
+	ctl_prefer = zend_read_property(yaf_route_map_ce, route, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 1 TSRMLS_CC);
+	delimer	   = zend_read_property(yaf_route_map_ce, route, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), 1 TSRMLS_CC);
 
 	if (base_uri && IS_STRING == Z_TYPE_P(base_uri)
 			&& strstr(Z_STRVAL_P(zuri), Z_STRVAL_P(base_uri)) == Z_STRVAL_P(zuri)) {
@@ -88,9 +85,9 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 
 	if (route_result.len) {
 		if (Z_BVAL_P(ctl_prefer)) {
-			zend_update_property_stringl(request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), route_result.c, route_result.len - 1 TSRMLS_CC);
+			zend_update_property_stringl(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), route_result.c, route_result.len - 1 TSRMLS_CC);
 		} else {
-			zend_update_property_stringl(request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), route_result.c, route_result.len - 1 TSRMLS_CC);
+			zend_update_property_stringl(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), route_result.c, route_result.len - 1 TSRMLS_CC);
 		}
 		efree(route_result.c);
 	}

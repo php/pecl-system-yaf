@@ -34,7 +34,7 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 	zval *varname, *zuir, *params;
 	char *req_uri, *module = NULL, *controller = NULL, *action = NULL, *rest = NULL;
 
-	varname = zend_read_property(yaf_route_supervar_ce, route, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), 0 TSRMLS_CC);
+	varname = zend_read_property(yaf_route_supervar_ce, route, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), 1 TSRMLS_CC);
 	
 	zuir = yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(varname), Z_STRLEN_P(varname) TSRMLS_CC);
 
@@ -131,15 +131,15 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 	efree(req_uri);
 
 	if (module != NULL) {
-		zend_update_property_string(Z_OBJCE_P(request), request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
+		zend_update_property_string(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
 		efree(module);
 	} 	
 	if (controller != NULL) {
-		zend_update_property_string(Z_OBJCE_P(request), request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
+		zend_update_property_string(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
 		efree(controller);
 	} 	
 	if (action != NULL) {
-		zend_update_property_string(Z_OBJCE_P(request), request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
+		zend_update_property_string(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
 		efree(action);
 	} 
 

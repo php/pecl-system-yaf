@@ -131,7 +131,7 @@ PHP_METHOD(yaf_exception, __construct) {
 /** {{{ proto Yaf_Exception::getPrevious(void)
 */
 PHP_METHOD(yaf_exception, getPrevious) {
-	zval *prev = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL("previous"), 0 TSRMLS_CC);
+	zval *prev = zend_read_property(Z_OBJCE_P(getThis()), getThis(), ZEND_STRL("previous"), 1 TSRMLS_CC);
 	RETURN_ZVAL(prev, 1, 0);
 }
 /* }}} */

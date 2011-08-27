@@ -66,7 +66,7 @@ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC
 		return 0;
 	}
 	
-	match  = zend_read_property(yaf_route_rewrite_ce, router, ZEND_STRL(YAF_ROUTE_PROPETY_NAME_MATCH), 0 TSRMLS_CC);
+	match  = zend_read_property(yaf_route_rewrite_ce, router, ZEND_STRL(YAF_ROUTE_PROPETY_NAME_MATCH), 1 TSRMLS_CC);
 	pmatch = estrndup(Z_STRVAL_P(match), Z_STRLEN_P(match));
 	
 	smart_str_appendc(&pattern, YAF_ROUTE_REGEX_DILIMITER);
@@ -166,12 +166,9 @@ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC
 int yaf_route_rewrite_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC) {
 	char *request_uri;
 	zval *args, *base_uri, *zuri;
-	zend_class_entry *request_ce;
 
-	request_ce = Z_OBJCE_P(request);
-
-	zuri 	 = zend_read_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), 0 TSRMLS_CC);
-	base_uri = zend_read_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_BASE), 0 TSRMLS_CC);
+	zuri 	 = zend_read_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), 1 TSRMLS_CC);
+	base_uri = zend_read_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_BASE), 1 TSRMLS_CC);
 
 	if (base_uri && IS_STRING == Z_TYPE_P(base_uri)
 			&& strstr(Z_STRVAL_P(zuri), Z_STRVAL_P(base_uri)) == Z_STRVAL_P(zuri)) {
@@ -185,17 +182,17 @@ int yaf_route_rewrite_route(yaf_route_t *router, yaf_request_t *request TSRMLS_D
 	} else {
 		zval **module, **controller, **action, *routes;
 
-		routes = zend_read_property(yaf_route_rewrite_ce, router, ZEND_STRL(YAF_ROUTE_PROPETY_NAME_ROUTE), 0 TSRMLS_CC);
+		routes = zend_read_property(yaf_route_rewrite_ce, router, ZEND_STRL(YAF_ROUTE_PROPETY_NAME_ROUTE), 1 TSRMLS_CC);
 		if (zend_hash_find(Z_ARRVAL_P(routes), ZEND_STRS("module"), (void **)&module) == SUCCESS) {
-			zend_update_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), *module TSRMLS_CC);
+			zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), *module TSRMLS_CC);
 		}
 
 		if (zend_hash_find(Z_ARRVAL_P(routes), ZEND_STRS("controller"), (void **)&controller) == SUCCESS) {
-			zend_update_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), *controller TSRMLS_CC);
+			zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), *controller TSRMLS_CC);
 		}
 
 		if (zend_hash_find(Z_ARRVAL_P(routes), ZEND_STRS("action"), (void **)&action) == SUCCESS) {
-			zend_update_property(request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), *action TSRMLS_CC);
+			zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), *action TSRMLS_CC);
 		}
 
 		(void)yaf_request_set_params_multi(request, args TSRMLS_CC);
