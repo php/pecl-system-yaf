@@ -539,28 +539,26 @@ PHP_METHOD(yaf_application, environ) {
 */
 PHP_METHOD(yaf_application, bootstrap) {
 	char *bootstrap_path;
-	uint len, retval = 0;
+	uint len, retval = 1;
 	zend_class_entry	**ce;
 	yaf_application_t	*self = getThis();
 
 	if (zend_hash_find(EG(class_table), YAF_DEFAULT_BOOTSTRAP_LOWER, YAF_DEFAULT_BOOTSTRAP_LEN, (void **) &ce) != SUCCESS) {
 		if (YAF_G(bootstrap)) {
-			bootstrap_path  = YAF_G(bootstrap);
+			bootstrap_path  = estrdup(YAF_G(bootstrap));
 			len = strlen(YAF_G(bootstrap));
-			/** bootstrap can't call twice, YAF_G(bootstrap) is able to be freed */
-			YAF_G(bootstrap) = NULL;
 		} else {
 			len = spprintf(&bootstrap_path, 0, "%s%c%s.%s", YAF_G(directory), DEFAULT_SLASH, YAF_DEFAULT_BOOTSTRAP, YAF_G(ext));
 		}
 
 		if (!yaf_loader_import(bootstrap_path, len + 1, 0 TSRMLS_CC)) {
-			yaf_trigger_error(YAF_ERR_AUTOLOAD_FAILED TSRMLS_CC, "Couldn't find bootstrap file %s", bootstrap_path);
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Couldn't find bootstrap file %s", bootstrap_path);
 			retval = 0;
 		} else if (zend_hash_find(EG(class_table), YAF_DEFAULT_BOOTSTRAP_LOWER, YAF_DEFAULT_BOOTSTRAP_LEN, (void **) &ce) != SUCCESS)  {
-			yaf_trigger_error(YAF_ERR_AUTOLOAD_FAILED TSRMLS_CC, "Couldn't find class %s in %s", YAF_DEFAULT_BOOTSTRAP, bootstrap_path);
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Couldn't find class %s in %s", YAF_DEFAULT_BOOTSTRAP, bootstrap_path);
 			retval = 0;
 		} else if (!instanceof_function(*ce, yaf_bootstrap_ce TSRMLS_CC)) {
-			yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "%s::bootstrap expect a %s instance, %s give", yaf_application_ce->name, yaf_bootstrap_ce->name, (*ce)->name);
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expect a %s instance, %s give", yaf_bootstrap_ce->name, (*ce)->name);    
 			retval = 0;
 		}
 	}
