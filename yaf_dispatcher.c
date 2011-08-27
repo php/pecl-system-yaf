@@ -657,7 +657,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				efree(func_name);
 
 				if (!ret ||( Z_TYPE_P(ret) == IS_BOOL
-						&& !Z_BVAL_P(ret))) {
+							&& !Z_BVAL_P(ret))) {
 					Z_DELREF_P(action);
 
 					zval_dtor(icontroller);
@@ -666,62 +666,54 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					return 0;
 				}
 
+			} else if ((ce = yaf_dispatcher_get_action(app_dir, icontroller, 
+							Z_STRVAL_P(module), is_def_module, Z_STRVAL_P(action), Z_STRLEN_P(action) TSRMLS_CC)) 
+					&& (zend_hash_find(&(ce)->function_table, YAF_ACTION_EXECUTOR_NAME, 
+							sizeof(YAF_ACTION_EXECUTOR_NAME), (void **)&fptr) == SUCCESS)) {
+				zval ***call_args;
+				uint count; 
+				yaf_action_t *iaction;
+
+				MAKE_STD_ZVAL(iaction);
+				object_init_ex(iaction, ce);
+
+				yaf_controller_construct(ce, iaction, request, response, view, NULL TSRMLS_CC);
+				executor = iaction;
+
+				zend_update_property(ce, iaction, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), controller TSRMLS_CC);
+				zend_update_property(ce, iaction, ZEND_STRL(YAF_ACTION_PROPERTY_NAME_CTRL), icontroller TSRMLS_CC);
+
+				if (fptr->common.num_args) {
+					zval *method_name = NULL;
+
+					yaf_dispatcher_get_call_parmaters(request_ce, request, fptr, &call_args, &count TSRMLS_CC);
+					MAKE_STD_ZVAL(method_name);
+					ZVAL_STRINGL(method_name, YAF_ACTION_EXECUTOR_NAME, sizeof(YAF_ACTION_EXECUTOR_NAME) - 1, 0);
+
+					call_user_function_ex(&(ce)->function_table, &iaction, method_name,
+							&ret, count, call_args, 1, NULL TSRMLS_CC);
+
+					efree(method_name);
+					efree(call_args);
+				} else {
+					zend_call_method_with_0_params(&iaction, ce, NULL, "execute", &ret);
+				}
+
+				if (!ret ||( Z_TYPE_P(ret) == IS_BOOL
+							&& !Z_BVAL_P(ret))) {
+					Z_DELREF_P(action);
+					zval_dtor(iaction);
+					efree(iaction);
+					zval_dtor(icontroller);
+					efree(icontroller);
+					return 0;
+				} 
 			} else {
-				ce = yaf_dispatcher_get_action(app_dir, icontroller, Z_STRVAL_P(module), is_def_module, Z_STRVAL_P(action), Z_STRLEN_P(action) TSRMLS_CC);
+				Z_DELREF_P(action);
 				zval_dtor(icontroller);
 				efree(icontroller);
-
-				if (ce) {
-					if (zend_hash_find(&(ce)->function_table, YAF_ACTION_EXECUTOR_NAME,
-								sizeof(YAF_ACTION_EXECUTOR_NAME), (void **)&fptr) == SUCCESS) {
-						zval ***call_args;
-						uint count; 
-						yaf_action_t *iaction;
-
-						MAKE_STD_ZVAL(iaction);
-						object_init_ex(iaction, ce);
-
-						yaf_controller_construct(ce, iaction, request, response, view, NULL TSRMLS_CC);
-						executor = iaction;
-
-						zend_update_property(ce, iaction, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), controller TSRMLS_CC);
-
-						if (fptr->common.num_args) {
-							zval *method_name = NULL;
-
-							yaf_dispatcher_get_call_parmaters(request_ce, request, fptr, &call_args, &count TSRMLS_CC);
-							MAKE_STD_ZVAL(method_name);
-							ZVAL_STRINGL(method_name, YAF_ACTION_EXECUTOR_NAME, sizeof(YAF_ACTION_EXECUTOR_NAME) - 1, 0);
-
-							call_user_function_ex(&(ce)->function_table, &iaction, method_name,
-								   	&ret, count, call_args, 1, NULL TSRMLS_CC);
-							
-							efree(method_name);
-							efree(call_args);
-						} else {
-							zend_call_method_with_0_params(&iaction, ce, NULL, "execute", &ret);
-						}
-
-						if (!ret ||( Z_TYPE_P(ret) == IS_BOOL
-									&& !Z_BVAL_P(ret))) {
-							Z_DELREF_P(action);
-
-							zval_dtor(iaction);
-							efree(iaction);
-
-							return 0;
-						} 
-					} else {
-						/** should never reached here */
-						yaf_trigger_error(YAF_ERR_NOTFOUND_ACTION TSRMLS_CC, "Could not find execute method in %s", ce->name);
-						return 0;
-					}	
-
-				} else {
-					Z_DELREF_P(action);
-					return 0;
-				}
-			}
+				return 0;
+			}	
 
 			render = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 0 TSRMLS_CC);
 			return_response = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), 0 TSRMLS_CC);

@@ -561,9 +561,9 @@ PHP_METHOD(yaf_application, bootstrap) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expect a %s instance, %s give", yaf_bootstrap_ce->name, (*ce)->name);    
 			retval = 0;
 		}
+	
+		efree(bootstrap_path);
 	}
-
-	efree(bootstrap_path);
 
 	if (!retval) {
 		RETURN_FALSE;
