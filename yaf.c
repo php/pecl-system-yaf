@@ -151,9 +151,7 @@ PHP_MINIT_FUNCTION(yaf)
 	YAF_STARTUP(router);
 	YAF_STARTUP(plugin);
 	YAF_STARTUP(registry);
-#ifdef PHP_HAVE_SESSION
 	YAF_STARTUP(session);
-#endif
 	YAF_STARTUP(exception);
 
 	return SUCCESS;
