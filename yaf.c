@@ -240,7 +240,7 @@ ZEND_GET_MODULE(yaf)
 zend_module_dep yaf_deps[] = {
 	ZEND_MOD_REQUIRED("spl")
 	ZEND_MOD_REQUIRED("pcre")
-	ZEND_MOD_OPTIONAL("json")
+	ZEND_MOD_OPTIONAL("session")
 	{NULL, NULL, NULL}
 };
 /* }}} */
