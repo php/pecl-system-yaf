@@ -446,7 +446,7 @@ PHP_METHOD(yaf_config_ini, __construct) {
 		MAKE_STD_ZVAL(prop);
 		array_init(prop);
 		zend_update_property(yaf_config_ini_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME), prop TSRMLS_CC);
-		Z_DELREF_P(prop);
+		zval_ptr_dtor(&prop);
 		return;
 	}
 
