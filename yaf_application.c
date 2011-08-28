@@ -42,44 +42,35 @@ zend_class_entry * yaf_application_ce;
 
 /** {{{ ARG_INFO
  *  */
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_construct_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, config)
 	ZEND_ARG_INFO(0, envrion)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_app_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_execute_arginfo, 0, 0, 2)
 	ZEND_ARG_INFO(0, entry)
 	ZEND_ARG_INFO(0, ...)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_getconfig_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_getmodule_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_getdispatch_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_bootstrap_arginfo, 0, 0, 0)
 	ZEND_ARG_INFO(0, bootstrap)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_environ_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_run_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -260,15 +251,14 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 /** {{{ proto Yaf_Application::__construct(mixed $config, string $environ = YAF_G(environ)) 
 */
 PHP_METHOD(yaf_application, __construct) {
-	zval 				*config;
 	yaf_config_t 	 	*zconfig;
 	yaf_request_t 	 	*request;
 	yaf_dispatcher_t	*zdispatcher;
-	yaf_application_t	*app;
+	yaf_application_t	*app, *self;
 	yaf_loader_t		*loader;
-	zval 				*section, *self;
+	zval 				*config;
+	zval 				*section = NULL;
 
-	self = getThis();
 	app	 = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
 
 #if PHP_YAF_DEBUG
@@ -279,6 +269,8 @@ PHP_METHOD(yaf_application, __construct) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "Only one application can be initialized");
 		RETURN_FALSE;
 	}
+
+	self = getThis();
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &config, &section) == FAILURE) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "%s::__construct expects at least 1 parameter, 0 give", yaf_application_ce->name);

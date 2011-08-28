@@ -22,7 +22,6 @@ zend_class_entry *yaf_route_supervar_ce;
 
 /** {{{ ARG_INFO
  */
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_route_supervar_construct_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, supervar_name)
 ZEND_END_ARG_INFO()

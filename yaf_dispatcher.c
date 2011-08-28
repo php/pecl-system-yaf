@@ -45,83 +45,67 @@ zend_class_entry * yaf_dispatcher_ce;
 
 /** {{{ ARG_INFO
  */
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_void_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_dispatch_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, request)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_seterrhdler_arginfo, 0, 0, 2)
     ZEND_ARG_INFO(0, callback)
 	ZEND_ARG_INFO(0, error_types)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_flush_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, flag)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_regplugin_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, plugin)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setrequest_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, plugin)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_throwex_arginfo, 0, 0, 0)
     ZEND_ARG_INFO(0, flag)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_catchex_arginfo, 0, 0, 0)
     ZEND_ARG_INFO(0, flag)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_autorender_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, flag)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_returnresp_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, flag)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_initview_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, templates_dir)
 	ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setview_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, view)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setappdir_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, directory)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setctrl_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, controller)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setmodule_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, module)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setaction_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, action)
 ZEND_END_ARG_INFO()
@@ -671,8 +655,8 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					&& (zend_hash_find(&(ce)->function_table, YAF_ACTION_EXECUTOR_NAME, 
 							sizeof(YAF_ACTION_EXECUTOR_NAME), (void **)&fptr) == SUCCESS)) {
 				zval ***call_args;
-				uint count; 
 				yaf_action_t *iaction;
+				uint count = 0; 
 
 				MAKE_STD_ZVAL(iaction);
 				object_init_ex(iaction, ce);

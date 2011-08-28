@@ -151,7 +151,9 @@ PHP_MINIT_FUNCTION(yaf)
 	YAF_STARTUP(router);
 	YAF_STARTUP(plugin);
 	YAF_STARTUP(registry);
+#ifdef PHP_HAVE_SESSION
 	YAF_STARTUP(session);
+#endif
 	YAF_STARTUP(exception);
 
 	return SUCCESS;
@@ -238,6 +240,7 @@ ZEND_GET_MODULE(yaf)
 zend_module_dep yaf_deps[] = {
 	ZEND_MOD_REQUIRED("spl")
 	ZEND_MOD_REQUIRED("pcre")
+	ZEND_MOD_OPTIONAL("json")
 	{NULL, NULL, NULL}
 };
 /* }}} */

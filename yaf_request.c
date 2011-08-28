@@ -40,54 +40,48 @@ zend_class_entry *yaf_request_ce;
 
 /** {{{ ARG_INFO
  */
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_void_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_routed_arginfo, 0, 0, 0)
 	ZEND_ARG_INFO(0, flag)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_module_name_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, module)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_controller_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, controller)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_action_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, action)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_baseuir_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, uir)
 ZEND_END_ARG_INFO()
 
-static
+ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_request_uri_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, uir)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_set_param_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_get_param_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, default)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_getserver_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, default)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_request_getenv_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, default)
@@ -726,6 +720,21 @@ PHP_METHOD(yaf_request, getRequestUri) {
 }
 /* }}} */
 
+/** {{{ proto public Yaf_Request_Abstract::setRequestUri(string $name)
+*/
+PHP_METHOD(yaf_request, setRequestUri) {
+	char *uri;
+	uint len;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &uri, &len) == FAILURE) {
+		return;
+	} 
+
+	zend_update_property_stringl(yaf_request_ce, getThis(), ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_URI), uri, len TSRMLS_CC);
+	RETURN_ZVAL(getThis(), 1, 0);
+}
+/* }}} */
+
 /** {{{ proto public Yaf_Request_Abstract::isRouted(void) 
 */
 PHP_METHOD(yaf_request, isRouted) {
@@ -770,6 +779,7 @@ zend_function_entry yaf_request_methods[] = {
 	PHP_ME(yaf_request, setBaseUri, yaf_request_set_baseuir_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_request, getBaseUri,	yaf_request_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_request, getRequestUri, yaf_request_void_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_request, setRequestUri, yaf_request_set_request_uri_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_request, isDispatched, yaf_request_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_request, setDispatched, yaf_request_void_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_request, isRouted, yaf_request_void_arginfo, ZEND_ACC_PUBLIC)

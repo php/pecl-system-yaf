@@ -23,7 +23,6 @@ zend_class_entry *yaf_route_map_ce;
 
 /** {{{ ARG_INFO
  */
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_route_map_construct_arginfo, 0, 0, 0)
     ZEND_ARG_INFO(0, controller_prefer)
 	ZEND_ARG_INFO(0, delimiter)

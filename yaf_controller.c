@@ -40,26 +40,21 @@ zend_class_entry * yaf_controller_ce;
 
 /** {{{ ARG_INFO
  */
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_void_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_initview_arginfo, 0, 0, 0)
     ZEND_ARG_ARRAY_INFO(0, options, 1)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_getiarg_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_setvdir_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, view_directory)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_forward_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, module)
     ZEND_ARG_INFO(0, controller)
@@ -67,18 +62,15 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_controller_forward_arginfo, 0, 0, 1)
     ZEND_ARG_ARRAY_INFO(0, paramters, 1)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_redirect_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, url)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_render_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, tpl)
     ZEND_ARG_ARRAY_INFO(0, parameters, 1)
 ZEND_END_ARG_INFO()
 
-static 
 ZEND_BEGIN_ARG_INFO_EX(yaf_controller_display_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, tpl)
     ZEND_ARG_ARRAY_INFO(0, parameters, 1)

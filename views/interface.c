@@ -20,30 +20,25 @@ zend_class_entry *yaf_view_interface_ce;
 
 /* {{{ ARG_INFO
  */
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_assign_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, name)
 	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_display_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, tpl)
 	ZEND_ARG_INFO(0, tpl_vars)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_render_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, tpl)
 	ZEND_ARG_INFO(0, tpl_vars)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_setpath_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, template_dir)
 ZEND_END_ARG_INFO()
 
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_getpath_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 /* }}} */

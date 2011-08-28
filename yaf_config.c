@@ -41,7 +41,6 @@ extern PHPAPI zend_class_entry *spl_ce_Countable;
 
 /* {{{ ARG_INFO
  */
-static
 ZEND_BEGIN_ARG_INFO_EX(yaf_config_void_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 /* }}} */
