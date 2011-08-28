@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2011-06-28</date>
+ <date>2011-08-28</date>
  <time>11:48:25</time>
  <version>
-  <release>2.0.1</release>
-  <api>2.0.1</api>
+  <release>2.1.0</release>
+  <api>2.1.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,10 +22,12 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-- Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
-- Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
-- Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
-- Corrected some broken C89 statements
+- Avoided calling to get_class_entry for higher performance
+- Added arginfo for all methods
+- Remove unnecessary stack variable initialization
+- Standardize error message
+- Add Yaf_Request::setRequstUri
+- Fixed build broken with PHP 5.4
  </notes>
  <contents> 
   <dir name="/"> 
@@ -129,6 +131,26 @@
  <providesextension>yaf</providesextension>
  <extsrcrelease />
  <changelog> 
+  <release> 
+   <date>2011-08-28</date> 
+   <version> 
+    <release>2.1.0</release> 
+    <api>2.1.0</api> 
+   </version> 
+   <stability> 
+    <release>beta<release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes> 
+- Avoided calling to get_class_entry for higher performance
+- Added arginfo for all methods
+- Remove unnecessary stack variable initialization
+- Standardize error message
+- Add Yaf_Request::setRequstUri
+- Fixed build broken with PHP 5.4
+   </notes> 
+  </release> 
   <release> 
    <date>2011-06-28</date> 
    <version> 

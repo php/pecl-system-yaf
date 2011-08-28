@@ -47,7 +47,7 @@ extern zend_module_entry yaf_module_entry;
 #define YAF_SHUTDOWN_FUNCTION(module)  	ZEND_MINIT_FUNCTION(yaf_##module)
 #define YAF_SHUTDOWN(module)	 	    ZEND_MODULE_SHUTDOWN_N(yaf_##module)(INIT_FUNC_ARGS_PASSTHRU)
 
-#define YAF_VERSION 					"1.0.0 $Id$"
+#define YAF_VERSION 					"2.1.0"
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
 #define YAF_HAVE_NAMESPACE			
