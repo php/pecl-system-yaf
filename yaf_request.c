@@ -203,7 +203,12 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 */
 zval * yaf_request_query(uint type, char * name, uint len TSRMLS_DC) {
 	zval 		**carrier, **ret;
+
+#if (PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4)
 	zend_bool 	jit_initialization = (PG(auto_globals_jit) && !PG(register_globals) && !PG(register_long_arrays));
+#else
+	zend_bool 	jit_initialization = PG(auto_globals_jit);
+#endif
 
 	/* for phpunit test requirements */
 #if PHP_YAF_DEBUG

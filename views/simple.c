@@ -21,6 +21,9 @@
 #define VIEW_BUFFER_BLOCK_SIZE	4096
 #define VIEW_BUFFER_SIZE_MASK 	4095
 
+zend_class_entry *yaf_view_simple_ce;
+
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 struct _yaf_view_simple_buffer {
 	char *buffer;
 	unsigned long size;
@@ -29,8 +32,6 @@ struct _yaf_view_simple_buffer {
 };
 
 typedef struct _yaf_view_simple_buffer yaf_view_simple_buffer;
-
-zend_class_entry *yaf_view_simple_ce;
 
 typedef int(*yaf_body_write_func)(const char *str, uint str_length TSRMLS_DC);
 
@@ -69,6 +70,7 @@ typedef int(*yaf_body_write_func)(const char *str, uint str_length TSRMLS_DC);
 		efree(seg); \
 	} while (0)
 /* }}} */
+#endif
 
 /** {{{ ARG_INFO */
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_construct_arginfo, 0, 0, 1)
@@ -90,6 +92,7 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_assign_by_ref_arginfo, 0, 0, 2)
 ZEND_END_ARG_INFO();
 /* }}} */
 
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 /** {{{ static int yaf_view_simple_render_write(const char *str, uint str_length TSRMLS_DC)
 */
 static int yaf_view_simple_render_write(const char *str, uint str_length TSRMLS_DC) {
@@ -122,6 +125,7 @@ static int yaf_view_simple_render_write(const char *str, uint str_length TSRMLS_
 	return str_length;
 }
 /* }}} */
+#endif
 
 static int yaf_view_simple_valid_var_name(char *var_name, int len) /* {{{ */
 {
@@ -257,9 +261,11 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 	char *script; 
 	uint len; 
 
+	HashTable *calling_symbol_table;
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	zend_class_entry *old_scope;
 	yaf_view_simple_buffer *buffer;
-	HashTable *calling_symbol_table;
+#endif
 
 	ZVAL_NULL(ret);
 
@@ -275,13 +281,24 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 
 	(void)yaf_view_simple_extract(tpl_vars, vars TSRMLS_CC);
 
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	YAF_REDIRECT_OUTPUT_BUFFER(buffer);
+#else 
+	if (php_output_start_user(NULL, 0, PHP_OUTPUT_HANDLER_STDFLAGS TSRMLS_CC) == FAILURE) {
+		php_error_docref("ref.outcontrol" TSRMLS_CC, E_WARNING, "failed to create buffer");
+		return 0;
+	}
+#endif
 
 	if (IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl), Z_STRLEN_P(tpl))) {
 		script 	= Z_STRVAL_P(tpl);
 		len 	= Z_STRLEN_P(tpl);
 		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
+#else
+			php_output_end(TSRMLS_C);
+#endif
 			if (calling_symbol_table) {
 				zend_hash_destroy(EG(active_symbol_table));
 				FREE_HASHTABLE(EG(active_symbol_table));
@@ -295,7 +312,11 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 		zval *tpl_dir = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 
 		if (ZVAL_IS_NULL(tpl_dir)) {
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
+#else
+			php_output_end(TSRMLS_C);
+#endif
 
 			if (calling_symbol_table) {
 				zend_hash_destroy(EG(active_symbol_table));
@@ -312,8 +333,11 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 		len = spprintf(&script, 0, "%s%c%s", Z_STRVAL_P(tpl_dir), DEFAULT_SLASH, Z_STRVAL_P(tpl));
 
 		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
-
+#else
+			php_output_end(TSRMLS_C);
+#endif
 			if (calling_symbol_table) {
 				zend_hash_destroy(EG(active_symbol_table));
 				FREE_HASHTABLE(EG(active_symbol_table));
@@ -333,12 +357,21 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 		EG(active_symbol_table) = calling_symbol_table;
 	}
 
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	if (buffer->len) {
 		ZVAL_STRINGL(ret, buffer->buffer, buffer->len, 1);
 	}
+#else
+	if (php_output_get_contents(ret TSRMLS_CC) == FAILURE) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fetch ob content");
+	}
+#endif
 
-	YAF_RESTORE_OUTPUT_BUFFER(buffer);
-
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+			YAF_RESTORE_OUTPUT_BUFFER(buffer);
+#else
+			php_output_end(TSRMLS_C);
+#endif
 	return 1;
 }
 /* }}} */
