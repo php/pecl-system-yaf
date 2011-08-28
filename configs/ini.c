@@ -471,24 +471,29 @@ PHP_METHOD(yaf_config_ini, get) {
 		char *entry, *seg, *pptr;
 
 		properties = zend_read_property(yaf_config_ini_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
-		entry = estrndup(name, len);
 
-		seg = php_strtok_r(entry, ".", &pptr);
-		while (seg) {
-
-			if (Z_TYPE_P(properties) != IS_ARRAY) {
-				efree(entry);
-				RETURN_NULL();
-			}
-
-			if (zend_hash_find(Z_ARRVAL_P(properties), seg, strlen(seg) + 1, (void **) &ppzval) == FAILURE) {
-				efree(entry);
-				RETURN_NULL();
-			}
-
-			properties = *ppzval;
-			seg = php_strtok_r(NULL, ".", &pptr);
+		if (Z_TYPE_P(properties) != IS_ARRAY) {
+			RETURN_NULL();
 		}
+
+		entry = estrndup(name, len);
+		if ((seg = php_strtok_r(entry, ".", &pptr))) {
+			while (seg) {
+				if (zend_hash_find(Z_ARRVAL_P(properties), seg, strlen(seg) + 1, (void **) &ppzval) == FAILURE) {
+					efree(entry);
+					RETURN_NULL();
+				}
+
+				properties = *ppzval;
+				seg = php_strtok_r(NULL, ".", &pptr);
+			}
+		} else {
+			if (zend_hash_find(Z_ARRVAL_P(properties), name, len + 1, (void **)&ppzval) == FAILURE) {
+				efree(entry);
+				RETURN_NULL();
+			}
+		}
+		
 		efree(entry);
 
 		if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
