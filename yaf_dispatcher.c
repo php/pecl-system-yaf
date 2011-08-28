@@ -633,8 +633,8 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			efree(action_lower);
 
 			if (zend_hash_find(&((ce)->function_table), func_name, func_name_len + 1, (void **)&fptr) == SUCCESS) {
-				zval ***call_args;
-				uint count;
+				uint count = 0;
+				zval ***call_args = NULL;
 
 				executor = icontroller;
 
