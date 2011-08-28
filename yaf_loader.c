@@ -636,7 +636,7 @@ PHP_METHOD(yaf_loader, import) {
 PHP_METHOD(yaf_loader, autoload) {
 	char *class_name, *app_directory, *directory = NULL, *file_name = NULL;
 #ifdef YAF_HAVE_NAMESPACE
-	char *origin_lcname;
+	char *origin_lcname = NULL;
 #endif
 	uint separator_len, class_name_len, file_name_len = 0;
 
