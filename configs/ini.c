@@ -498,8 +498,11 @@ PHP_METHOD(yaf_config_ini, get) {
 		efree(entry);
 
 		if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
-			ret = yaf_config_ini_format(getThis(), ppzval TSRMLS_CC);
-			RETURN_ZVAL(ret, 0, 0);
+			if ((ret = yaf_config_ini_format(getThis(), ppzval TSRMLS_CC))) {
+				RETURN_ZVAL(ret, 1, 1);
+			} else {
+				RETURN_NULL();
+			}
 		} else {
 			RETURN_ZVAL(*ppzval, 1, 0);
 		}
@@ -572,8 +575,11 @@ PHP_METHOD(yaf_config_ini, current) {
 	}
 
 	if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
-		ret = yaf_config_ini_format(getThis(),  ppzval TSRMLS_CC);
-		RETURN_ZVAL(ret, 0, 0);
+		if ((ret = yaf_config_ini_format(getThis(),  ppzval TSRMLS_CC))) {
+			RETURN_ZVAL(ret, 1, 1);
+		} else {
+			RETURN_NULL();
+		}
 	} else {
 		RETURN_ZVAL(*ppzval, 1, 0);
 	}

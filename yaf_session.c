@@ -75,45 +75,40 @@ inline int yaf_session_start(yaf_session_t *session TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ yaf_session_t * yaf_session_instance(yaf_session_t *this_ptr TSRMLS_DC)
+/** {{{ static yaf_session_t * yaf_session_instance(TSRMLS_D)
 */
-yaf_session_t * yaf_session_instance(yaf_session_t *this_ptr TSRMLS_DC) {
-	yaf_session_t *instance = zend_read_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), 1 TSRMLS_CC);
-	
-	if (Z_TYPE_P(instance) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(instance), yaf_session_ce TSRMLS_CC)) {
-		zval **sess, *member;
-		zend_object *obj; 
-		zend_property_info *property_info;
+static yaf_session_t * yaf_session_instance(TSRMLS_D) {
+	yaf_session_t *instance;
+	zval **sess, *member;
+	zend_object *obj; 
+	zend_property_info *property_info;
 
-		MAKE_STD_ZVAL(instance);
-		object_init_ex(instance, yaf_session_ce);
+	MAKE_STD_ZVAL(instance);
+	object_init_ex(instance, yaf_session_ce);
 
-		yaf_session_start(instance TSRMLS_CC);
+	yaf_session_start(instance TSRMLS_CC);
 
-		if (zend_hash_find(&EG(symbol_table), ZEND_STRS("_SESSION"), (void **)&sess) == FAILURE || Z_TYPE_PP(sess) != IS_ARRAY) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Attempt to start session failed");
-			zval_ptr_dtor(&instance);
-			return NULL;
-		}
-
-		MAKE_STD_ZVAL(member);
-		ZVAL_STRING(member, YAF_SESSION_PROPERTY_NAME_SESSION, 0);
-
-		obj = zend_objects_get_address(instance TSRMLS_CC);
-
-		property_info = zend_get_property_info(obj->ce, member, 1 TSRMLS_CC);
-
-		Z_ADDREF_P(*sess);
-		/** This is ugly , because we can't set a ref property through the stadard APIs */
-		zend_hash_quick_update(obj->properties, property_info->name,
-			   	property_info->name_length+1, property_info->h, (void **)sess, sizeof(zval *), NULL);
-
-		zend_update_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
-
-		efree(member);
-	} else {
-		zval_copy_ctor(instance);
+	if (zend_hash_find(&EG(symbol_table), ZEND_STRS("_SESSION"), (void **)&sess) == FAILURE || Z_TYPE_PP(sess) != IS_ARRAY) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Attempt to start session failed");
+		zval_ptr_dtor(&instance);
+		return NULL;
 	}
+
+	MAKE_STD_ZVAL(member);
+	ZVAL_STRING(member, YAF_SESSION_PROPERTY_NAME_SESSION, 0);
+
+	obj = zend_objects_get_address(instance TSRMLS_CC);
+
+	property_info = zend_get_property_info(obj->ce, member, 1 TSRMLS_CC);
+
+	Z_ADDREF_P(*sess);
+	/** This is ugly , because we can't set a ref property through the stadard APIs */
+	zend_hash_quick_update(obj->properties, property_info->name,
+			property_info->name_length+1, property_info->h, (void **)sess, sizeof(zval *), NULL);
+
+	zend_update_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
+
+	efree(member);
 
 	return instance;
 }
@@ -152,12 +147,17 @@ PHP_METHOD(yaf_session, __clone) {
 /** {{{ proto public Yaf_Session::getInstance(void)
 */
 PHP_METHOD(yaf_session, getInstance) {
-	yaf_session_t *session;
-
-	if ((session = yaf_session_instance(NULL TSRMLS_CC))) {
-		RETURN_ZVAL(session, 0, 0);
+	yaf_session_t *instance = zend_read_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), 1 TSRMLS_CC);
+	
+	if (Z_TYPE_P(instance) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(instance), yaf_session_ce TSRMLS_CC)) {
+		if ((instance = yaf_session_instance(TSRMLS_C))) {
+			RETURN_ZVAL(instance, 1, 1);
+		} else {
+			RETURN_NULL();
+		}
+	} else {
+		RETURN_ZVAL(instance, 1, 0);
 	}
-	RETURN_FALSE;
 }
 /* }}} */
 

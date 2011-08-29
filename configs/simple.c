@@ -130,7 +130,7 @@ PHP_METHOD(yaf_config_simple, get) {
 		
 		if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
 			if ((ret = yaf_config_simple_format(getThis(), ppzval TSRMLS_CC))) {
-				RETURN_ZVAL(ret, 0, 0);
+				RETURN_ZVAL(ret, 1, 1);
 			} else {
 				RETURN_NULL();
 			}
@@ -248,7 +248,7 @@ PHP_METHOD(yaf_config_simple, current) {
 
 	if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
 		if ((ret = yaf_config_simple_format(getThis(), ppzval TSRMLS_CC))) {
-			RETURN_ZVAL(ret, 0, 0);
+			RETURN_ZVAL(ret, 1, 1);
 		} else {
 			RETURN_NULL();
 		}
