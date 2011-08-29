@@ -168,6 +168,7 @@ static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, i
 				efree(real_key);
 			}
 		}
+		efree(record_name);
 	}
 
 	zval_copy_ctor(ret);

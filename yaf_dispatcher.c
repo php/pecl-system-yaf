@@ -117,7 +117,6 @@ ZEND_END_ARG_INFO()
 yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC) {
 	zval				*plugins;
 	yaf_router_t	 	*router;
-	yaf_response_t	 	*response;
 	yaf_dispatcher_t 	*instance;
 
 	instance = zend_read_static_property(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_INSTANCE), 1 TSRMLS_CC);
@@ -148,15 +147,11 @@ yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC)
 	zval_ptr_dtor(&plugins);
 
 	router	 = yaf_router_instance(NULL TSRMLS_CC);
-	response = yaf_response_instance(NULL, sapi_module.name TSRMLS_CC);
 
-	zend_update_property(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RESPONSE), response TSRMLS_CC);
 	zend_update_property(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ROUTER), router TSRMLS_CC);
-
 	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 	YAF_G(default_module) TSRMLS_CC);
 	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_CONTROLLER), YAF_G(default_controller) TSRMLS_CC);
 	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ACTION), 	YAF_G(default_action) TSRMLS_CC);
-
 	zend_update_static_property(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
 
 	return instance;
@@ -1076,7 +1071,7 @@ PHP_METHOD(yaf_dispatcher, dispatch) {
 	self = getThis();
 	zend_update_property(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_REQUEST), request TSRMLS_CC);
 	if ((response = yaf_dispatcher_dispatch(self TSRMLS_CC))) {
-		RETURN_ZVAL(response, 1, 0);
+		RETURN_ZVAL(response, 1, 1);
 	}
 
 	RETURN_FALSE;
