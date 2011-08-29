@@ -12,20 +12,25 @@ $age = 28;
 $session->age = $age;
 unset($age);
 
-$session["company"] = "Baidu";
+unset($session);
+$session2 = Yaf_Session::getInstance();
+$session2["company"] = "Baidu";
 
-var_dump(isset($session->age));
-var_dump($session->has("name"));
-var_dump(count($session));
-foreach ($session as $key => $value) {
+var_dump(isset($session2->age));
+var_dump($session2->has("name"));
+var_dump(count($session2));
+foreach ($session2 as $key => $value) {
 	echo $key , "=>", $value, "\n";
 }
 
-$session->del("name");
-unset($session["company"]);
-unset($session->age);
+unset($session2);
+$session3 = Yaf_Session::getInstance();
 
-var_dump(count($session));
+$session3->del("name");
+unset($session3["company"]);
+unset($session3->age);
+
+var_dump(count($session3));
 ?>
 --EXPECTF--
 bool(true)
