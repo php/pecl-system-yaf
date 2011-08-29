@@ -13,7 +13,7 @@ $config = array(
 );
 
 $config1 = new Yaf_Config_Simple($config, 'section2');
-var_dump($config1);
+print_r($config1);
 $config2 = new Yaf_Config_Simple($config, 'section1');
 var_dump($config2->readonly());
 $config2->new = "value";
@@ -28,13 +28,15 @@ echo "Config3 readonly:";
 var_dump($config3->readonly());
 
 foreach($config3 as $key => $val) {
-	var_dump($key);
-	var_dump($val);
+	print_r($key);
+	print_r("=>");
+	print_r($val);
+	print_r("\n");
 }
 
-var_dump($config3->toArray());
+print_r($config3->toArray());
 
-$sick = new Yaf_Config_Simple();
+$sick = @new Yaf_Config_Simple();
 
 var_dump($sick->__isset(1));
 var_dump($sick->__get(2));
@@ -43,57 +45,49 @@ var_dump(count($sick));
 var_dump($sick->total);
 ?>
 --EXPECTF--
-object(Yaf_Config_Simple)#%d (2) {
-  ["_config:protected"]=>
-  array(2) {
-    ["section1"]=>
-    array(2) {
-      ["name"]=>
-      string(5) "value"
-      ["dummy"]=>
-      string(3) "foo"
-    }
-    ["section2"]=>
-    string(8) "laruence"
-  }
-  ["_readonly:protected"]=>
-  bool(true)
-}
+Yaf_Config_Simple Object
+(
+    [_config:protected] => Array
+        (
+            [section1] => Array
+                (
+                    [name] => value
+                    [dummy] => foo
+                )
+
+            [section2] => laruence
+        )
+
+    [_readonly:protected] => 1
+)
 bool(true)
 bool(false)
 Isset config3 section:bool(true)
 Config3 readonly:bool(false)
-string(8) "section1"
-object(Yaf_Config_Simple)#%d (2) {
-  ["_config:protected"]=>
-  array(2) {
-    ["name"]=>
-    string(5) "value"
-    ["dummy"]=>
-    string(3) "foo"
-  }
-  ["_readonly:protected"]=>
-  bool(false)
-}
-string(8) "section2"
-string(8) "laruence"
-string(3) "new"
-string(5) "value"
-array(3) {
-  ["section1"]=>
-  array(2) {
-    ["name"]=>
-    string(5) "value"
-    ["dummy"]=>
-    string(3) "foo"
-  }
-  ["section2"]=>
-  string(8) "laruence"
-  ["new"]=>
-  string(5) "value"
-}
+section1=>Yaf_Config_Simple Object
+(
+    [_config:protected] => Array
+        (
+            [name] => value
+            [dummy] => foo
+        )
 
-Warning: %s
+    [_readonly:protected] => 
+)
+
+section2=>laruence
+new=>value
+Array
+(
+    [section1] => Array
+        (
+            [name] => value
+            [dummy] => foo
+        )
+
+    [section2] => laruence
+    [new] => value
+)
 bool(false)
 bool(false)
 int(1)

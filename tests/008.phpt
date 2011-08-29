@@ -11,62 +11,60 @@ $route  = new Yaf_Route_Simple('m', 'c', 'a');
 $sroute = new Yaf_Route_Supervar('r');
 
 $router->addRoute("simple", $route)->addRoute("super", $sroute);
-var_dump($router);
+print_r($router);
 var_dump($router->getCurrentRoute());
-var_dump($router->getRoutes());
-var_dump($router->getRoute("simple"));
+print_r($router->getRoutes());
+print_r($router->getRoute("simple"));
 var_dump($router->getRoute("noexists"));
 --EXPECTF--
-object(Yaf_Router)#%d (2) {
-  ["_routes:protected"]=>
-  array(3) {
-    ["_default"]=>
-    object(Yaf_Route_Static)#%d (0) {
-    }
-    ["simple"]=>
-    object(Yaf_Route_Simple)#%d (3) {
-      ["controller:protected"]=>
-      string(1) "c"
-      ["module:protected"]=>
-      string(1) "m"
-      ["action:protected"]=>
-      string(1) "a"
-    }
-    ["super"]=>
-    object(Yaf_Route_Supervar)#%d (1) {
-      ["_var_name:protected"]=>
-      string(1) "r"
-    }
-  }
-  ["_current:protected"]=>
-  NULL
-}
+Yaf_Router Object
+(
+    [_routes:protected] => Array
+        (
+            [_default] => Yaf_Route_Static Object
+                (
+                )
+
+            [simple] => Yaf_Route_Simple Object
+                (
+                    [controller:protected] => c
+                    [module:protected] => m
+                    [action:protected] => a
+                )
+
+            [super] => Yaf_Route_Supervar Object
+                (
+                    [_var_name:protected] => r
+                )
+
+        )
+
+    [_current:protected] => 
+)
 NULL
-array(3) {
-  ["_default"]=>
-  object(Yaf_Route_Static)#%d (0) {
-  }
-  ["simple"]=>
-  object(Yaf_Route_Simple)#%d (3) {
-    ["controller:protected"]=>
-    string(1) "c"
-    ["module:protected"]=>
-    string(1) "m"
-    ["action:protected"]=>
-    string(1) "a"
-  }
-  ["super"]=>
-  object(Yaf_Route_Supervar)#%d (1) {
-    ["_var_name:protected"]=>
-    string(1) "r"
-  }
-}
-object(Yaf_Route_Simple)#%d (3) {
-  ["controller:protected"]=>
-  string(1) "c"
-  ["module:protected"]=>
-  string(1) "m"
-  ["action:protected"]=>
-  string(1) "a"
-}
+Array
+(
+    [_default] => Yaf_Route_Static Object
+        (
+        )
+
+    [simple] => Yaf_Route_Simple Object
+        (
+            [controller:protected] => c
+            [module:protected] => m
+            [action:protected] => a
+        )
+
+    [super] => Yaf_Route_Supervar Object
+        (
+            [_var_name:protected] => r
+        )
+
+)
+Yaf_Route_Simple Object
+(
+    [controller:protected] => c
+    [module:protected] => m
+    [action:protected] => a
+)
 NULL

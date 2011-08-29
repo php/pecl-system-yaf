@@ -8,30 +8,30 @@ $view = new Yaf_View_Simple(dirname(__FILE__));
 $value = "laruence";
 $view->assign("name", $value);
 unset($value);
-var_dump($view);
+print_r($view);
 var_dump(strlen($view->render(dirname(__FILE__) . "/002.phpt")));
 var_dump($view->name);
 var_dump($view->noexists);
-var_dump($view);
+print_r($view);
 --EXPECTF--
-object(Yaf_View_Simple)#1 (2) {
-  ["_tpl_vars:protected"]=>
-  array(1) {
-    ["name"]=>
-    string(8) "laruence"
-  }
-  ["_tpl_dir:protected"]=>
-  string(%d) "%s"
-}
-int(2038)
+Yaf_View_Simple Object
+(
+    [_tpl_vars:protected] => Array
+        (
+            [name] => laruence
+        )
+
+    [_tpl_dir:protected] => %s
+)
+int(1590)
 string(8) "laruence"
 NULL
-object(Yaf_View_Simple)#1 (2) {
-  ["_tpl_vars:protected"]=>
-  array(1) {
-    ["name"]=>
-    string(8) "laruence"
-  }
-  ["_tpl_dir:protected"]=>
-  string(%d) "%s"
-}
+Yaf_View_Simple Object
+(
+    [_tpl_vars:protected] => Array
+        (
+            [name] => laruence
+        )
+
+    [_tpl_dir:protected] => %s
+)

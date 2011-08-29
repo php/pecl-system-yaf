@@ -18,7 +18,7 @@ foreach($config as $key => $value) {
 	print_r($key);
 }
 
-$sick = @new Yaf_Config_Ini();
+$sick = new Yaf_Config_Ini();
 
 var_dump($sick->__isset(1));
 var_dump($sick->__get(1));
