@@ -65,6 +65,8 @@ yaf_registry_t *yaf_registry_instance(yaf_registry_t *this_ptr TSRMLS_DC) {
 		array_init(regs);
 		zend_update_property(yaf_registry_ce, instance, ZEND_STRL(YAF_REGISTRY_PROPERTY_NAME_ENTRYS), regs TSRMLS_CC);
 		zend_update_static_property(yaf_registry_ce, ZEND_STRL(YAF_REGISTRY_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
+		zval_ptr_dtor(&regs);
+		zval_ptr_dtor(&instance);
 	}
 
 	return instance;

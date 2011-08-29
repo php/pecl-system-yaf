@@ -52,9 +52,9 @@ yaf_route_t * yaf_route_rewrite_instance(yaf_route_t *this_ptr, zval *match, zva
 }
 /* }}} */
 
-/** {{{ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC)
+/** {{{ static zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC)
  */
-zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC) {
+static zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC) {
 	char *seg, *pmatch, *ptrptr;
 	int  seg_len;
 	zval *match;
@@ -62,7 +62,7 @@ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC
 	smart_str pattern = {0};
 
 	if (!len) {
-		return 0;
+		return NULL;
 	}
 	
 	match  = zend_read_property(yaf_route_rewrite_ce, router, ZEND_STRL(YAF_ROUTE_PROPETY_NAME_MATCH), 1 TSRMLS_CC);
@@ -115,7 +115,9 @@ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC
 		php_pcre_match_impl(pce_regexp, uir, len, matches, subparts /* subpats */,
 				0/* global */, 0/* ZEND_NUM_ARGS() >= 4 */, 0/*flags PREG_OFFSET_CAPTURE*/, 0/* start_offset */ TSRMLS_CC);
 
-		if (!matches || !Z_LVAL_P(matches)) {
+		if (!Z_LVAL_P(matches)) {
+			zval_ptr_dtor(&matches);
+			zval_ptr_dtor(&subparts);
 			return NULL;
 		} else {
 			zval *ret, **ppzval;
@@ -128,7 +130,6 @@ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC
 			array_init(ret);
 
 			ht = Z_ARRVAL_P(subparts);
-
 			for(zend_hash_internal_pointer_reset(ht);
 					zend_hash_has_more_elements(ht) == SUCCESS;
 					zend_hash_move_forward(ht)) {
@@ -146,12 +147,16 @@ zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TSRMLS_DC
 					zval *args = yaf_router_parse_parameters(Z_STRVAL_PP(ppzval) TSRMLS_CC);
 					if (args) {
 						zend_hash_copy(Z_ARRVAL_P(ret), Z_ARRVAL_P(args), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
+						zval_ptr_dtor(&args);
 					}
 				} else {
+					Z_ADDREF_P(*ppzval);
 					zend_hash_update(Z_ARRVAL_P(ret), key, len, (void **)ppzval, sizeof(zval *), NULL);
 				}
 			}
 
+			zval_ptr_dtor(&matches);
+			zval_ptr_dtor(&subparts);
 			return ret;
 		}
 	}
@@ -177,6 +182,7 @@ int yaf_route_rewrite_route(yaf_route_t *router, yaf_request_t *request TSRMLS_D
 	}
 
 	if (!(args = yaf_route_rewrite_match(router, request_uri, strlen(request_uri) TSRMLS_CC))) {
+		efree(request_uri);
 		return 0;
 	} else {
 		zval **module, **controller, **action, *routes;
@@ -195,6 +201,8 @@ int yaf_route_rewrite_route(yaf_route_t *router, yaf_request_t *request TSRMLS_D
 		}
 
 		(void)yaf_request_set_params_multi(request, args TSRMLS_CC);
+		zval_ptr_dtor(&args);
+		efree(request_uri);
 		return 1;
 	}
 
@@ -237,7 +245,7 @@ PHP_METHOD(yaf_route_rewrite, match) {
 	if (!len) RETURN_FALSE;
 
 	if ((matches = yaf_route_rewrite_match(getThis(), uri, len TSRMLS_CC))) {
-		RETURN_ZVAL(matches, 1, 0);
+		RETURN_ZVAL(matches, 0, 0);
 	}
 
 	RETURN_FALSE;

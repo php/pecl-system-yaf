@@ -94,6 +94,7 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 	if (query_str) {
 		params = yaf_router_parse_parameters(query_str TSRMLS_CC);
 		(void)yaf_request_set_params_multi(request, params TSRMLS_CC);
+		zval_ptr_dtor(&params);
 		efree(query_str);
 	}
 

@@ -244,8 +244,9 @@ yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *opt
 
 	MAKE_STD_ZVAL(tpl_vars);
 	array_init(tpl_vars);
-
 	zend_update_property(yaf_view_simple_ce, instance, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), tpl_vars TSRMLS_CC);
+	zval_ptr_dtor(&tpl_vars);
+
 	if (tpl_dir && Z_TYPE_P(tpl_dir) == IS_STRING && IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl_dir), Z_STRLEN_P(tpl_dir))) {
 		zend_update_property(yaf_view_simple_ce, instance, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), tpl_dir TSRMLS_CC);
 	}

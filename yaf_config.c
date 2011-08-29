@@ -351,8 +351,8 @@ yaf_config_t * yaf_config_instance(yaf_config_t *this_ptr, zval *arg1, zval *arg
 
 		MAKE_STD_ZVAL(readonly);
 		ZVAL_BOOL(readonly, 1);
-
 		instance = yaf_config_simple_instance(this_ptr, arg1, readonly TSRMLS_CC);
+		efree(readonly);
 		return instance;
 	}
 

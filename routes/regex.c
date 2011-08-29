@@ -54,14 +54,14 @@ yaf_route_t * yaf_route_regex_instance(yaf_route_t *this_ptr, zval *route, zval 
 }
 /* }}} */
 
-/** {{{ zval * yaf_route_regex_match(yaf_route_t *router, char *uir, int len TSRMLS_DC)
+/** {{{ static zval * yaf_route_regex_match(yaf_route_t *router, char *uir, int len TSRMLS_DC)
  */
-zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
+static zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
 	zval *match;
 	pcre_cache_entry *pce_regexp;
 
 	if (!len) {
-		return 0;
+		return NULL;
 	}
 	
 	match = zend_read_property(yaf_route_regex_ce, route, ZEND_STRL(YAF_ROUTE_PROPETY_NAME_MATCH), 1 TSRMLS_CC);
@@ -81,6 +81,8 @@ zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
 				0/* global */, 0/* ZEND_NUM_ARGS() >= 4 */, 0/*flags PREG_OFFSET_CAPTURE*/, 0/* start_offset */ TSRMLS_CC);
 
 		if (!Z_LVAL_P(matches)) {
+			zval_ptr_dtor(&matches);
+			zval_ptr_dtor(&subparts);
 			return NULL;
 		} else {
 			zval  *ret, **name, **ppzval;
@@ -93,7 +95,6 @@ zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
 			array_init(ret);
 
 			ht = Z_ARRVAL_P(subparts);
-
 			for(zend_hash_internal_pointer_reset(ht);
 					zend_hash_has_more_elements(ht) == SUCCESS;
 					zend_hash_move_forward(ht)) {
@@ -104,14 +105,17 @@ zval * yaf_route_regex_match(yaf_route_t *route, char *uir, int len TSRMLS_DC) {
 
 				if (zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL) == HASH_KEY_IS_LONG) {
 					if (zend_hash_index_find(Z_ARRVAL_P(map), idx, (void **)&name) == SUCCESS) {
-						zend_hash_update(Z_ARRVAL_P(ret), Z_STRVAL_PP(name), Z_STRLEN_PP(name) + 1, 
-								(void **)ppzval, sizeof(zval *), NULL);
+						Z_ADDREF_P(*ppzval);
+						zend_hash_update(Z_ARRVAL_P(ret), Z_STRVAL_PP(name), Z_STRLEN_PP(name) + 1, (void **)ppzval, sizeof(zval *), NULL);
 					}
 				} else {
+					Z_ADDREF_P(*ppzval);
 					zend_hash_update(Z_ARRVAL_P(ret), key, len, (void **)ppzval, sizeof(zval *), NULL);
 				}
 			}
 
+			zval_ptr_dtor(&matches);
+			zval_ptr_dtor(&subparts);
 			return ret;
 		}
 	}
@@ -137,6 +141,7 @@ int yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC)
 	}
 
 	if (!(args = yaf_route_regex_match(router, request_uri, strlen(request_uri) TSRMLS_CC))) {
+		efree(request_uri);
 		return 0;
 	} else {
 		zval **module, **controller, **action, *routes;
@@ -155,6 +160,8 @@ int yaf_route_regex_route(yaf_route_t *router, yaf_request_t *request TSRMLS_DC)
 		}
 
 		(void)yaf_request_set_params_multi(request, args TSRMLS_CC);
+		zval_ptr_dtor(&args);
+		efree(request_uri);
 	}
 
 	return 1;

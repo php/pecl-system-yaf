@@ -145,6 +145,7 @@ yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC)
 	MAKE_STD_ZVAL(plugins);
 	array_init(plugins);
 	zend_update_property(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_PLUGINS), plugins TSRMLS_CC);
+	zval_ptr_dtor(&plugins);
 
 	router	 = yaf_router_instance(NULL TSRMLS_CC);
 	response = yaf_response_instance(NULL, sapi_module.name TSRMLS_CC);

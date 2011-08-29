@@ -57,9 +57,10 @@ yaf_router_t * yaf_router_instance(yaf_router_t *this_ptr TSRMLS_DC) {
 
 	MAKE_STD_ZVAL(route);
 	object_init_ex(route, yaf_route_static_ce);
-	zend_hash_update(Z_ARRVAL_P(routes), "_default", sizeof("_default"), (void **)&route, sizeof(zval *), NULL);
 
+	zend_hash_update(Z_ARRVAL_P(routes), "_default", sizeof("_default"), (void **)&route, sizeof(zval *), NULL);
 	zend_update_property(yaf_router_ce, instance, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), routes TSRMLS_CC);
+	zval_ptr_dtor(&routes);
 
 	return instance;
 }
@@ -86,6 +87,7 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 		zend_call_method_with_1_params(route, Z_OBJCE_PP(route), NULL, "route", &ret, request);
 
 		if (IS_BOOL != Z_TYPE_P(ret) || !Z_BVAL_P(ret)) {
+			zval_ptr_dtor(&ret);
 			continue;
 		} else {
 			char *key;
@@ -99,6 +101,7 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 			}
 
 			yaf_request_set_routed(request, 1 TSRMLS_CC);
+			zval_ptr_dtor(&ret);
 			return 1;
 		}
 	} 

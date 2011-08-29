@@ -53,28 +53,24 @@ yaf_config_t * yaf_config_simple_instance(yaf_config_t *this_ptr, zval *values, 
 	yaf_config_t *instance;
 
 	switch (Z_TYPE_P(values)) {
-		case IS_ARRAY : { 
+		case IS_ARRAY: 
 			if (this_ptr) {
 				instance = this_ptr;
 			} else {
 				MAKE_STD_ZVAL(instance);
 				object_init_ex(instance, yaf_config_simple_ce);
-
 			}
 			zend_update_property(yaf_config_simple_ce, instance, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), values TSRMLS_CC);
 			if (readonly) {
 				convert_to_boolean(readonly);
-				zend_update_property(yaf_config_simple_ce, instance, ZEND_STRL(YAF_CONFIG_PROPERT_NAME_READONLY), readonly TSRMLS_CC);
+				zend_update_property_bool(yaf_config_simple_ce, instance, ZEND_STRL(YAF_CONFIG_PROPERT_NAME_READONLY), Z_BVAL_P(readonly) TSRMLS_CC);
 			}
 			return instance;
-		}
 		break;
 		default:
 			yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Invalid parameters provided, must be an array");
 			return NULL;	
 	}
-
-	return instance;
 }
 /* }}} */
 
@@ -99,6 +95,7 @@ PHP_METHOD(yaf_config_simple, __construct) {
 		MAKE_STD_ZVAL(prop);
 		array_init(prop);
 		zend_update_property(yaf_config_simple_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME), prop TSRMLS_CC);
+		zval_ptr_dtor(&prop);
 
 		return;
 	}
@@ -132,8 +129,11 @@ PHP_METHOD(yaf_config_simple, get) {
 		}
 		
 		if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
-			ret = yaf_config_simple_format(getThis(), ppzval TSRMLS_CC);
-			RETURN_ZVAL(ret, 0, 0);
+			if ((ret = yaf_config_simple_format(getThis(), ppzval TSRMLS_CC))) {
+				RETURN_ZVAL(ret, 0, 0);
+			} else {
+				RETURN_NULL();
+			}
 		} else {
 			RETURN_ZVAL(*ppzval, 1, 0);
 		}
@@ -247,8 +247,11 @@ PHP_METHOD(yaf_config_simple, current) {
 	}
 
 	if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
-		ret = yaf_config_simple_format(getThis(), ppzval TSRMLS_CC);
-		RETURN_ZVAL(ret, 0, 0);
+		if ((ret = yaf_config_simple_format(getThis(), ppzval TSRMLS_CC))) {
+			RETURN_ZVAL(ret, 0, 0);
+		} else {
+			RETURN_NULL();
+		}
 	} else {
 		RETURN_ZVAL(*ppzval, 1, 0);
 	}

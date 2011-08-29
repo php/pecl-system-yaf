@@ -39,7 +39,7 @@ zend_class_entry *yaf_loader_ce;
 /** {{{ int yaf_loader_register(TSRMLS_D)
 */
 int yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
-	zval *ret, *autoload, *method, *function;
+	zval *autoload, *method, *function, *ret = NULL;
 	zval **params[1] = {&autoload};
 
 	MAKE_STD_ZVAL(autoload);
@@ -68,6 +68,11 @@ int yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 		};
 
 		if (zend_call_function(&fci, NULL TSRMLS_CC) == FAILURE) {
+			if (ret) {
+				zval_ptr_dtor(&ret);
+			}
+			efree(function);
+			zval_ptr_dtor(&autoload);
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to register autoload function %s", YAF_AUTOLOAD_FUNC_NAME);
 			return 0;
 		}
@@ -112,6 +117,11 @@ int yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 		}
 		}}} */
 
+		if (ret) {
+			zval_ptr_dtor(&ret);
+		}
+		efree(function);
+		zval_ptr_dtor(&autoload);
 	} while (0);
 	return 1;
 }
@@ -167,6 +177,7 @@ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int le
 #endif 
 
 	if (!prefix_len) {
+		efree(prefix);
 		return 0;
 	}
 
@@ -180,7 +191,7 @@ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int le
 		}
 		ns = pos + prefix_len;
 	}
-
+	efree(prefix);
 	return 0;
 }
 /* }}} */
@@ -218,16 +229,20 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 		ZVAL_STRING(library, library_path, 1);
 		zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), library TSRMLS_CC);
 		zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), glibrary TSRMLS_CC);
+		zval_ptr_dtor(&library);
+		zval_ptr_dtor(&glibrary);
 	} else if (!global_path) {
 		MAKE_STD_ZVAL(library);
 		ZVAL_STRING(library, library_path, 1);
 		zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), library TSRMLS_CC);
 		zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), library TSRMLS_CC);
+		zval_ptr_dtor(&library);
 	} else {
 		MAKE_STD_ZVAL(glibrary);
 		ZVAL_STRING(glibrary, global_path, 1);
 		zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), glibrary TSRMLS_CC);
 		zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), glibrary TSRMLS_CC);
+		zval_ptr_dtor(&glibrary);
 	}
 
 	if (!yaf_loader_register(instance TSRMLS_CC)) {

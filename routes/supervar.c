@@ -145,6 +145,7 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 	if (rest) {
 		params = yaf_router_parse_parameters(rest TSRMLS_CC);
 		(void)yaf_request_set_params_multi(request, params TSRMLS_CC);
+		zval_ptr_dtor(&params);
 		efree(rest);
 	}
 

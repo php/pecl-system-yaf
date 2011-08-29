@@ -57,8 +57,9 @@ yaf_response_t * yaf_response_instance(yaf_response_t *this_ptr, char *sapi_name
 	
 	MAKE_STD_ZVAL(header);
 	array_init(header);
-
 	zend_update_property(ce, instance, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADER), header TSRMLS_CC);
+	zval_ptr_dtor(&header);
+
 	zend_update_property_string(ce, instance, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), "" TSRMLS_CC);
 
 	return instance;

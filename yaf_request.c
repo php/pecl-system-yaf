@@ -285,6 +285,7 @@ zval * yaf_request_query(uint type, char * name, uint len TSRMLS_DC) {
 	}
 
 	if (!len) {
+		Z_ADDREF_P(*carrier);
 		return *carrier;
 	}
 
@@ -294,6 +295,8 @@ zval * yaf_request_query(uint type, char * name, uint len TSRMLS_DC) {
 		ZVAL_NULL(empty);
 		return empty;
 	}
+	
+	Z_ADDREF_P(*ret);
 	return *ret;
 }
 /* }}} */
