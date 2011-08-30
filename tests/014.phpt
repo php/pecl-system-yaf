@@ -36,8 +36,8 @@ Yaf_Application Object
                             [regex] => Array
                                 (
                                     [type] => regex
-                                    [route] => ^/ap/(.*)
-                                    [default] => Array
+                                    [match] => ^/ap/(.*)
+                                    [route] => Array
                                         (
                                             [controller] => Index
                                             [action] => action
@@ -69,8 +69,8 @@ Yaf_Application Object
                             [rewrite] => Array
                                 (
                                     [type] => rewrite
-                                    [route] => /ap/:name/:value
-                                    [default] => Array
+                                    [match] => /ap/:name/:value
+                                    [route] => Array
                                         (
                                             [controller] => Index
                                             [action] => action

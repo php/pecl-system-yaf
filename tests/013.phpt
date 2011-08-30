@@ -24,8 +24,8 @@ Yaf_Config_Ini Object
             [regex] => Array
                 (
                     [type] => regex
-                    [route] => ^/ap/(.*)
-                    [default] => Array
+                    [match] => ^/ap/(.*)
+                    [route] => Array
                         (
                             [controller] => Index
                             [action] => action
@@ -57,8 +57,8 @@ Yaf_Config_Ini Object
             [rewrite] => Array
                 (
                     [type] => rewrite
-                    [route] => /ap/:name/:value
-                    [default] => Array
+                    [match] => /ap/:name/:value
+                    [route] => Array
                         (
                             [controller] => Index
                             [action] => action

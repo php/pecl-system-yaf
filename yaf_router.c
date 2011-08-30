@@ -94,12 +94,16 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 			int  len = 0;
 			long idx = 0;
 
-			zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL);
-
-			if (len) {
-				zend_update_property_string(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_CURRENT_ROUTE), key TSRMLS_CC);
+			switch(zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL)) {
+				case HASH_KEY_IS_LONG:
+					zend_update_property_long(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_CURRENT_ROUTE), idx TSRMLS_CC);
+					break;
+				case HASH_KEY_IS_STRING:
+					if (len) {
+						zend_update_property_string(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_CURRENT_ROUTE), key TSRMLS_CC);
+					}
+					break;
 			}
-
 			yaf_request_set_routed(request, 1 TSRMLS_CC);
 			zval_ptr_dtor(&ret);
 			return 1;
@@ -139,15 +143,20 @@ int yaf_router_add_config(yaf_router_t *router, zval *configs TSRMLS_DC) {
 			}
 
 			route = yaf_route_instance(NULL, *entry TSRMLS_CC);
-			if (!route) {
-				continue;
-			}
 			switch (zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL)) {
 				case HASH_KEY_IS_STRING:
-						zend_hash_update(Z_ARRVAL_P(routes), key, len, (void **)&route, sizeof(zval *), NULL);
+					if (!route) {
+						php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to initialize route named '%s'", key);
+						continue;
+					}
+					zend_hash_update(Z_ARRVAL_P(routes), key, len, (void **)&route, sizeof(zval *), NULL);
 					break;
 				case HASH_KEY_IS_LONG:
-						zend_hash_index_update(Z_ARRVAL_P(routes), idx, (void **)&route, sizeof(zval *), NULL);
+					if (!route) {
+						php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to initialize route at index '%ld'", idx);
+						continue;
+					}
+					zend_hash_index_update(Z_ARRVAL_P(routes), idx, (void **)&route, sizeof(zval *), NULL);
 					break;
 				default:
 					continue;
