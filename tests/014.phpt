@@ -25,11 +25,12 @@ Yaf_Application Object
                     [name] => extra
                     [array] => Array
                         (
-                            [1] => 5
+                            [1] => 1
                             [name] => new_name
                             [2] => test
                         )
 
+                    [5] => 5
                     [routes] => Array
                         (
                             [regex] => Array
@@ -129,16 +130,6 @@ Yaf_Application Object
             [_default_module:protected] => Index
             [_default_controller:protected] => Index
             [_default_action:protected] => index
-            [_response] => Yaf_Response_Cli Object
-                (
-                    [_header:protected] => Array
-                        (
-                        )
-
-                    [_body:protected] => 
-                    [_sendheader:protected] => 
-                )
-
         )
 
     [_modules:protected] => Array

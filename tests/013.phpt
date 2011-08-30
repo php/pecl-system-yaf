@@ -9,6 +9,7 @@ $file = dirname(__FILE__) . "/simple.ini";
 $config = new Yaf_Config_Ini($file, 'extra');
 
 $routes = $config->routes;
+print_r($routes);
 
 $router = new Yaf_Router();
 $router->addConfig($routes);
@@ -16,6 +17,59 @@ $router->addConfig($routes);
 print_r($router->getRoutes());
 ?>
 --EXPECTF--
+Yaf_Config_Ini Object
+(
+    [_config:protected] => Array
+        (
+            [regex] => Array
+                (
+                    [type] => regex
+                    [route] => ^/ap/(.*)
+                    [default] => Array
+                        (
+                            [controller] => Index
+                            [action] => action
+                        )
+
+                    [map] => Array
+                        (
+                            [0] => name
+                            [1] => name
+                            [2] => value
+                        )
+
+                )
+
+            [simple] => Array
+                (
+                    [type] => simple
+                    [controller] => c
+                    [module] => m
+                    [action] => a
+                )
+
+            [supervar] => Array
+                (
+                    [type] => supervar
+                    [varname] => c
+                )
+
+            [rewrite] => Array
+                (
+                    [type] => rewrite
+                    [route] => /ap/:name/:value
+                    [default] => Array
+                        (
+                            [controller] => Index
+                            [action] => action
+                        )
+
+                )
+
+        )
+
+    [_readonly:protected] => 1
+)
 Array
 (
     [_default] => Yaf_Route_Static Object

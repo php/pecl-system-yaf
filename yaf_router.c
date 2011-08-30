@@ -120,19 +120,16 @@ int yaf_router_add_config(yaf_router_t *router, zval *configs TSRMLS_DC) {
 		return 0;
 	} else {
 		char *key = NULL;
-		int	 len  = 0;
+		uint len  = 0;
 		long idx  = 0;
+		zval *routes;
+
+		routes = zend_read_property(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), 1 TSRMLS_CC);
 
 		ht = Z_ARRVAL_P(configs);
-
 		for(zend_hash_internal_pointer_reset(ht);
 				zend_hash_has_more_elements(ht) == SUCCESS;
 				zend_hash_move_forward(ht)) {
-
-			if (zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL) != HASH_KEY_IS_STRING) {
-				continue;
-			}
-
 			if (zend_hash_get_current_data(ht, (void**)&entry) == FAILURE) {
 				continue;
 			}
@@ -142,10 +139,18 @@ int yaf_router_add_config(yaf_router_t *router, zval *configs TSRMLS_DC) {
 			}
 
 			route = yaf_route_instance(NULL, *entry TSRMLS_CC);
-
-			if (route) {
-				zval *routes = zend_read_property(yaf_router_ce, router, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), 1 TSRMLS_CC);
-				zend_hash_update(Z_ARRVAL_P(routes), key, len, (void **)&route, sizeof(zval *), NULL);
+			if (!route) {
+				continue;
+			}
+			switch (zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL)) {
+				case HASH_KEY_IS_STRING:
+						zend_hash_update(Z_ARRVAL_P(routes), key, len, (void **)&route, sizeof(zval *), NULL);
+					break;
+				case HASH_KEY_IS_LONG:
+						zend_hash_index_update(Z_ARRVAL_P(routes), idx, (void **)&route, sizeof(zval *), NULL);
+					break;
+				default:
+					continue;
 			}
 		} 
 		return 1;
@@ -248,13 +253,14 @@ PHP_METHOD(yaf_router, addConfig) {
 		return;
 	}
 
-	if (IS_OBJECT != Z_TYPE_P(config) || !instanceof_function(Z_OBJCE_P(config), yaf_config_ce TSRMLS_CC)) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING,  "Expect a %s instance", yaf_config_ce->name);
+	if (IS_OBJECT == Z_TYPE_P(config) && instanceof_function(Z_OBJCE_P(config), yaf_config_ce TSRMLS_CC)){
+		routes = zend_read_property(yaf_config_ce, config, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
+	} else if (IS_ARRAY == Z_TYPE_P(config)) {
+		routes = config;
+	} else {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING,  "Expect a %s instance or an array, %s given", yaf_config_ce->name, zend_zval_type_name(config));
 		RETURN_FALSE;
 	}
-
-	Z_ADDREF_P(config);
-	routes = zend_read_property(yaf_config_ce, config, ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
 
 	if (yaf_router_add_config(getThis(), routes TSRMLS_CC)) {
 		RETURN_ZVAL(getThis(), 1, 0);

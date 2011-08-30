@@ -18,7 +18,7 @@ foreach($config as $key => $value) {
 	print_r($key);
 }
 
-$sick = new Yaf_Config_Ini();
+$sick = @new Yaf_Config_Ini();
 
 var_dump($sick->__isset(1));
 var_dump($sick->__get(1));
@@ -41,10 +41,11 @@ Yaf_Config_Ini Object
                     [name] => base
                     [array] => Array
                         (
-                            [1] => 5
+                            [1] => 1
                             [name] => name
                         )
 
+                    [5] => 5
                     [routes] => Array
                         (
                             [regex] => Array
@@ -106,11 +107,12 @@ Yaf_Config_Ini Object
                     [name] => extra
                     [array] => Array
                         (
-                            [1] => 5
+                            [1] => 1
                             [name] => new_name
                             [2] => test
                         )
 
+                    [5] => 5
                     [routes] => Array
                         (
                             [regex] => Array
@@ -173,11 +175,12 @@ Yaf_Config_Ini Object
                     [name] => extra
                     [array] => Array
                         (
-                            [1] => 5
+                            [1] => 1
                             [name] => new_name
                             [2] => test
                         )
 
+                    [5] => 5
                     [routes] => Array
                         (
                             [regex] => Array
@@ -246,11 +249,12 @@ Yaf_Config_Ini Object
             [name] => extra
             [array] => Array
                 (
-                    [1] => 5
+                    [1] => 1
                     [name] => new_name
                     [2] => test
                 )
 
+            [5] => 5
             [routes] => Array
                 (
                     [regex] => Array

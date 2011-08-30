@@ -560,7 +560,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 		if (!ce) {
 			return 0;
 		} else {
-			zval  *action, *ret, *view_dir, *render;
+			zval  *action, *view_dir, *render, *ret = NULL;
 			char  *action_lower, *func_name;
 			uint  func_name_len;
 			zend_class_entry *view_ce;
@@ -619,8 +619,9 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				uint count = 0;
 				zval ***call_args = NULL;
 
-				executor = icontroller;
+				ret = NULL;
 
+				executor = icontroller;
 				if (fptr->common.num_args) {	
 					zval *method_name;
 
@@ -628,8 +629,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					MAKE_STD_ZVAL(method_name);
 					ZVAL_STRINGL(method_name, func_name, func_name_len, 0);
 
-					call_user_function_ex(&(ce)->function_table, &icontroller, 
-							method_name, &ret, count, call_args, 1, NULL TSRMLS_CC);
+					call_user_function_ex(&(ce)->function_table, &icontroller, method_name, &ret, count, call_args, 1, NULL TSRMLS_CC);
 
 					efree(method_name);
 					efree(call_args);
@@ -639,16 +639,21 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 
 				efree(func_name);
 
-				if (!ret ||( Z_TYPE_P(ret) == IS_BOOL
-							&& !Z_BVAL_P(ret))) {
+				if (!ret) {
 					Z_DELREF_P(action);
-
 					zval_dtor(icontroller);
 					efree(icontroller);
-
 					return 0;
 				}
 
+				if ((Z_TYPE_P(ret) == IS_BOOL
+							&& !Z_BVAL_P(ret))) {
+					zval_ptr_dtor(&ret);
+					Z_DELREF_P(action);
+					zval_dtor(icontroller);
+					efree(icontroller);
+					return 0;
+				}
 			} else if ((ce = yaf_dispatcher_get_action(app_dir, icontroller, 
 							Z_STRVAL_P(module), is_def_module, Z_STRVAL_P(action), Z_STRLEN_P(action) TSRMLS_CC)) 
 					&& (zend_hash_find(&(ce)->function_table, YAF_ACTION_EXECUTOR_NAME, 
@@ -673,8 +678,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					MAKE_STD_ZVAL(method_name);
 					ZVAL_STRINGL(method_name, YAF_ACTION_EXECUTOR_NAME, sizeof(YAF_ACTION_EXECUTOR_NAME) - 1, 0);
 
-					call_user_function_ex(&(ce)->function_table, &iaction, method_name,
-							&ret, count, call_args, 1, NULL TSRMLS_CC);
+					call_user_function_ex(&(ce)->function_table, &iaction, method_name, &ret, count, call_args, 1, NULL TSRMLS_CC);
 
 					efree(method_name);
 					efree(call_args);
@@ -682,8 +686,18 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					zend_call_method_with_0_params(&iaction, ce, NULL, "execute", &ret);
 				}
 
-				if (!ret ||( Z_TYPE_P(ret) == IS_BOOL
+				if (!ret) {
+					Z_DELREF_P(action);
+					zval_dtor(iaction);
+					efree(iaction);
+					zval_dtor(icontroller);
+					efree(icontroller);
+					return 0;
+				}
+
+				if (( Z_TYPE_P(ret) == IS_BOOL
 							&& !Z_BVAL_P(ret))) {
+					zval_ptr_dtor(&ret);
 					Z_DELREF_P(action);
 					zval_dtor(iaction);
 					efree(iaction);
@@ -703,9 +717,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			instantly_flush	= zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 1 TSRMLS_CC);
 
 			if (executor && Z_BVAL_P(render)) {
-				MAKE_STD_ZVAL(ret);
-				ZVAL_NULL(ret);
-
+				ret = NULL;
 				if (!Z_BVAL_P(instantly_flush)) {
 					zend_call_method_with_1_params(&executor, ce, NULL, "render", &ret, action);
 					zval_dtor(executor);
@@ -713,8 +725,9 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 
 					if (ret && Z_TYPE_P(ret) == IS_STRING && Z_STRLEN_P(ret)) {
 						yaf_response_alter_body(response, NULL, 0, Z_STRVAL_P(ret), Z_STRLEN_P(ret), 0 TSRMLS_CC);
-					} else {
-						efree(ret);
+						zval_ptr_dtor(&ret);
+					} else if (ret) {
+						zval_ptr_dtor(&ret);
 						Z_DELREF_P(action);
 						return 0;
 					}
@@ -723,17 +736,20 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					zval_dtor(executor);
 					efree(executor);
 
-					if (!ret || (Z_TYPE_P(ret) == IS_BOOL && !Z_BVAL_P(ret))) {
-						efree(ret);
+					if (!ret) {
+						Z_DELREF_P(action);
+						return 0;
+					}
+
+					if ((Z_TYPE_P(ret) == IS_BOOL && !Z_BVAL_P(ret))) {
+						zval_ptr_dtor(&ret);
 						Z_DELREF_P(action);
 						return 0;
 					}
 				}
 
 			}
-
 			Z_DELREF_P(action);
-			efree(ret);
 
 			return 1;
 		}

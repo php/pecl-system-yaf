@@ -105,7 +105,7 @@ yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC)
 		}	
 
 		instance = yaf_route_supervar_instance(NULL, *match TSRMLS_CC); 
-	}
+	} 
 	
 	return instance;
 }

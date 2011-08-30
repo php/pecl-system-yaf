@@ -81,7 +81,7 @@ ZEND_END_ARG_INFO()
  */
 static zval * yaf_controller_render(yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC) {
 	char 	*path, *view_ext, *self_name, *tmp;
-	zval 	*name, *param, *ret;
+	zval 	*name, *param, *ret = NULL;
 	int 	path_len;
 	yaf_view_t *view;
 
@@ -138,7 +138,7 @@ static zval * yaf_controller_render(yaf_controller_t *instance, char *action_nam
  */
 static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC) {
 	char *path, *view_ext, *self_name;
-	zval *name, *param, *ret;
+	zval *name, *param, *ret = NULL;
 	int  path_len;
 
 	yaf_view_t	*view;
@@ -163,9 +163,15 @@ static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instan
 	zval_dtor(param);
 	efree(param);
 
-	if (!ret || (Z_TYPE_P(ret) == IS_BOOL && !Z_BVAL_P(ret))) {
+	if (!ret) {
 		return 0;
 	}
+
+	if ((Z_TYPE_P(ret) == IS_BOOL && !Z_BVAL_P(ret))) { 
+		zval_ptr_dtor(&ret);
+		return 0;
+	}
+
 	return 1;
 }
 /* }}} */
@@ -332,7 +338,7 @@ PHP_METHOD(yaf_controller, getViewpath) {
 	} else {
 		zval *ret;
 		zend_call_method_with_0_params(&view, view_ce, NULL, "getscriptpath", &ret);
-		RETURN_ZVAL(ret, 1, 0);
+		RETURN_ZVAL(ret, 1, 1);
 	}
 }
 /* }}} */

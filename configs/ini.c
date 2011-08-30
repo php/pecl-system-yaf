@@ -97,10 +97,10 @@ zval * yaf_config_ini_format(yaf_config_t *instance, zval **ppzval TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ static zval * yaf_config_ini_parse_entry(HashTable * ht, char * name, int start, int name_len TSRMLS_DC) 
+/** {{{ static zval * yaf_config_ini_parse_entry(HashTable * ht, char * name, int start, int name_len, long index TSRMLS_DC) 
  * parse string to array
  */
-static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, int name_len TSRMLS_DC) {
+static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, int name_len, long index TSRMLS_DC) {
 	char *key;
 	uint keylen;
 	long idx;
@@ -108,67 +108,94 @@ static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, i
 	zval **ppzval, *ret = NULL;
 	int  found = 0;
 
-	for(zend_hash_internal_pointer_reset(ht);
-			zend_hash_has_more_elements(ht) == SUCCESS;
-			zend_hash_move_forward(ht)) {
-
-		zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL);
-		if (keylen != name_len || strncasecmp(key, name, name_len)) {
-			continue;
-		}
-
-		found = 1;
-		if (zend_hash_get_current_data(ht, (void**)&ppzval) == FAILURE) {
-			continue;
-		}
-		ret = *ppzval;
-		Z_ADDREF_P(ret);
-	} 
-
-	if (!found) {
-		char * record_name = emalloc(name_len + 1);
-
-		memcpy(record_name, name, name_len - 1);
-		record_name[name_len - 1] 	= '.';
-		record_name[name_len] 		= '\0';
-
-		MAKE_STD_ZVAL(ret);
-		array_init(ret);
+	if (index) {
+		/* HASH_KEY_IS_LONG */
 		for(zend_hash_internal_pointer_reset(ht);
 				zend_hash_has_more_elements(ht) == SUCCESS;
 				zend_hash_move_forward(ht)) {
 
+			if (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL) != HASH_KEY_IS_LONG) {
+				continue;
+			}
+			if (idx != index) {
+				continue;
+			}
+			if (zend_hash_get_current_data(ht, (void**)&ppzval) == FAILURE) {
+				continue;
+			}
+			ret = *ppzval;
+			Z_ADDREF_P(ret);
+		} 
+	} else {
+		/* HASH_KEY_IS_STRING */
+		for(zend_hash_internal_pointer_reset(ht);
+				zend_hash_has_more_elements(ht) == SUCCESS;
+				zend_hash_move_forward(ht)) {
 			if (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL) != HASH_KEY_IS_STRING) {
 				continue;
 			}
-			if (strncasecmp(key, record_name, name_len)) {
+			if (keylen != name_len || strncasecmp(key, name, name_len)) {
 				continue;
-			} else {
-				zval *son;
-				int real_key_len, long_key;
-				char *real_key = strstr(key + name_len + 1, ".");
-
-				zend_hash_get_pointer(ht, &position);
-				if (real_key == NULL) {
-					son 	 	 = yaf_config_ini_parse_entry(ht, key, name_len - 1, keylen TSRMLS_CC);
-					real_key	 = estrdup(key + name_len);
-					real_key_len = strlen(real_key) + 1;
-				} else {
-					son 		 = yaf_config_ini_parse_entry(ht, key, name_len - 1 , real_key - key + 1 TSRMLS_CC);
-					real_key_len = real_key - (key + name_len) + 1;
-					real_key 	 = estrdup(key + name_len);
-					*(real_key + real_key_len - 1) = '\0';
-				}
-				zend_hash_set_pointer(ht, &position);
-				if((long_key = yaf_config_ini_is_numeric(real_key TSRMLS_CC)) >= 0) {
-					zend_hash_index_update(Z_ARRVAL_P(ret), long_key, (void **)&son, sizeof(zval *), NULL);
-				} else {
-					zend_hash_update(Z_ARRVAL_P(ret), real_key, real_key_len , (void **)&son, sizeof(zval *), NULL);
-				}
-				efree(real_key);
 			}
+			if (zend_hash_get_current_data(ht, (void**)&ppzval) == FAILURE) {
+				continue;
+			}
+
+			found = 1;
+			ret = *ppzval;
+			Z_ADDREF_P(ret);
+		} 
+
+		if (!found) {
+			char * record_name = emalloc(name_len + 1);
+
+			memcpy(record_name, name, name_len - 1);
+			record_name[name_len - 1] = '.';
+			record_name[name_len] 	  = '\0';
+
+			MAKE_STD_ZVAL(ret);
+			array_init(ret);
+			for(zend_hash_internal_pointer_reset(ht);
+					zend_hash_has_more_elements(ht) == SUCCESS;
+					zend_hash_move_forward(ht)) {
+				if (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL) != HASH_KEY_IS_STRING) {
+					continue;
+				}
+				if (strncasecmp(key, record_name, name_len)) {
+					continue;
+				} else {
+					zval *son = NULL;
+					int real_key_len, long_key;
+					char *real_key = strstr(key + name_len + 1, ".");
+
+					zend_hash_get_pointer(ht, &position);
+					if (real_key == NULL) {
+						son 	 	 = yaf_config_ini_parse_entry(ht, key, name_len - 1, keylen, 0 TSRMLS_CC);
+						real_key	 = estrdup(key + name_len);
+						real_key_len = strlen(real_key) + 1;
+					} else {
+						son 		 = yaf_config_ini_parse_entry(ht, key, name_len - 1 , real_key - key + 1, 0 TSRMLS_CC);
+						real_key_len = real_key - (key + name_len) + 1;
+						real_key 	 = estrdup(key + name_len);
+						*(real_key + real_key_len - 1) = '\0';
+					}
+
+					if (!son) {
+						efree(real_key);
+						continue;
+					}
+
+					zend_hash_set_pointer(ht, &position);
+					if((long_key = yaf_config_ini_is_numeric(real_key TSRMLS_CC)) >= 0) {
+						zend_hash_index_update(Z_ARRVAL_P(ret), long_key, (void **)&son, sizeof(zval *), NULL);
+					} else {
+						zend_hash_update(Z_ARRVAL_P(ret), real_key, real_key_len , (void **)&son, sizeof(zval *), NULL);
+					}
+					efree(real_key);
+				}
+			}
+			efree(record_name);
 		}
-		efree(record_name);
 	}
 
 	return ret;
@@ -186,32 +213,40 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 	HashTable *ret;
 
 	ALLOC_HASHTABLE(ret);
-	zend_hash_init(ret, 128, NULL, ZVAL_PTR_DTOR, 0);
+	zend_hash_init(ret, 64, NULL, ZVAL_PTR_DTOR, 0);
 
 	MAKE_STD_ZVAL(dummy);
 	ZVAL_NULL(dummy);
 	for(zend_hash_internal_pointer_reset(ht);
 			zend_hash_has_more_elements(ht) == SUCCESS;
 			zend_hash_move_forward(ht)) {
-		zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL);
-		if ((real_key = strstr(key, "."))) {
-			keylen	 = real_key - key;
-			real_key = estrndup(key, keylen);
+		switch (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL)) {
+			case HASH_KEY_IS_STRING:
+				if ((real_key = strstr(key, "."))) {
+					keylen	 = real_key - key;
+					real_key = estrndup(key, keylen);
+					if (zend_hash_exists(ret, real_key, keylen + 1)) {
+						efree(real_key);
+						continue;
+					}
 
-			if (zend_hash_exists(ret, real_key, keylen + 1)) {
-				efree(real_key);
+					Z_ADDREF_P(dummy);
+					zend_hash_update(ret, real_key, keylen + 1, (void **)&dummy, sizeof(zval *), NULL);
+					efree(real_key);
+				} else {
+					if (zend_hash_exists(ret, key, keylen)) {
+						continue;
+					}
+					Z_ADDREF_P(dummy);
+					zend_hash_update(ret, key, keylen, (void **)&dummy, sizeof(zval *), NULL);
+				}
+			break;
+			case HASH_KEY_IS_LONG:
+				Z_ADDREF_P(dummy);
+				zend_hash_index_update(ret, idx, (void **)&dummy, sizeof(zval *), NULL);
+			break;
+			default:
 				continue;
-			}
-
-			Z_ADDREF_P(dummy);
-			zend_hash_update(ret, real_key, keylen + 1, (void **)&dummy, sizeof(zval *), NULL);
-			efree(real_key);
-		} else {
-			if (zend_hash_exists(ret, key, keylen)) {
-				continue;
-			}
-			Z_ADDREF_P(dummy);
-			zend_hash_update(ret, key, keylen, (void **)&dummy, sizeof(zval *), NULL);
 		}
 	}
 	zval_ptr_dtor(&dummy);
@@ -219,18 +254,29 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 	for(zend_hash_internal_pointer_reset(ret);
 			zend_hash_has_more_elements(ret) == SUCCESS;
 			zend_hash_move_forward(ret)) {
-		zend_hash_get_current_key_ex(ret, &key, &keylen, &idx, 0, NULL);
-		tmp = yaf_config_ini_parse_entry(ht, key, 0, keylen TSRMLS_CC);
-		zend_hash_update(ret, key, keylen , (void **)&tmp, sizeof(zval *), NULL);
+		switch (zend_hash_get_current_key_ex(ret, &key, &keylen, &idx, 0, NULL)) {
+			case HASH_KEY_IS_STRING:
+				if ((tmp = yaf_config_ini_parse_entry(ht, key, 0, keylen, 0 TSRMLS_CC))) {
+					zend_hash_update(ret, key, keylen , (void **)&tmp, sizeof(zval *), NULL);
+				}
+				break;
+			case HASH_KEY_IS_LONG:
+				if ((tmp = yaf_config_ini_parse_entry(ht, NULL, 0, 0, idx TSRMLS_CC))) {
+					zend_hash_index_update(ret, idx, (void **)&tmp, sizeof(zval *), NULL);
+				}
+				break;
+			default:
+				continue;
+		}
 	}
 
 	return ret;
 }
 /* }}} */
 
-/** {{{static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSRMLS_DC) 
+/** {{{static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len, long index TSRMLS_DC) 
 */
-static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len TSRMLS_DC)  {
+static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len, long index TSRMLS_DC)  {
 	zval *parent, **ppzval;
 	char *key, *buf;
 	long idx;
@@ -241,54 +287,80 @@ static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len TS
 	MAKE_STD_ZVAL(section);
 	array_init(section);
 
-	for(zend_hash_internal_pointer_reset(ht);
-			zend_hash_has_more_elements(ht) == SUCCESS;
-			zend_hash_move_forward(ht)) {
+	if (name) {
+		for(zend_hash_internal_pointer_reset(ht);
+				zend_hash_has_more_elements(ht) == SUCCESS;
+				zend_hash_move_forward(ht)) {
 
-		if (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL) == HASH_KEY_NON_EXISTANT) {
-			continue;
-		}
-
-		if (strncasecmp(key, name, len)) {
-			continue;
-		}
-
-		if (zend_hash_get_current_data(ht, (void**)&ppzval) == FAILURE) {
-			continue;
-		}
-
-		if (Z_TYPE_PP(ppzval) != IS_ARRAY) {
-			continue;
-		}
-
-		zend_hash_merge(Z_ARRVAL_P(section), Z_ARRVAL_PP(ppzval), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 0);
-
-		if ((buf = strstr(key, ":"))) {
-			char *parent_section, *tmp;
-			uint parent_len;
-			while((++buf)[0] == ' ');
-
-			parent_section = buf;
-
-			if ((tmp = strstr(parent_section, ":"))) {
-				parent_len = tmp - parent_section;
-			} else {
-				parent_len = strlen(parent_section);
+			if (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL) != HASH_KEY_IS_STRING) {
+				continue;
 			}
 
-			/* in case of nesting like "section : section" */
-			if (strncasecmp(buf, name, len)) {
-				zend_hash_get_pointer(ht, &position);
-				parent = yaf_config_ini_parse_section(ht, parent_section, parent_len TSRMLS_CC);
-				zend_hash_set_pointer(ht, &position);
-				zend_hash_merge(Z_ARRVAL_P(parent), Z_ARRVAL_P(section), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 1);
-				zval_ptr_dtor(&section);
-				section = parent;
-				parent  = NULL;
+			if (strncasecmp(key, name, len)) {
+				continue;
 			}
-		} 
 
-		break;
+			if (zend_hash_get_current_data(ht, (void**)&ppzval) == FAILURE) {
+				continue;
+			}
+
+			if (Z_TYPE_PP(ppzval) != IS_ARRAY) {
+				continue;
+			}
+
+			zend_hash_merge(Z_ARRVAL_P(section), Z_ARRVAL_PP(ppzval), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 0);
+
+			if ((buf = strstr(key, ":"))) {
+				char *parent_section, *tmp;
+				uint parent_len;
+				while((++buf)[0] == ' ');
+
+				parent_section = buf;
+
+				if ((tmp = strstr(parent_section, ":"))) {
+					parent_len = tmp - parent_section;
+				} else {
+					parent_len = strlen(parent_section);
+				}
+
+				/* in case of nesting like "section : section" */
+				if (strncasecmp(buf, name, len)) {
+					zend_hash_get_pointer(ht, &position);
+					parent = yaf_config_ini_parse_section(ht, parent_section, parent_len, 0 TSRMLS_CC);
+					zend_hash_set_pointer(ht, &position);
+					zend_hash_merge(Z_ARRVAL_P(parent), Z_ARRVAL_P(section), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 1);
+					zval_ptr_dtor(&section);
+					section = parent;
+					parent  = NULL;
+				}
+			} 
+
+			break;
+		}
+	} else {
+		/* HASH_KEY_IS_LONG */
+		for(zend_hash_internal_pointer_reset(ht);
+				zend_hash_has_more_elements(ht) == SUCCESS;
+				zend_hash_move_forward(ht)) {
+
+			if (zend_hash_get_current_key_ex(ht, &key, &keylen, &idx, 0, NULL) != HASH_KEY_IS_LONG) {
+				continue;
+			}
+
+			if (idx != index) {
+				continue;
+			}
+
+			if (zend_hash_get_current_data(ht, (void**)&ppzval) == FAILURE) {
+				continue;
+			}
+
+			if (Z_TYPE_PP(ppzval) != IS_ARRAY) {
+				continue;
+			}
+
+			zend_hash_merge(Z_ARRVAL_P(section), Z_ARRVAL_PP(ppzval), (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *), 0);
+		}
 	}
 
 	return section;
@@ -324,6 +396,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 		params[1] = process_section;
 
 		ZVAL_STRING(&function, "parse_ini_file", 0);
+
 		MAKE_STD_ZVAL(ini_entries);
 		ZVAL_FALSE(ini_entries);
 		/* since config need section parsing
@@ -347,7 +420,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 
 		if (section_name && Z_STRLEN_P(section_name)) {
 			HashTable *garbage;
-			configs = yaf_config_ini_parse_section(Z_ARRVAL_P(ini_entries), Z_STRVAL_P(section_name), Z_STRLEN_P(section_name) TSRMLS_CC);
+			configs = yaf_config_ini_parse_section(Z_ARRVAL_P(ini_entries), Z_STRVAL_P(section_name), Z_STRLEN_P(section_name), 0 TSRMLS_CC);
 			if (!configs) {
 				zval_ptr_dtor(&ini_entries);
 				yaf_trigger_error(E_ERROR TSRMLS_CC, "There is no section %s in %s", Z_STRVAL_P(section_name), Z_STRVAL_P(filename));
@@ -373,42 +446,61 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 			for(zend_hash_internal_pointer_reset(ht);
 					zend_hash_has_more_elements(ht) == SUCCESS;
 					zend_hash_move_forward(ht)) {
-
-				if (zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL) == HASH_KEY_NON_EXISTANT) {
-					continue;
-				}
-
-				if ((tmp = strstr(key, ex))) {
-					while(strlen(tmp) && (*(tmp - 1) == ' ' || *(tmp - 1) == '	')) tmp--;
-					len = tmp - key;
-				} else {
-					len -= 1;
-				}
-
-				if (zend_hash_get_current_data(ht, (void **)&ppzv) == FAILURE) {
-					continue;
-				}
-
-				if (Z_TYPE_PP(ppzv) == IS_ARRAY) {
-					section = 1;
-					zend_hash_get_pointer(ht, &pot);
-					sec = yaf_config_ini_parse_section(ht, key, len TSRMLS_CC);
-					zend_hash_set_pointer(ht, &pot);
-					if (sec) {
-						HashTable *garbage = Z_ARRVAL_P(sec);
-						Z_ARRVAL_P(sec) = yaf_config_ini_parse_record(Z_ARRVAL_P(sec) TSRMLS_CC);
-						zend_hash_destroy(garbage);
-						efree(garbage);
-
-						if (tmp) {
-							key = estrndup(key, len);
-							zend_hash_update(Z_ARRVAL_P(configs), key, len + 1, (void **)&sec, sizeof(zval *), NULL);
-							efree(key);
+				switch (zend_hash_get_current_key_ex(ht, &key, &len, &idx, 0, NULL)) {
+					case HASH_KEY_IS_STRING:
+						if ((tmp = strstr(key, ex))) {
+							while(strlen(tmp) && (*(tmp - 1) == ' ' || *(tmp - 1) == '	')) tmp--;
+							len = tmp - key;
 						} else {
-							zend_hash_update(Z_ARRVAL_P(configs), key, len + 1, (void **)&sec, sizeof(zval *), NULL);
+							len -= 1;
 						}
-					}
+
+						if (zend_hash_get_current_data(ht, (void **)&ppzv) == FAILURE) {
+							continue;
+						}
+						if (Z_TYPE_PP(ppzv) == IS_ARRAY) {
+							section = 1;
+							zend_hash_get_pointer(ht, &pot);
+							sec = yaf_config_ini_parse_section(ht, key, len, 0 TSRMLS_CC);
+							zend_hash_set_pointer(ht, &pot);
+							if (sec) {
+								HashTable *garbage = Z_ARRVAL_P(sec);
+								Z_ARRVAL_P(sec) = yaf_config_ini_parse_record(Z_ARRVAL_P(sec) TSRMLS_CC);
+								zend_hash_destroy(garbage);
+								efree(garbage);
+
+								if (tmp) {
+									key = estrndup(key, len);
+									zend_hash_update(Z_ARRVAL_P(configs), key, len + 1, (void **)&sec, sizeof(zval *), NULL);
+									efree(key);
+								} else {
+									zend_hash_update(Z_ARRVAL_P(configs), key, len + 1, (void **)&sec, sizeof(zval *), NULL);
+								}
+							}
+						}
+					break;
+					case HASH_KEY_IS_LONG:
+						if (zend_hash_get_current_data(ht, (void **)&ppzv) == FAILURE) {
+							continue;
+						}
+						if (Z_TYPE_PP(ppzv) == IS_ARRAY) {
+							section = 1;
+							zend_hash_get_pointer(ht, &pot);
+							sec = yaf_config_ini_parse_section(ht, NULL, 0, idx TSRMLS_CC);
+							zend_hash_set_pointer(ht, &pot);
+							if (sec) {
+								HashTable *garbage = Z_ARRVAL_P(sec);
+								Z_ARRVAL_P(sec) = yaf_config_ini_parse_record(Z_ARRVAL_P(sec) TSRMLS_CC);
+								zend_hash_destroy(garbage);
+								efree(garbage);
+								zend_hash_index_update(Z_ARRVAL_P(configs), idx, (void **)&sec, sizeof(zval *), NULL);
+							}
+						}
+					break;
+					default:
+						continue;
 				}
+
 			}
 
 			if (!section) {

@@ -169,7 +169,6 @@ yaf_route_t * yaf_route_supervar_instance(yaf_route_t *this_ptr, zval *name TSRM
 		object_init_ex(instance, yaf_route_supervar_ce);
 	}
 
-	Z_ADDREF_P(name);
 	zend_update_property(yaf_route_supervar_ce, instance, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), name TSRMLS_CC);
 
 	return instance;
