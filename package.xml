@@ -14,18 +14,22 @@
   </maintainer>
   </maintainers>
  <release>
-  <version>2.0.1</version>
-  <date>2011-06-28</date>
+  <version>2.1.0</version>
+  <date>2011-08-30</date>
   <license>PHP</license>
   <state>beta</state>
-  <notes>- Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
-- Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
-- Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
-- Corrected some broken C89 statements
+  <notes>- Avoided calling to get_class_entry for higher performance
+- Remove unnecessary stack variable initialization
+- Fixed mem leak reproted by test scripts
+- Added arginfo for all methods
+- Standardize error message
+- Add Yaf_Request::setRequstUri
+- Fixed build broken with PHP 5.4
+- many other litte improvements
   </notes>
   <deps>
-   <dep type="php" rel="ge" version="5.1.0"/>
-   <dep type="php" rel="le" version="5.3.6"/>
+   <dep type="php" rel="ge" version="5.2.0"/>
+   <dep type="php" rel="le" version="5.4.0"/>
   </deps>
   <filelist>
    <dir name="configs">
