@@ -118,8 +118,10 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	HashTable	*configs;
 	zval 		*modules;
 	uint 		buf_nesting;
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	void		*buffer;
 	void 		*owrite_handler;
+#endif
 #ifdef YAF_HAVE_NAMESPACE
 	zend_bool	use_namespace;
 #endif
