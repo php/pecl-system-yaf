@@ -10,8 +10,8 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2011-08-28</date>
- <time>11:48:25</time>
+ <date>2011-08-30</date>
+ <time>18:48:25</time>
  <version>
   <release>2.1.0</release>
   <api>2.1.0</api>
@@ -23,11 +23,13 @@
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
 - Avoided calling to get_class_entry for higher performance
-- Added arginfo for all methods
 - Remove unnecessary stack variable initialization
+- Fixed mem leak reproted by test scripts
+- Added arginfo for all methods
 - Standardize error message
 - Add Yaf_Request::setRequstUri
 - Fixed build broken with PHP 5.4
+- many other litte improvements
  </notes>
  <contents> 
   <dir name="/"> 
@@ -138,7 +140,7 @@
     <api>2.1.0</api> 
    </version> 
    <stability> 
-    <release>beta<release> 
+    <release>beta</release> 
     <api>beta</api> 
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
