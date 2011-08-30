@@ -318,6 +318,10 @@ PHP_METHOD(yaf_application, __construct) {
 	zend_update_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_CONFIG), zconfig TSRMLS_CC);
 	zend_update_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), zdispatcher TSRMLS_CC);
 
+	zval_ptr_dtor(&request);
+	zval_ptr_dtor(&zdispatcher);
+	zval_ptr_dtor(&zconfig);
+
 	if (YAF_G(library_directory)) {
 		loader = yaf_loader_instance(NULL, YAF_G(library_directory), 
 				strlen(YAF_G(global_library))? YAF_G(global_library) : NULL TSRMLS_CC);
