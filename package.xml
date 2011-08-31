@@ -14,18 +14,12 @@
   </maintainer>
   </maintainers>
  <release>
-  <version>2.1.0</version>
-  <date>2011-08-30</date>
+  <version>2.1.1</version>
+  <date>2011-08-31</date>
   <license>PHP</license>
   <state>beta</state>
-  <notes>- Avoided calling to get_class_entry for higher performance
-- Remove unnecessary stack variable initialization
-- Fixed mem leak reproted by test scripts
-- Added arginfo for all methods
-- Standardize error message
-- Add Yaf_Request::setRequstUri
-- Fixed build broken with PHP 5.4
-- many other litte improvements
+  <notes>-Fixed Yaf_View_Simple::render flush output instantly in PHP5.4
+-Fixed Yaf_Session crash in PHP5.4
   </notes>
   <deps>
    <dep type="php" rel="ge" version="5.2.0"/>
