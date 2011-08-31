@@ -102,9 +102,15 @@ static yaf_session_t * yaf_session_instance(TSRMLS_D) {
 	property_info = zend_get_property_info(obj->ce, member, 1 TSRMLS_CC);
 
 	Z_ADDREF_P(*sess);
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 3)) || (PHP_MAJOR_VERSION > 5)
+	if (!obj->properties) {
+		rebuild_object_properties(obj);
+	}
+#endif
 	/** This is ugly , because we can't set a ref property through the stadard APIs */
 	zend_hash_quick_update(obj->properties, property_info->name,
 			property_info->name_length+1, property_info->h, (void **)sess, sizeof(zval *), NULL);
+
 
 	zend_update_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
 

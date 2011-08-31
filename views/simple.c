@@ -364,14 +364,18 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 	}
 #else
 	if (php_output_get_contents(ret TSRMLS_CC) == FAILURE) {
+		php_output_end(TSRMLS_C);
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fetch ob content");
+		return 0;
+	}
+
+	if (php_output_discard(TSRMLS_C) != SUCCESS ) {
+		return 0;
 	}
 #endif
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
-			YAF_RESTORE_OUTPUT_BUFFER(buffer);
-#else
-			php_output_end(TSRMLS_C);
+	YAF_RESTORE_OUTPUT_BUFFER(buffer);
 #endif
 	return 1;
 }

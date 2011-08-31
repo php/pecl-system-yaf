@@ -179,16 +179,18 @@ PHP_RINIT_FUNCTION(yaf)
 {
 	YAF_G(running)  			= 0;
 	YAF_G(in_exception) 		= 0;
-	YAF_G(throw_exception)   = 1;
-	YAF_G(catch_exception)   = 0;
+	YAF_G(throw_exception)   	= 1;
+	YAF_G(catch_exception)   	= 0;
 	YAF_G(directory)			= NULL;
 	YAF_G(bootstrap)			= NULL;
-	YAF_G(library_directory) = NULL;
-	YAF_G(modules)			= NULL;
-	YAF_G(base_uri)			= NULL;
-	YAF_G(buffer)			= NULL;
-	YAF_G(owrite_handler)	= NULL;
-	YAF_G(buf_nesting)		= 0;
+	YAF_G(library_directory) 	= NULL;
+	YAF_G(modules)				= NULL;
+	YAF_G(base_uri)				= NULL;
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	YAF_G(buffer)				= NULL;
+	YAF_G(owrite_handler)		= NULL;
+	YAF_G(buf_nesting)			= 0;
+#endif
 
 	return SUCCESS;
 }
