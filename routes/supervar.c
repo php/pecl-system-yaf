@@ -130,15 +130,15 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 	efree(req_uri);
 
 	if (module != NULL) {
-		zend_update_property_string(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
+		zend_update_property_string(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
 		efree(module);
 	} 	
 	if (controller != NULL) {
-		zend_update_property_string(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
+		zend_update_property_string(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
 		efree(controller);
 	} 	
 	if (action != NULL) {
-		zend_update_property_string(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
+		zend_update_property_string(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
 		efree(action);
 	} 
 
@@ -224,7 +224,7 @@ YAF_STARTUP_FUNCTION(route_supervar) {
 	zend_class_implements(yaf_route_supervar_ce TSRMLS_CC, 1, yaf_route_ce);
 	yaf_route_supervar_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_property_null(yaf_route_supervar_ce, YAF_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR),  ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_route_supervar_ce, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR),  ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	return SUCCESS;
 }

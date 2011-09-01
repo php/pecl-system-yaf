@@ -60,7 +60,7 @@ yaf_response_t * yaf_response_instance(yaf_response_t *this_ptr, char *sapi_name
 	zend_update_property(ce, instance, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADER), header TSRMLS_CC);
 	zval_ptr_dtor(&header);
 
-	zend_update_property_string(ce, instance, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), "" TSRMLS_CC);
+	zend_update_property_string(ce, instance, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), "" TSRMLS_CC);
 
 	return instance;
 }
@@ -122,7 +122,7 @@ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, 
 /** {{{ int yaf_response_clear_body(yaf_response_t *response TSRMLS_DC)
  */
 int yaf_response_clear_body(yaf_response_t *response TSRMLS_DC) {
-	zend_update_property_string(yaf_response_ce, response, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), "" TSRMLS_CC);
+	zend_update_property_string(yaf_response_ce, response, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), "" TSRMLS_CC);
 	return 1;
 }
 /* }}} */
@@ -362,9 +362,9 @@ YAF_STARTUP_FUNCTION(response) {
 	yaf_response_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	yaf_response_ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
 
-	zend_declare_property_null(yaf_response_ce, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADER), ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_response_ce, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_bool(yaf_response_ce, YAF_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADEREXCEPTION), 0, ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_response_ce, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADER), ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_response_ce, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_response_ce, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADEREXCEPTION), 0, ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	YAF_STARTUP(response_http);
 	YAF_STARTUP(response_cli);

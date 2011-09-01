@@ -795,7 +795,7 @@ void yaf_dispatcher_exception_handler(yaf_dispatcher_t *dispatcher, yaf_request_
 	Z_DELREF_P(action);
 
 	/** use $request->getException() instand of */
-	yaf_request_set_params_single(request, YAF_STRL("exception"), exception TSRMLS_CC);
+	yaf_request_set_params_single(request, ZEND_STRL("exception"), exception TSRMLS_CC);
 	yaf_request_set_dispatched(request, 0 TSRMLS_CC);
 
 	view = yaf_dispatcher_init_view(dispatcher, NULL, NULL TSRMLS_CC);
@@ -942,7 +942,10 @@ PHP_METHOD(yaf_dispatcher, setErrorHandler) {
 	ZVAL_STRING(&function, "set_error_handler", 0);
 	if (call_user_function(EG(function_table), NULL, &function, return_value, ZEND_NUM_ARGS(), params TSRMLS_CC) == FAILURE) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Call to set_error_handler failed");
+		RETURN_FALSE;
 	}
+
+	RETURN_ZVAL(getThis(), 1, 0);
 }
 /* }}} */
 
@@ -950,7 +953,7 @@ PHP_METHOD(yaf_dispatcher, setErrorHandler) {
 */
 PHP_METHOD(yaf_dispatcher, disableView) {
 	yaf_dispatcher_t *self = getThis();
-	zend_update_property_bool(yaf_dispatcher_ce, self, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 0 TSRMLS_CC);
+	zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 0 TSRMLS_CC);
 	RETURN_ZVAL(self, 1, 0);
 }
 /* }}} */
@@ -959,7 +962,7 @@ PHP_METHOD(yaf_dispatcher, disableView) {
 */
 PHP_METHOD(yaf_dispatcher, enableView) {
 	yaf_dispatcher_t *self = getThis();
-	zend_update_property_bool(yaf_dispatcher_ce, self, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
+	zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
 	RETURN_ZVAL(self, 1, 0);
 }
 /* }}} */
@@ -974,7 +977,7 @@ PHP_METHOD(yaf_dispatcher, returnResponse) {
 		return;
 	}
 
-	zend_update_property_bool(yaf_dispatcher_ce, self, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), (auto_response)? 1:0 TSRMLS_CC);
+	zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), (auto_response)? 1:0 TSRMLS_CC);
 
 	RETURN_ZVAL(self, 1, 0);
 }
@@ -990,7 +993,7 @@ PHP_METHOD(yaf_dispatcher, flushInstantly) {
 		return;
 	}
 
-	zend_update_property_bool(yaf_dispatcher_ce, self, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), (instantly_flush)? 1:0 TSRMLS_CC);
+	zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), (instantly_flush)? 1:0 TSRMLS_CC);
 
 	RETURN_ZVAL(self, 1, 0);
 }
@@ -1328,22 +1331,22 @@ YAF_STARTUP_FUNCTION(dispatcher) {
 	yaf_dispatcher_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	yaf_dispatcher_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_ROUTER), 	ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_VIEW), 	ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_REQUEST), 	ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_PLUGINS), 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ROUTER), 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_VIEW), 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_REQUEST), 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_PLUGINS), 	ZEND_ACC_PROTECTED TSRMLS_CC);
 
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_INSTANCE), ZEND_ACC_PROTECTED|ZEND_ACC_STATIC TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_INSTANCE), ZEND_ACC_PROTECTED|ZEND_ACC_STATIC TSRMLS_CC);
 
-	zend_declare_property_bool(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER),	1,  ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_bool(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN),   0, ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_bool(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 	0, ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER),	1,  ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN),   0, ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 	0, ZEND_ACC_PROTECTED TSRMLS_CC);
 
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 		ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_CONTROLLER), 	ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_ACTION), 	 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 		ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_CONTROLLER), 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ACTION), 	 	ZEND_ACC_PROTECTED TSRMLS_CC);
 
-	/*zend_declare_property_null(yaf_dispatcher_ce, YAF_STRL(YAF_DISPATCHER_PROPERTY_NAME_ARGS), 	 	ZEND_ACC_PROTECTED TSRMLS_CC);*/
+	/*zend_declare_property_null(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ARGS), 	 	ZEND_ACC_PROTECTED TSRMLS_CC);*/
 
 	return SUCCESS;
 }

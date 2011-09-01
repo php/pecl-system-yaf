@@ -139,4 +139,6 @@ Yaf_Application Object
 
     [_running:protected] => 
     [_environ:protected] => product
+    [_err_no:protected] => 0
+    [_err_msg:protected] => 
 )

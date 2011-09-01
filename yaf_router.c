@@ -359,8 +359,8 @@ YAF_STARTUP_FUNCTION(router) {
 
 	yaf_router_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_property_null(yaf_router_ce, YAF_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), 		 ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_router_ce, YAF_STRL(YAF_ROUTER_PROPERTY_NAME_CURRENT_ROUTE), ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_router_ce, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), 		 ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_router_ce, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_CURRENT_ROUTE), ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	YAF_STARTUP(route);
 

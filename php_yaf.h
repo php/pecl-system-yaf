@@ -77,17 +77,6 @@ extern PHPAPI int  php_register_info_logo(char *logo_string, const char *mimetyp
 extern PHPAPI void php_var_dump(zval **struc, int level TSRMLS_DC);
 extern PHPAPI void php_debug_zval_dump(zval **struc, int level TSRMLS_DC);
 
-#define YAF_STRS	ZEND_STRS
-#define YAF_STRL	ZEND_STRL
-
-#define YAF_PSTRS(z)	Z_STRVAL_P(z), Z_STRLEN_P(z) + 1	
-#define YAF_PSTRL(z)	Z_STRVAL_P(z), Z_STRLEN_P(z)
-
-#define YAF_PPSTRS(z) \
-	Z_STRVAL_PP(z), Z_STRLEN_PP(z) + 1	
-#define YAF_PPSTRL(z) \
-	Z_STRVAL_PP(z), Z_STRLEN_PP(z)
-
 ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	char 		*ext;
 	char		*base_uri;

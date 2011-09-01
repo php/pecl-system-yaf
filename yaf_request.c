@@ -214,19 +214,19 @@ zval * yaf_request_query(uint type, char * name, uint len TSRMLS_DC) {
 #if PHP_YAF_DEBUG
 	switch (type) {
 		case YAF_GLOBAL_VARS_POST:
-			(void)zend_hash_find(&EG(symbol_table), YAF_STRS("_POST"), (void **)&carrier);
+			(void)zend_hash_find(&EG(symbol_table), ZEND_STRS("_POST"), (void **)&carrier);
 			break;
 		case YAF_GLOBAL_VARS_GET:
-			(void)zend_hash_find(&EG(symbol_table), YAF_STRS("_GET"), (void **)&carrier);
+			(void)zend_hash_find(&EG(symbol_table), ZEND_STRS("_GET"), (void **)&carrier);
 			break;
 		case YAF_GLOBAL_VARS_COOKIE:
-			(void)zend_hash_find(&EG(symbol_table), YAF_STRS("_COOKIE"), (void **)&carrier);
+			(void)zend_hash_find(&EG(symbol_table), ZEND_STRS("_COOKIE"), (void **)&carrier);
 			break;
 		case YAF_GLOBAL_VARS_SERVER:
 			if (jit_initialization) {
 				zend_is_auto_global(ZEND_STRL("_SERVER") TSRMLS_CC);
 			} 
-			(void)zend_hash_find(&EG(symbol_table), YAF_STRS("_SERVER"), (void **)&carrier);
+			(void)zend_hash_find(&EG(symbol_table), ZEND_STRS("_SERVER"), (void **)&carrier);
 			break;
 		case YAF_GLOBAL_VARS_ENV:
 			if (jit_initialization) {
@@ -241,7 +241,7 @@ zval * yaf_request_query(uint type, char * name, uint len TSRMLS_DC) {
 			if (jit_initialization) {
 				zend_is_auto_global(ZEND_STRL("_REQUEST") TSRMLS_CC);
 			} 
-			(void)zend_hash_find(&EG(symbol_table), YAF_STRS("_REQUEST"), (void **)&carrier);
+			(void)zend_hash_find(&EG(symbol_table), ZEND_STRS("_REQUEST"), (void **)&carrier);
 			break;
 		default:
 			break;
@@ -270,7 +270,7 @@ zval * yaf_request_query(uint type, char * name, uint len TSRMLS_DC) {
 			if (jit_initialization) {
 				zend_is_auto_global(ZEND_STRL("_REQUEST") TSRMLS_CC);
 			} 
-			(void)zend_hash_find(&EG(symbol_table), YAF_STRS("_REQUEST"), (void **)&carrier);
+			(void)zend_hash_find(&EG(symbol_table), ZEND_STRS("_REQUEST"), (void **)&carrier);
 			break;
 		default:
 			break;

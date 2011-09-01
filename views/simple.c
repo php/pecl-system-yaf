@@ -670,8 +670,8 @@ YAF_STARTUP_FUNCTION(view_simple) {
 	YAF_INIT_CLASS_ENTRY(ce, "Yaf_View_Simple", "Yaf\\View\\Simple", yaf_view_simple_methods);
 	yaf_view_simple_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 
-	zend_declare_property_null(yaf_view_simple_ce, YAF_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_view_simple_ce, YAF_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR),  ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_view_simple_ce, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_view_simple_ce, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR),  ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	yaf_view_simple_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 	zend_class_implements(yaf_view_simple_ce TSRMLS_CC, 1, yaf_view_interface_ce);

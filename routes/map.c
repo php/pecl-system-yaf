@@ -84,9 +84,9 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 
 	if (route_result.len) {
 		if (Z_BVAL_P(ctl_prefer)) {
-			zend_update_property_stringl(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), route_result.c, route_result.len - 1 TSRMLS_CC);
+			zend_update_property_stringl(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), route_result.c, route_result.len - 1 TSRMLS_CC);
 		} else {
-			zend_update_property_stringl(yaf_request_ce, request, YAF_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), route_result.c, route_result.len - 1 TSRMLS_CC);
+			zend_update_property_stringl(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), route_result.c, route_result.len - 1 TSRMLS_CC);
 		}
 		efree(route_result.c);
 	}
@@ -131,12 +131,12 @@ PHP_METHOD(yaf_route_map, __construct) {
 
 	if (controller_prefer) {
 		zend_update_property_bool(yaf_route_map_ce, getThis(),
-				YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 1 TSRMLS_CC);
+				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 1 TSRMLS_CC);
 	}
 
 	if (delim && delim_len) {
 		zend_update_property_stringl(yaf_route_map_ce, getThis(), 
-				YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), delim, delim_len TSRMLS_CC);
+				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), delim, delim_len TSRMLS_CC);
 	}
 }
 /* }}} */
@@ -161,8 +161,8 @@ YAF_STARTUP_FUNCTION(route_map) {
 
 	yaf_route_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 
-	zend_declare_property_bool(yaf_route_map_ce, YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 0, ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_route_map_ce, YAF_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER),  ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_bool(yaf_route_map_ce, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 0, ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_route_map_ce, ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER),  ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	return SUCCESS;
 }

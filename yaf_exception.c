@@ -31,6 +31,7 @@
 #include "zend_objects.h"
 
 #include "php_yaf.h"
+#include "yaf_application.h"
 #include "yaf_namespace.h"
 #include "yaf_exception.h"
 
@@ -43,19 +44,22 @@ static zend_class_entry * yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];
  */
 void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
 	va_list args;
+	char *message;
+	uint msg_len;
+
+	va_start(args, format);
+	msg_len = vspprintf(&message, 0, format, args); 
+	va_end(args);    
 
 	if (YAF_G(throw_exception)) {
-		char *message;
-		va_start(args, format);
-		vspprintf(&message, 0, format, args); 
-		va_end(args);    
 		yaf_throw_exception(type, message TSRMLS_CC);
-		efree(message); 
 	} else { 
-		va_start(args, format);
-		php_verror(NULL, "", E_ERROR, format, args TSRMLS_CC);
-		va_end(args);
+		yaf_application_t *app = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
+		zend_update_property_long(yaf_application_ce, app, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRNO), type TSRMLS_CC);
+		zend_update_property_stringl(yaf_application_ce, app, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRMSG), message, msg_len TSRMLS_CC);
+		php_error_docref(NULL TSRMLS_CC, E_RECOVERABLE_ERROR, message);
 	} 
+	efree(message); 
 }
 /* }}} */
 
@@ -164,9 +168,9 @@ YAF_STARTUP_FUNCTION(exception) {
 
 	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Exception", "Yaf\\Exception", yaf_exception_methods);
 	yaf_exception_ce = zend_register_internal_class_ex(&ce, yaf_get_exception_base(0 TSRMLS_CC), NULL TSRMLS_CC);
-	zend_declare_property_null(yaf_exception_ce, YAF_STRL("message"), 	ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_long(yaf_exception_ce, YAF_STRL("code"), 0,	ZEND_ACC_PROTECTED TSRMLS_CC);
-	zend_declare_property_null(yaf_exception_ce, YAF_STRL("previous"),  ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_exception_ce, ZEND_STRL("message"), 	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_long(yaf_exception_ce, ZEND_STRL("code"), 0,	ZEND_ACC_PROTECTED TSRMLS_CC);
+	zend_declare_property_null(yaf_exception_ce, ZEND_STRL("previous"),  ZEND_ACC_PROTECTED TSRMLS_CC);
 
 	YAF_INIT_CLASS_ENTRY(startup_ce, "Yaf_Exception_StartupError", "Yaf\\Exception\\StartupError", NULL);
 	yaf_buildin_exceptions[YAF_EXCEPTION_OFFSET(YAF_ERR_STARTUP_FAILED)] = zend_register_internal_class_ex(&startup_ce, yaf_exception_ce, NULL TSRMLS_CC);
