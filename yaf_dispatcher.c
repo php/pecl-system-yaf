@@ -225,6 +225,7 @@ static void yaf_dispatcher_get_call_parmaters(zend_class_entry *request_ce, yaf_
 
 	view = yaf_view_instance(NULL, tpl_dir, options TSRMLS_CC);
 	zend_update_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_VIEW), view TSRMLS_CC);
+	zval_ptr_dtor(&view);
 
 	return view;
 }
@@ -849,6 +850,7 @@ yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 	plugins	 = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_PLUGINS), 1 TSRMLS_CC);
 
 	if (!request || IS_OBJECT != Z_TYPE_P(request)) {
+		zval_ptr_dtor(&response);
 		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expect a %s instance", yaf_request_ce->name);
 		return NULL;
 	}
@@ -858,6 +860,7 @@ yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 		YAF_PLUGIN_HANDLE(plugins, YAF_PLUGIN_HOOK_ROUTESTARTUP, request, response);
 		YAF_EXCEPTION_HANDLE(dispatcher, request, response);
 		if (!yaf_dispatcher_route(dispatcher, request TSRMLS_CC)) {
+			zval_ptr_dtor(&response);
 			yaf_trigger_error(YAF_ERR_ROUTE_FAILED TSRMLS_CC, "Routing request failed");
 			YAF_EXCEPTION_HANDLE_NORET(dispatcher, request, response);
 			return NULL;
@@ -877,6 +880,7 @@ yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 	do {
 		YAF_PLUGIN_HANDLE(plugins, YAF_PLUGIN_HOOK_PREDISPATCH, request, response);
 		if (!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC)) {
+			zval_ptr_dtor(&response);
 			YAF_EXCEPTION_HANDLE(dispatcher, request, response);
 			return NULL;
 		}
@@ -889,6 +893,7 @@ yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 	YAF_EXCEPTION_HANDLE(dispatcher, request, response);
 
 	if (0 == nesting && !yaf_request_is_dispatched(request TSRMLS_CC)) {
+		zval_ptr_dtor(&response);
 		yaf_trigger_error(YAF_ERR_DISPATCH_FAILED TSRMLS_CC, "The max dispatch nesting %ld was reached", YAF_G(forward_limit));
 		YAF_EXCEPTION_HANDLE_NORET(dispatcher, request, response);
 		return NULL;
@@ -941,8 +946,15 @@ PHP_METHOD(yaf_dispatcher, setErrorHandler) {
 
 	ZVAL_STRING(&function, "set_error_handler", 0);
 	if (call_user_function(EG(function_table), NULL, &function, return_value, ZEND_NUM_ARGS(), params TSRMLS_CC) == FAILURE) {
+		if (return_value) {
+			zval_dtor(return_value);
+		}
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Call to set_error_handler failed");
 		RETURN_FALSE;
+	}
+
+	if (return_value) {
+		zval_dtor(return_value);
 	}
 
 	RETURN_ZVAL(getThis(), 1, 0);

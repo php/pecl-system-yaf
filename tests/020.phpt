@@ -24,7 +24,8 @@ function error_handler($errno, $errstr, $errfile, $errline) {
 }
 
 $app = new Yaf_Application($config);
-$app->getDispatcher()->setErrorHandler("error_handler", E_RECOVERABLE_ERROR)->getApplication()->run();
+$app->getDispatcher()->setErrorHandler("error_handler", E_RECOVERABLE_ERROR);
+$app->run();
 ?>
 --EXPECTF--
 int(516)

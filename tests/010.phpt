@@ -233,6 +233,80 @@ Yaf_Config_Ini Object
                     [value] => 2
                 )
 
+            [nocatch] => Array
+                (
+                    [application] => Array
+                        (
+                            [directory] => APPLICATION_PATCH/applcation
+                            [dispatcher] => Array
+                                (
+                                    [throwException] => 
+                                    [catchException] => 1
+                                )
+
+                        )
+
+                    [name] => extra
+                    [array] => Array
+                        (
+                            [1] => 1
+                            [name] => new_name
+                            [2] => test
+                        )
+
+                    [5] => 5
+                    [routes] => Array
+                        (
+                            [regex] => Array
+                                (
+                                    [type] => regex
+                                    [match] => ^/ap/(.*)
+                                    [route] => Array
+                                        (
+                                            [controller] => Index
+                                            [action] => action
+                                        )
+
+                                    [map] => Array
+                                        (
+                                            [0] => name
+                                            [1] => name
+                                            [2] => value
+                                        )
+
+                                )
+
+                            [simple] => Array
+                                (
+                                    [type] => simple
+                                    [controller] => c
+                                    [module] => m
+                                    [action] => a
+                                )
+
+                            [supervar] => Array
+                                (
+                                    [type] => supervar
+                                    [varname] => c
+                                )
+
+                            [rewrite] => Array
+                                (
+                                    [type] => rewrite
+                                    [match] => /ap/:name/:value
+                                    [route] => Array
+                                        (
+                                            [controller] => Index
+                                            [action] => action
+                                        )
+
+                                )
+
+                        )
+
+                    [value] => 2
+                )
+
         )
 
     [_readonly:protected] => 1
@@ -310,6 +384,6 @@ Yaf_Config_Ini Object
     [_readonly:protected] => 1
 )
 bool(true)
-baseextraproductbool(false)
+baseextraproductnocatchbool(false)
 NULL
 int(0)

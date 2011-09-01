@@ -203,15 +203,19 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 		}
 
 		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("throwException"), (void **)&ppsval) == SUCCESS) {
-			zval_add_ref(ppsval);
-			convert_to_boolean_ex(ppsval);
-			YAF_G(throw_exception) = Z_BVAL_PP(ppsval);
+			zval *tmp = *ppsval;
+			Z_ADDREF_P(tmp);
+			convert_to_boolean_ex(&tmp);
+			YAF_G(throw_exception) = Z_BVAL_P(tmp);
+			zval_ptr_dtor(&tmp);
 		}
 
 		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("catchException"), (void **)&ppsval) == SUCCESS) {
-			zval_add_ref(ppsval);
-			convert_to_boolean_ex(ppsval);
-			YAF_G(catch_exception) = Z_BVAL_PP(ppsval);
+			zval *tmp = *ppsval;
+			Z_ADDREF_P(tmp);
+			convert_to_boolean_ex(&tmp);
+			YAF_G(catch_exception) = Z_BVAL_P(tmp);
+			zval_ptr_dtor(&tmp);
 		}
 	}
 
@@ -400,7 +404,7 @@ PHP_METHOD(yaf_application, run) {
 
 	dispatcher = zend_read_property(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 1 TSRMLS_CC);
 	if ((response = yaf_dispatcher_dispatch(dispatcher TSRMLS_CC))) {
-		RETURN_ZVAL(response, 1, 0);
+		RETURN_ZVAL(response, 1, 1);
 	}
 
 	RETURN_FALSE;
