@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2011-08-31</date>
- <time>10:53:20</time>
+ <date>2011-09-01</date>
+ <time>17:50:20</time>
  <version>
-  <release>2.1.1</release>
-  <api>2.1.1</api>
+  <release>2.1.2</release>
+  <api>2.1.2</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,8 +22,10 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  -Fixed Yaf_View_Simple::render flush output instantly in PHP5.4
-  -Fixed Yaf_Session crash in PHP5.4
+-Added Yaf_Application::getLastErrorNo
+-Added Yaf_Application::getLastErrorMsg
+-Added Yaf_Application::clearLastError
+-Changed trigger ERROR to E_RECOVERABLE_ERROR, then people can use set_error_handler to catch it
  </notes>
  <contents> 
   <dir name="/"> 
@@ -127,6 +129,25 @@
  <providesextension>yaf</providesextension>
  <extsrcrelease />
  <changelog> 
+  <release> 
+   <date>2011-09-01</date> 
+   <version> 
+    <release>2.1.2</release> 
+    <api>2.1.2</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes> 
+-Added Yaf_Application::getLastErrorNo
+-Added Yaf_Application::getLastErrorMsg
+-Added Yaf_Application::clearLastError
+-Changed trigger ERROR to E_RECOVERABLE_ERROR, then people can use set_error_handler to catch it
+   </notes> 
+  </release> 
+
   <release> 
    <date>2011-08-31</date> 
    <version> 
