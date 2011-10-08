@@ -118,9 +118,9 @@ static zval * yaf_controller_render(yaf_controller_t *instance, char *action_nam
 	ZVAL_STRING(param, path, 0);
 
 	if (var_array) {
-		zend_call_method_with_2_params(&view, yaf_view_ce, NULL, "render", &ret, param, var_array);
+		zend_call_method_with_2_params(&view, Z_OBJCE_P(view), NULL, "render", &ret, param, var_array);
 	} else {
-		zend_call_method_with_1_params(&view, yaf_view_ce, NULL, "render", &ret, param);
+		zend_call_method_with_1_params(&view, Z_OBJCE_P(view), NULL, "render", &ret, param);
 	}
 
 	zval_dtor(param);
@@ -155,9 +155,9 @@ static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instan
 	ZVAL_STRING(param, path, 0);
 
 	if (var_array) {
-		zend_call_method_with_2_params(&view, yaf_view_ce, NULL, "display", &ret, param, var_array);
+		zend_call_method_with_2_params(&view, Z_OBJCE_P(view), NULL, "display", &ret, param, var_array);
 	} else {
-		zend_call_method_with_1_params(&view, yaf_view_ce, NULL, "display", &ret, param);
+		zend_call_method_with_1_params(&view, Z_OBJCE_P(view), NULL, "display", &ret, param);
 	}
 
 	zval_dtor(param);
@@ -317,7 +317,7 @@ PHP_METHOD(yaf_controller, setViewpath) {
 	}
 
 	view = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
-	if ((view_ce = yaf_view_ce) == yaf_view_simple_ce) {
+	if ((view_ce = Z_OBJCE_P(view)) == yaf_view_simple_ce) {
 		zend_update_property(view_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), path TSRMLS_CC);
 	} else {
 		zend_call_method_with_1_params(&view, view_ce, NULL, "setscriptpath", NULL, path);
@@ -332,7 +332,7 @@ PHP_METHOD(yaf_controller, setViewpath) {
 PHP_METHOD(yaf_controller, getViewpath) {
 	zend_class_entry *view_ce;
 	zval *view = zend_read_property(yaf_controller_ce, getThis(), ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
-	if ((view_ce = yaf_view_ce) == yaf_view_simple_ce) {
+	if ((view_ce = Z_OBJCE_P(view)) == yaf_view_simple_ce) {
 		zval *tpl_dir = zend_read_property(view_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 		RETURN_ZVAL(tpl_dir, 1, 0);
 	} else {
