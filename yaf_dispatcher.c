@@ -94,10 +94,6 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setview_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, view)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setappdir_arginfo, 0, 0, 1)
-    ZEND_ARG_INFO(0, directory)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(yaf_dispatcher_setctrl_arginfo, 0, 0, 1)
     ZEND_ARG_INFO(0, controller)
 ZEND_END_ARG_INFO()
@@ -1194,29 +1190,6 @@ PHP_METHOD(yaf_dispatcher, setView) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Dispatcher::setAppDirectory(string $directory) 
-*/
-PHP_METHOD(yaf_dispatcher, setAppDirectory) {
-	int	 len;
-	char *directory;
-	yaf_dispatcher_t *self = getThis();
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &directory, &len) == FAILURE) {
-		return;
-	}
-
-	if (!len || !IS_ABSOLUTE_PATH(directory, len)) {
-		RETURN_FALSE;
-	}
-
-	efree(YAF_G(directory));
-	
-	YAF_G(directory) = estrndup(directory, len);
-
-	RETURN_ZVAL(self, 1, 0);
-}
-/* }}} */
-
 /** {{{ proto public Yaf_Dispatcher::setDefaultModule(string $name)
 */
 PHP_METHOD(yaf_dispatcher, setDefaultModule) {
@@ -1317,7 +1290,6 @@ zend_function_entry yaf_dispatcher_methods[] = {
 	PHP_ME(yaf_dispatcher, getRouter,			yaf_dispatcher_void_arginfo, 		ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_dispatcher, getRequest,			yaf_dispatcher_void_arginfo, 		ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_dispatcher, setErrorHandler,		yaf_dispatcher_seterrhdler_arginfo, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_dispatcher, setAppDirectory,		yaf_dispatcher_setappdir_arginfo,	ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_dispatcher, setDefaultModule,	yaf_dispatcher_setmodule_arginfo, 	ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_dispatcher, setDefaultController,yaf_dispatcher_setctrl_arginfo, 	ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_dispatcher, setDefaultAction,	yaf_dispatcher_setaction_arginfo, 	ZEND_ACC_PUBLIC)

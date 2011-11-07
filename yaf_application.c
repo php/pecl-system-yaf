@@ -42,6 +42,9 @@ zend_class_entry * yaf_application_ce;
 
 /** {{{ ARG_INFO
  *  */
+ZEND_BEGIN_ARG_INFO_EX(yaf_application_void_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_construct_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, config)
 	ZEND_ARG_INFO(0, envrion)
@@ -74,6 +77,9 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(yaf_application_run_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(yaf_application_setappdir_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, directory)
+ZEND_END_ARG_INFO()
 /* }}} */
 
 /** {{{ int yaf_application_is_module_name(char *name, int len TSRMLS_DC)
@@ -629,6 +635,36 @@ PHP_METHOD(yaf_application, clearLastError) {
 }
 /* }}} */
 
+/** {{{ proto public Yaf_Application::setAppDirectory(string $directory) 
+*/
+PHP_METHOD(yaf_application, setAppDirectory) {
+	int	 len;
+	char *directory;
+	yaf_dispatcher_t *self = getThis();
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &directory, &len) == FAILURE) {
+		return;
+	}
+
+	if (!len || !IS_ABSOLUTE_PATH(directory, len)) {
+		RETURN_FALSE;
+	}
+
+	efree(YAF_G(directory));
+	
+	YAF_G(directory) = estrndup(directory, len);
+
+	RETURN_ZVAL(self, 1, 0);
+}
+/* }}} */
+
+/** {{{ proto public Yaf_Application::getAppDirectory(void) 
+*/
+PHP_METHOD(yaf_application, getAppDirectory) {
+	RETURN_STRING(YAF_G(directory), 1);
+}
+/* }}} */
+
 /** {{{ yaf_application_methods 
 */
 zend_function_entry yaf_application_methods[] = {
@@ -641,13 +677,15 @@ zend_function_entry yaf_application_methods[] = {
 	PHP_ME(yaf_application, getConfig,   	yaf_application_getconfig_arginfo, 	ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_application, getModules,   	yaf_application_getmodule_arginfo,  ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_application, getDispatcher, 	yaf_application_getdispatch_arginfo,ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_application, getLastErrorNo, NULL, 								ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_application, getLastErrorMsg,NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_application, clearLastError, NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_application, __destruct,		NULL, 								ZEND_ACC_PUBLIC|ZEND_ACC_DTOR)
-	PHP_ME(yaf_application, __clone,		NULL, 								ZEND_ACC_PRIVATE|ZEND_ACC_CLONE)
-	PHP_ME(yaf_application, __sleep,		NULL, 								ZEND_ACC_PRIVATE)
-	PHP_ME(yaf_application, __wakeup,		NULL, 								ZEND_ACC_PRIVATE)
+	PHP_ME(yaf_application, setAppDirectory,yaf_application_setappdir_arginfo,  ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, getAppDirectory,yaf_application_void_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, getLastErrorNo, yaf_application_void_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, getLastErrorMsg,yaf_application_void_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, clearLastError, yaf_application_void_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, __destruct,		NULL, ZEND_ACC_PUBLIC|ZEND_ACC_DTOR)
+	PHP_ME(yaf_application, __clone,		NULL, ZEND_ACC_PRIVATE|ZEND_ACC_CLONE)
+	PHP_ME(yaf_application, __sleep,		NULL, ZEND_ACC_PRIVATE)
+	PHP_ME(yaf_application, __wakeup,		NULL, ZEND_ACC_PRIVATE)
 	{NULL, NULL, NULL}
 };
 /* }}} */
