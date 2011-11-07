@@ -21,16 +21,16 @@ $loader->autoload("Bar_Foo");
 $loader->autoload("Bar_Model");
 ?>
 --EXPECTF--
-Warning: Yaf_Loader::autoload(): Could not find script /foo/Foo/Bar.php in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Could not find script /foo/Foo/Bar.php in %s023.php on line %d
 
-Warning: Yaf_Loader::autoload(): Could not find script /bar/Bar/Foo.php in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Could not find script /bar/Bar/Foo.php in %s023.php on line %d
 
-Warning: Yaf_Loader::autoload(): Could not find script /foobar/Foo/Bar.php in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Could not find script /foobar/Foo/Bar.php in %s023.php on line %d
 
-Warning: Yaf_Loader::autoload(): Could not find script /bar/Bar/Foo.php in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Could not find script /bar/Bar/Foo.php in %s023.php on line %d
 
-Warning: Yaf_Loader::autoload(): Could not find script /foobar/Foo/Bar.php in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Could not find script /foobar/Foo/Bar.php in %s023.php on line %d
 
-Warning: Yaf_Loader::autoload(): Could not find script /foobar/Bar/Foo.php in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Could not find script /foobar/Bar/Foo.php in %s023.php on line %d
 
-Warning: Yaf_Loader::autoload(): Couldn't load a framework MVC class without an Yaf_Application initializing in %s021.php on line %d
+Warning: Yaf_Loader::autoload(): Couldn't load a framework MVC class without an Yaf_Application initializing in %s023.php on line %d
