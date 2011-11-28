@@ -198,7 +198,7 @@ static int yaf_view_simple_extract(zval *tpl_vars, zval *vars TSRMLS_DC) {
 
 			if (yaf_view_simple_valid_var_name(var_name, var_name_len - 1)) {
 				ZEND_SET_SYMBOL_WITH_LENGTH(EG(active_symbol_table), var_name, var_name_len, 
-						*entry, Z_REFCOUNT_P(*entry) + 1, 0 /**PZVAL_IS_REF(*entry)*/);
+						*entry, Z_REFCOUNT_P(*entry) + 1, PZVAL_IS_REF(*entry));
 			}
 		}
 	}
