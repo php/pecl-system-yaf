@@ -240,8 +240,23 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 
 	instance = zend_read_static_property(yaf_loader_ce, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_INSTANCE), 1 TSRMLS_CC);
 
-	if (IS_OBJECT == Z_TYPE_P(instance) 
-			&& instanceof_function(Z_OBJCE_P(instance), yaf_loader_ce TSRMLS_CC)) {
+	if (IS_OBJECT == Z_TYPE_P(instance)) {
+	/* unecessary since there is no set_router things 
+	   && instanceof_function(Z_OBJCE_P(instance), yaf_loader_ce TSRMLS_CC)) {
+	 */
+		if (library_path) {
+			MAKE_STD_ZVAL(library);
+			ZVAL_STRING(library, library_path, 1);
+			zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_LIBRARY), library TSRMLS_CC);
+			zval_ptr_dtor(&library);
+		}
+
+		if (global_path) {
+			MAKE_STD_ZVAL(glibrary);
+			ZVAL_STRING(glibrary, global_path, 1);
+			zend_update_property(yaf_loader_ce, instance, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_GLOBAL_LIB), glibrary TSRMLS_CC);
+			zval_ptr_dtor(&glibrary);
+		}
 		return instance;
 	}
 

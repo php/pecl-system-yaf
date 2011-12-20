@@ -79,17 +79,17 @@ PHP_INI_END();
 */
 PHP_GINIT_FUNCTION(yaf)
 {
-	yaf_globals->autoload_started    = 0;
-	yaf_globals->configs				= NULL;
+	yaf_globals->autoload_started   = 0;
+	yaf_globals->configs			= NULL;
 	yaf_globals->directory			= NULL;
-	yaf_globals->library_directory   = NULL;
-	yaf_globals->ext				    = YAF_DEFAULT_EXT;
+	yaf_globals->library_directory  = NULL;
+	yaf_globals->ext			    = YAF_DEFAULT_EXT;
 	yaf_globals->view_ext			= YAF_DEFAULT_VIEW_EXT;
 	yaf_globals->default_module		= YAF_ROUTER_DEFAULT_MODULE;
-	yaf_globals->default_controller  = YAF_ROUTER_DEFAULT_CONTROLLER;
+	yaf_globals->default_controller = YAF_ROUTER_DEFAULT_CONTROLLER;
 	yaf_globals->default_action		= YAF_ROUTER_DEFAULT_ACTION;
 	yaf_globals->bootstrap			= YAF_DEFAULT_BOOTSTRAP;
-	yaf_globals->modules				= NULL;
+	yaf_globals->modules			= NULL;
 }
 /* }}} */
 
@@ -261,7 +261,6 @@ zend_module_entry yaf_module_entry = {
 	YAF_VERSION,
 	PHP_MODULE_GLOBALS(yaf),
 	PHP_GINIT(yaf),
-	NULL,
 	NULL,
 	STANDARD_MODULE_PROPERTIES_EX
 };
