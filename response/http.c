@@ -18,7 +18,7 @@
 
 zend_class_entry *yaf_response_http_ce;
 
-/** {{{ yaf_response_methods 
+/** {{{ yaf_response_methods
 */
 zend_function_entry yaf_response_http_methods[] = {
 	{NULL, NULL, NULL}

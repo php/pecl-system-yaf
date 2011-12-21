@@ -13,13 +13,13 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-   
+
 /* $Id$ */
 
 
 zend_class_entry * yaf_response_cli_ce;
 
-/** {{{ yaf_response_methods 
+/** {{{ yaf_response_methods
 */
 zend_function_entry yaf_response_cli_methods[] = {
 	{NULL, NULL, NULL}

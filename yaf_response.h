@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-   
+
 /* $Id$ */
 
 #ifndef PHP_YAF_RESPONSE_H

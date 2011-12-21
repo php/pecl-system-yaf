@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
- 
+
 /* $Id$ */
 
 #ifndef PHP_YAF_H
@@ -26,7 +26,7 @@ extern zend_module_entry yaf_module_entry;
 #define PHP_YAF_API __declspec(dllexport)
 #ifndef _MSC_VER
 #define _MSC_VER 1600
-#endif      
+#endif
 #else
 #define PHP_YAF_API
 #endif
@@ -41,7 +41,7 @@ extern zend_module_entry yaf_module_entry;
 #define YAF_G(v) (yaf_globals.v)
 #endif
 
-#define YAF_VERSION 					"2.1.4"
+#define YAF_VERSION 					"2.1.5-dev"
 
 #define YAF_STARTUP_FUNCTION(module)   	ZEND_MINIT_FUNCTION(yaf_##module)
 #define YAF_RINIT_FUNCTION(modle)		ZEND_RINIT_FUNCTION(yaf_##module)
@@ -50,7 +50,7 @@ extern zend_module_entry yaf_module_entry;
 #define YAF_SHUTDOWN(module)	 	    ZEND_MODULE_SHUTDOWN_N(yaf_##module)(INIT_FUNC_ARGS_PASSTHRU)
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
-#define YAF_HAVE_NAMESPACE			
+#define YAF_HAVE_NAMESPACE
 #else
 #define Z_ADDREF_P 	 ZVAL_ADDREF
 #define Z_REFCOUNT_P ZVAL_REFCOUNT

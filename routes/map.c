@@ -52,9 +52,9 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 		req_uri  = estrdup(Z_STRVAL_P(zuri));
 	}
 
-	if (Z_TYPE_P(delimer) == IS_STRING 
-			&& Z_STRLEN_P(delimer)) { 
-		if ((query_str = strstr(req_uri, Z_STRVAL_P(delimer))) != NULL 
+	if (Z_TYPE_P(delimer) == IS_STRING
+			&& Z_STRLEN_P(delimer)) {
+		if ((query_str = strstr(req_uri, Z_STRVAL_P(delimer))) != NULL
 			&& *(query_str - 1) == '/') {
 			tmp  = req_uri;
 			rest = query_str + Z_STRLEN_P(delimer);
@@ -135,7 +135,7 @@ PHP_METHOD(yaf_route_map, __construct) {
 	}
 
 	if (delim && delim_len) {
-		zend_update_property_stringl(yaf_route_map_ce, getThis(), 
+		zend_update_property_stringl(yaf_route_map_ce, getThis(),
 				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), delim, delim_len TSRMLS_CC);
 	}
 }
@@ -174,5 +174,5 @@ YAF_STARTUP_FUNCTION(route_map) {
  * c-basic-offset: 4
  * End:
  * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4 
+ * vim<600: noet sw=4 ts=4
  */

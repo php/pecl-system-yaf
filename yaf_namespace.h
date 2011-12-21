@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-  
+
 /* $Id$ */
 
 #ifndef YAF_NAMESPACE_H
@@ -39,7 +39,7 @@
 #endif
 
 #define namespace_switch(n)	(n)
-#define YAF_INIT_CLASS_ENTRY(ce, name, name_ns, methods)  INIT_CLASS_ENTRY(ce, name, methods) 
+#define YAF_INIT_CLASS_ENTRY(ce, name, name_ns, methods)  INIT_CLASS_ENTRY(ce, name, methods)
 #define YAF_BEGIN_ARG_INFO		static ZEND_BEGIN_ARG_INFO
 #define YAF_BEGIN_ARG_INFO_EX	static ZEND_BEGIN_ARG_INFO_EX
 

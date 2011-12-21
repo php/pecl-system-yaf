@@ -112,7 +112,7 @@ int yaf_application_is_module_name(char *name, int len TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ static int yaf_application_parse_option(zval *options TSRMLS_DC) 
+/** {{{ static int yaf_application_parse_option(zval *options TSRMLS_DC)
 */
 static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 	HashTable 	*conf;
@@ -160,7 +160,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("library"), (void **)&ppzval) == SUCCESS
 			&& Z_TYPE_PP(ppzval) == IS_STRING) {
 		YAF_G(library_directory) = estrndup(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval));
-	} 
+	}
 
 	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("view"), (void **)&ppzval) == FAILURE
 			|| Z_TYPE_PP(ppzval) != IS_ARRAY) {
@@ -240,7 +240,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 				if (seg && strlen(seg)) {
 					MAKE_STD_ZVAL(module);
 					ZVAL_STRINGL(module, seg, strlen(seg), 1);
-					zend_hash_next_index_insert(Z_ARRVAL_P(zmodules), 
+					zend_hash_next_index_insert(Z_ARRVAL_P(zmodules),
 							(void **)&module, sizeof(zval *), NULL);
 				}
 				seg = php_strtok_r(NULL, ",", &ptrptr);
@@ -258,7 +258,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ proto Yaf_Application::__construct(mixed $config, string $environ = YAF_G(environ)) 
+/** {{{ proto Yaf_Application::__construct(mixed $config, string $environ = YAF_G(environ))
 */
 PHP_METHOD(yaf_application, __construct) {
 	yaf_config_t 	 	*zconfig;
@@ -285,7 +285,7 @@ PHP_METHOD(yaf_application, __construct) {
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &config, &section) == FAILURE) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "%s::__construct expects at least 1 parameter, 0 give", yaf_application_ce->name);
 		return;
-	} 
+	}
 
 	if (!section || Z_TYPE_P(section) != IS_STRING || !Z_STRLEN_P(section)) {
 		MAKE_STD_ZVAL(section);
@@ -333,14 +333,14 @@ PHP_METHOD(yaf_application, __construct) {
 	zval_ptr_dtor(&zconfig);
 
 	if (YAF_G(library_directory)) {
-		loader = yaf_loader_instance(NULL, YAF_G(library_directory), 
+		loader = yaf_loader_instance(NULL, YAF_G(library_directory),
 				strlen(YAF_G(global_library))? YAF_G(global_library) : NULL TSRMLS_CC);
 		efree(YAF_G(library_directory));
 		YAF_G(library_directory) = NULL;
 	} else {
 		char *library_directory;
 		spprintf(&library_directory, 0, "%s%c%s", YAF_G(directory), DEFAULT_SLASH, YAF_LIBRARY_DIRECTORY_NAME);
-		loader = yaf_loader_instance(NULL, library_directory, 
+		loader = yaf_loader_instance(NULL, library_directory,
 				strlen(YAF_G(global_library))? YAF_G(global_library) : NULL TSRMLS_CC);
 		efree(library_directory);
 	}
@@ -360,7 +360,7 @@ PHP_METHOD(yaf_application, __construct) {
 	} else {
 		zend_update_property_null(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_MODULES) TSRMLS_CC);
 	}
- 
+
 	zend_update_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), self TSRMLS_CC);
 }
 /* }}} */
@@ -498,7 +498,7 @@ PHP_METHOD(yaf_application, execute) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::app(void) 
+/** {{{ proto public Yaf_Application::app(void)
 */
 PHP_METHOD(yaf_application, app) {
 	yaf_application_t *app = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
@@ -506,7 +506,7 @@ PHP_METHOD(yaf_application, app) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::getConfig(void) 
+/** {{{ proto public Yaf_Application::getConfig(void)
 */
 PHP_METHOD(yaf_application, getConfig) {
 	yaf_config_t *config = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_CONFIG), 1 TSRMLS_CC);
@@ -514,7 +514,7 @@ PHP_METHOD(yaf_application, getConfig) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::getDispatcher(void) 
+/** {{{ proto public Yaf_Application::getDispatcher(void)
 */
 PHP_METHOD(yaf_application, getDispatcher) {
 	yaf_dispatcher_t *dispatcher = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_DISPATCHER), 1 TSRMLS_CC);
@@ -530,7 +530,7 @@ PHP_METHOD(yaf_application, getModules) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::environ(void) 
+/** {{{ proto public Yaf_Application::environ(void)
 */
 PHP_METHOD(yaf_application, environ) {
 	zval *env = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ENV), 1 TSRMLS_CC);
@@ -538,7 +538,7 @@ PHP_METHOD(yaf_application, environ) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::bootstrap(void) 
+/** {{{ proto public Yaf_Application::bootstrap(void)
 */
 PHP_METHOD(yaf_application, bootstrap) {
 	char *bootstrap_path;
@@ -561,10 +561,10 @@ PHP_METHOD(yaf_application, bootstrap) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Couldn't find class %s in %s", YAF_DEFAULT_BOOTSTRAP, bootstrap_path);
 			retval = 0;
 		} else if (!instanceof_function(*ce, yaf_bootstrap_ce TSRMLS_CC)) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expect a %s instance, %s give", yaf_bootstrap_ce->name, (*ce)->name);    
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Expect a %s instance, %s give", yaf_bootstrap_ce->name, (*ce)->name);
 			retval = 0;
 		}
-	
+
 		efree(bootstrap_path);
 	}
 
@@ -603,13 +603,13 @@ PHP_METHOD(yaf_application, bootstrap) {
 
 		zval_dtor(bootstrap);
 		efree(bootstrap);
-	} 
+	}
 
 	RETVAL_ZVAL(self, 1, 0);
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::getLastErrorNo(void) 
+/** {{{ proto public Yaf_Application::getLastErrorNo(void)
 */
 PHP_METHOD(yaf_application, getLastErrorNo) {
 	zval *errcode = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRNO), 1 TSRMLS_CC);
@@ -617,7 +617,7 @@ PHP_METHOD(yaf_application, getLastErrorNo) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::getLastErrorMsg(void) 
+/** {{{ proto public Yaf_Application::getLastErrorMsg(void)
 */
 PHP_METHOD(yaf_application, getLastErrorMsg) {
 	zval *errmsg = zend_read_property(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRMSG), 1 TSRMLS_CC);
@@ -625,7 +625,7 @@ PHP_METHOD(yaf_application, getLastErrorMsg) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::clearLastError(void) 
+/** {{{ proto public Yaf_Application::clearLastError(void)
 */
 PHP_METHOD(yaf_application, clearLastError) {
 	zend_update_property_long(yaf_application_ce, getThis(), ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRNO), 0 TSRMLS_CC);
@@ -635,7 +635,7 @@ PHP_METHOD(yaf_application, clearLastError) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::setAppDirectory(string $directory) 
+/** {{{ proto public Yaf_Application::setAppDirectory(string $directory)
 */
 PHP_METHOD(yaf_application, setAppDirectory) {
 	int	 len;
@@ -651,27 +651,27 @@ PHP_METHOD(yaf_application, setAppDirectory) {
 	}
 
 	efree(YAF_G(directory));
-	
+
 	YAF_G(directory) = estrndup(directory, len);
 
 	RETURN_ZVAL(self, 1, 0);
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Application::getAppDirectory(void) 
+/** {{{ proto public Yaf_Application::getAppDirectory(void)
 */
 PHP_METHOD(yaf_application, getAppDirectory) {
 	RETURN_STRING(YAF_G(directory), 1);
 }
 /* }}} */
 
-/** {{{ yaf_application_methods 
+/** {{{ yaf_application_methods
 */
 zend_function_entry yaf_application_methods[] = {
-	PHP_ME(yaf_application, __construct, 	yaf_application_construct_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR) 
-	PHP_ME(yaf_application, run, 	 	 	yaf_application_run_arginfo, 		ZEND_ACC_PUBLIC) 
-	PHP_ME(yaf_application, execute,	  	yaf_application_execute_arginfo, 	ZEND_ACC_PUBLIC) 
-	PHP_ME(yaf_application, app, 	 	 	yaf_application_app_arginfo, 		ZEND_ACC_PUBLIC|ZEND_ACC_STATIC) 
+	PHP_ME(yaf_application, __construct, 	yaf_application_construct_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+	PHP_ME(yaf_application, run, 	 	 	yaf_application_run_arginfo, 		ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, execute,	  	yaf_application_execute_arginfo, 	ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_application, app, 	 	 	yaf_application_app_arginfo, 		ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(yaf_application, environ, 	  	yaf_application_environ_arginfo, 	ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_application, bootstrap,   	yaf_application_bootstrap_arginfo,  ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_application, getConfig,   	yaf_application_getconfig_arginfo, 	ZEND_ACC_PUBLIC)

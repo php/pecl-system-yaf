@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-  
+
 /* $Id$ */
 
 zend_class_entry *yaf_route_simple_ce;
@@ -145,5 +145,5 @@ YAF_STARTUP_FUNCTION(route_simple) {
  * c-basic-offset: 4
  * End:
  * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4 
+ * vim<600: noet sw=4 ts=4
  */

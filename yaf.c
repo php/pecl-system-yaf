@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-   
+
 /* $Id$ */
 
 #ifdef HAVE_CONFIG_H
@@ -50,7 +50,7 @@ ZEND_DECLARE_MODULE_GLOBALS(yaf);
 /* {{{ yaf_functions[]
 */
 zend_function_entry yaf_functions[] = {
-	{NULL, NULL, NULL}	
+	{NULL, NULL, NULL}
 };
 /* }}} */
 
@@ -228,14 +228,14 @@ PHP_MINFO_FUNCTION(yaf)
 }
 /* }}} */
 
-/** {{{ DL support 
+/** {{{ DL support
  */
 #ifdef COMPILE_DL_YAF
 ZEND_GET_MODULE(yaf)
 #endif
 /* }}} */
 
-/** {{{ module depends 
+/** {{{ module depends
  */
 zend_module_dep yaf_deps[] = {
 	ZEND_MOD_REQUIRED("spl")
@@ -248,15 +248,15 @@ zend_module_dep yaf_deps[] = {
 /** {{{ yaf_module_entry
 */
 zend_module_entry yaf_module_entry = {
-	STANDARD_MODULE_HEADER_EX, 
+	STANDARD_MODULE_HEADER_EX,
 	NULL,
 	yaf_deps,
 	"yaf",
 	yaf_functions,
 	PHP_MINIT(yaf),
 	PHP_MSHUTDOWN(yaf),
-	PHP_RINIT(yaf),	
-	PHP_RSHUTDOWN(yaf),	
+	PHP_RINIT(yaf),
+	PHP_RSHUTDOWN(yaf),
 	PHP_MINFO(yaf),
 	YAF_VERSION,
 	PHP_MODULE_GLOBALS(yaf),

@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-   
+
 /* $Id$ */
 
 #ifndef YAF_REGISTRY_H

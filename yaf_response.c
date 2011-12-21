@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-   
+
 /* $Id$ */
 
 #ifdef HAVE_CONFIG_H
@@ -54,7 +54,7 @@ yaf_response_t * yaf_response_instance(yaf_response_t *this_ptr, char *sapi_name
 		MAKE_STD_ZVAL(instance);
 		object_init_ex(instance, ce);
 	}
-	
+
 	MAKE_STD_ZVAL(header);
 	array_init(header);
 	zend_update_property(ce, instance, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADER), header TSRMLS_CC);
@@ -106,7 +106,7 @@ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, 
 
 	zbody = zend_read_property(yaf_response_ce, response, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), 1 TSRMLS_CC);
 	obody = Z_STRVAL_P(zbody);
-	
+
 	if (prepend) {
 		Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", body, obody);
 	}  else {
@@ -165,7 +165,7 @@ zval * yaf_response_get_body(yaf_response_t *response TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ proto private Yaf_Response_Abstract::__construct() 
+/** {{{ proto private Yaf_Response_Abstract::__construct()
 */
 PHP_METHOD(yaf_response, __construct) {
 	(void)yaf_response_instance(getThis(), sapi_module.name TSRMLS_CC);
@@ -184,7 +184,7 @@ PHP_METHOD(yaf_response, appendBody) {
 	char		  	*body, *name = NULL;
 	uint			body_len, name_len = 0;
 	yaf_response_t 	*self;
-	
+
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s", &body, &body_len, &name, &name_len) == FAILURE) {
 		return;
 	}
@@ -205,7 +205,7 @@ PHP_METHOD(yaf_response, prependBody) {
 	char		  	*body, *name = NULL;
 	uint			body_len, name_len = 0;
 	yaf_response_t 	*self;
-	
+
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s", &body, &body_len, &name, &name_len) == FAILURE) {
 		return;
 	}
@@ -256,7 +256,7 @@ PHP_METHOD(yaf_response, setRedirect) {
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &url, &url_len) == FAILURE) {
 		return;
-	}	
+	}
 
 	if (!url_len) {
 		RETURN_FALSE;
@@ -272,7 +272,7 @@ PHP_METHOD(yaf_response, setBody) {
 	char		  	*body, *name = NULL;
 	uint			body_len, name_len = 0;
 	yaf_response_t 	*self;
-	
+
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s", &body, &body_len, &name, &name_len) == FAILURE) {
 		return;
 	}
@@ -304,7 +304,7 @@ PHP_METHOD(yaf_response, getBody) {
 	zval *body;
 
 	body = yaf_response_get_body(getThis() TSRMLS_CC);
-	
+
 	RETURN_ZVAL(body, 1, 0);
 }
 /* }}} */
@@ -330,11 +330,11 @@ PHP_METHOD(yaf_response, __clone) {
 }
 /* }}} */
 
-/** {{{ yaf_response_methods 
+/** {{{ yaf_response_methods
 */
 zend_function_entry yaf_response_methods[] = {
-	PHP_ME(yaf_response, __construct, 	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR) 
-	PHP_ME(yaf_response, __destruct,  	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_DTOR) 
+	PHP_ME(yaf_response, __construct, 	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+	PHP_ME(yaf_response, __destruct,  	NULL, ZEND_ACC_PUBLIC|ZEND_ACC_DTOR)
 	PHP_ME(yaf_response, __clone,		NULL, ZEND_ACC_PRIVATE)
 	PHP_ME(yaf_response, __toString,		NULL, ZEND_ACC_PRIVATE)
 	PHP_ME(yaf_response, setBody,		NULL, ZEND_ACC_PUBLIC)
@@ -345,7 +345,7 @@ zend_function_entry yaf_response_methods[] = {
 	PHP_ME(yaf_response, setHeader,		NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_response, setAllHeaders,	NULL, ZEND_ACC_PROTECTED)
 	PHP_ME(yaf_response, getHeader,		NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(yaf_response, clearHeaders,   NULL, ZEND_ACC_PUBLIC)	
+	PHP_ME(yaf_response, clearHeaders,   NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_response, setRedirect,	NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_response, response,		NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}

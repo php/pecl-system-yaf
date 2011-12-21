@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
-   
+
 /* $Id$ */
 
 #ifdef HAVE_CONFIG_H
@@ -29,7 +29,7 @@
 
 zend_class_entry *yaf_bootstrap_ce;
 
-/** {{{ yaf_bootstrap_methods 
+/** {{{ yaf_bootstrap_methods
 */
 zend_function_entry yaf_bootstrap_methods[] = {
 	{NULL, NULL, NULL}

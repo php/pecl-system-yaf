@@ -52,21 +52,21 @@ ZEND_END_ARG_INFO()
 /** {{{ static unsigned int numerics[256]
 */
 static unsigned int numerics[256] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3,
 	4, 5, 6, 7, 8, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 /* }}} */
 
@@ -97,7 +97,7 @@ zval * yaf_config_ini_format(yaf_config_t *instance, zval **ppzval TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ static zval * yaf_config_ini_parse_entry(HashTable * ht, char * name, int start, int name_len, long index TSRMLS_DC) 
+/** {{{ static zval * yaf_config_ini_parse_entry(HashTable * ht, char * name, int start, int name_len, long index TSRMLS_DC)
  * parse string to array
  */
 static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, int name_len, long index TSRMLS_DC) {
@@ -125,7 +125,7 @@ static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, i
 			}
 			ret = *ppzval;
 			Z_ADDREF_P(ret);
-		} 
+		}
 	} else {
 		/* HASH_KEY_IS_STRING */
 		for(zend_hash_internal_pointer_reset(ht);
@@ -144,7 +144,7 @@ static zval * yaf_config_ini_parse_entry(HashTable *ht, char *name, int start, i
 			found = 1;
 			ret = *ppzval;
 			Z_ADDREF_P(ret);
-		} 
+		}
 
 		if (!found) {
 			char * record_name = emalloc(name_len + 1);
@@ -274,7 +274,7 @@ static HashTable * yaf_config_ini_parse_record(HashTable *ht TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len, long index TSRMLS_DC) 
+/** {{{static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len, long index TSRMLS_DC)
 */
 static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len, long index TSRMLS_DC)  {
 	zval *parent, **ppzval;
@@ -333,7 +333,7 @@ static zval * yaf_config_ini_parse_section(HashTable *ht, char *name, int len, l
 					section = parent;
 					parent  = NULL;
 				}
-			} 
+			}
 
 			break;
 		}
@@ -530,12 +530,12 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 		return instance;
 	} else {
 		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Invalid parameters provided, must be path of ini file");
-		return NULL;	
+		return NULL;
 	}
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Config_Ini::__construct(mixed $config_path, string $section_name) 
+/** {{{ proto public Yaf_Config_Ini::__construct(mixed $config_path, string $section_name)
 */
 PHP_METHOD(yaf_config_ini, __construct) {
 	zval *filename, *section = NULL;
@@ -593,7 +593,7 @@ PHP_METHOD(yaf_config_ini, get) {
 				RETURN_NULL();
 			}
 		}
-		
+
 		efree(entry);
 
 		if (Z_TYPE_PP(ppzval) == IS_ARRAY) {
@@ -635,7 +635,7 @@ PHP_METHOD(yaf_config_ini, __isset) {
 		return;
 	} else {
 		zval *prop = zend_read_property(yaf_config_ini_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
-		RETURN_BOOL(zend_hash_exists(Z_ARRVAL_P(prop), name, len + 1)); 
+		RETURN_BOOL(zend_hash_exists(Z_ARRVAL_P(prop), name, len + 1));
 	}
 }
 /* }}} */
@@ -648,7 +648,7 @@ PHP_METHOD(yaf_config_ini, count) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Config_Ini::offsetUnset($index) 
+/** {{{ proto public Yaf_Config_Ini::offsetUnset($index)
 */
 PHP_METHOD(yaf_config_ini, offsetUnset) {
 	RETURN_FALSE;

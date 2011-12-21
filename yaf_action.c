@@ -13,7 +13,7 @@
   | Author: Xinchen Hui  <laruence@php.net>                              |
   +----------------------------------------------------------------------+
 */
- 
+
 /* $Id$ */
 
 #ifdef HAVE_CONFIG_H
@@ -35,7 +35,7 @@
 
 zend_class_entry *yaf_action_ce;
 
-/** {{{ ARG_INFO 
+/** {{{ ARG_INFO
  */
 
 /* }}} */
@@ -48,7 +48,7 @@ PHP_METHOD(yaf_action, getController) {
 }
 /* }}} */
 
-/** {{{ yaf_controller_methods 
+/** {{{ yaf_controller_methods
 */
 zend_function_entry yaf_action_methods[] = {
 	PHP_ABSTRACT_ME(yaf_action_controller, execute, NULL)
