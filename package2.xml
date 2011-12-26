@@ -22,7 +22,7 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  Fix Bug #60608
+- Fix Bug #60608
  </notes>
  <contents> 
   <dir name="/"> 
@@ -178,7 +178,7 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
--Fixed Bug that Yaf still call to Yaf_View_Simple although a custom view engine was setted
+- Fixed Bug that Yaf still call to Yaf_View_Simple although a custom view engine was setted
    </notes> 
   </release> 
   <release> 
@@ -193,10 +193,10 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
--Added Yaf_Application::getLastErrorNo
--Added Yaf_Application::getLastErrorMsg
--Added Yaf_Application::clearLastError
--Changed trigger ERROR to E_RECOVERABLE_ERROR, then people can use set_error_handler to catch it
+- Added Yaf_Application::getLastErrorNo
+- Added Yaf_Application::getLastErrorMsg
+- Added Yaf_Application::clearLastError
+- Changed trigger ERROR to E_RECOVERABLE_ERROR, then people can use set_error_handler to catch it
    </notes> 
   </release> 
 
@@ -212,8 +212,8 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
--Fixed Yaf_View_Simple::render flush output instantly in PHP5.4
--Fixed Yaf_Session crash in PHP5.4
+- Fixed Yaf_View_Simple::render flush output instantly in PHP5.4
+- Fixed Yaf_Session crash in PHP5.4
    </notes> 
   </release> 
   <release> 
