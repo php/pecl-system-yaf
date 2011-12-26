@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2011-12-21</date>
- <time>23:32:20</time>
+ <date>2011-12-26</date>
+ <time>10:44:20</time>
  <version>
-  <release>2.1.4</release>
-  <api>2.1.4</api>
+  <release>2.1.5</release>
+  <api>2.1.5</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,8 +22,7 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-- Improve the Yaf_Loader::getInstance, make the Yaf_Loader can be used independently
-- Implemented Yaf_View::assignRef, which didn't work as expect before.
+  Fix Bug #60608
  </notes>
  <contents> 
   <dir name="/"> 
@@ -136,6 +135,22 @@
  <extsrcrelease />
  <changelog> 
   <release> 
+   <date>2011-12-26</date> 
+   <version> 
+    <release>2.1.5</release> 
+    <api>2.1.5</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes> 
+- Fix Bug #60608
+   </notes> 
+  </release> 
+
+  <release> 
    <date>2011-12-21</date> 
    <version> 
     <release>2.1.4</release> 
@@ -151,7 +166,6 @@
 - Implemented Yaf_View::assignRef, which didn't work as expect before.
    </notes> 
   </release> 
-
   <release> 
    <date>2011-10-08</date> 
    <version> 
