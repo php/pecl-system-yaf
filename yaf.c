@@ -237,20 +237,25 @@ ZEND_GET_MODULE(yaf)
 
 /** {{{ module depends
  */
+#if ZEND_MODULE_API_NO >= 20050922
 zend_module_dep yaf_deps[] = {
 	ZEND_MOD_REQUIRED("spl")
 	ZEND_MOD_REQUIRED("pcre")
 	ZEND_MOD_OPTIONAL("session")
 	{NULL, NULL, NULL}
 };
+#endif
 /* }}} */
 
 /** {{{ yaf_module_entry
 */
 zend_module_entry yaf_module_entry = {
-	STANDARD_MODULE_HEADER_EX,
-	NULL,
+#if ZEND_MODULE_API_NO >= 20050922
+	STANDARD_MODULE_HEADER_EX, NULL,
 	yaf_deps,
+#else
+	STANDARD_MODULE_HEADER,
+#endif
 	"yaf",
 	yaf_functions,
 	PHP_MINIT(yaf),
@@ -261,6 +266,7 @@ zend_module_entry yaf_module_entry = {
 	YAF_VERSION,
 	PHP_MODULE_GLOBALS(yaf),
 	PHP_GINIT(yaf),
+	NULL,
 	NULL,
 	STANDARD_MODULE_PROPERTIES_EX
 };
