@@ -516,9 +516,9 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 }
 /* }}} */
 
-/** {{{ int yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRMLS_DC)
+/** {{{ int yaf_loader_register_namespace_single(yaf_loader_t *loader, char *prefix, uint len TSRMLS_DC)
  */
-int yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRMLS_DC) {
+int yaf_loader_register_namespace_single(yaf_loader_t *loader, char *prefix, uint len TSRMLS_DC) {
 	zval *namespaces;
 	smart_str buf = {NULL, 0, 0};
 
@@ -530,7 +530,7 @@ int yaf_loader_register_namespace_single(yaf_loader_t *loader, zval *prefix TSRM
 		smart_str_appendl(&buf, Z_STRVAL_P(namespaces), Z_STRLEN_P(namespaces));
 	}
 
-	smart_str_appendl(&buf, Z_STRVAL_P(prefix), Z_STRLEN_P(prefix));
+	smart_str_appendl(&buf, prefix, len);
 	smart_str_appendc(&buf, DEFAULT_DIR_SEPARATOR);
 
 	ZVAL_STRINGL(namespaces, buf.c, buf.len, 1);
@@ -611,7 +611,7 @@ PHP_METHOD(yaf_loader, registerLocalNamespace) {
 	}
 
 	if (IS_STRING == Z_TYPE_P(namespaces)) {
-		if (yaf_loader_register_namespace_single(getThis(), namespaces TSRMLS_CC)) {
+		if (yaf_loader_register_namespace_single(getThis(), Z_STRVAL_P(namespaces), Z_STRLEN_P(namespaces) TSRMLS_CC)) {
 			RETURN_ZVAL(getThis(), 1, 0);
 		}
 	} else if (IS_ARRAY == Z_TYPE_P(namespaces)) {

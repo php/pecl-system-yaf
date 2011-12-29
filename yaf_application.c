@@ -157,12 +157,22 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 		YAF_G(bootstrap) = estrndup(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval));
 	}
 
-	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("library"), (void **)&ppzval) == SUCCESS
-			&& Z_TYPE_PP(ppzval) == IS_STRING) {
-		YAF_G(library_directory) = estrndup(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval));
+	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("library"), (void **)&ppzval) == SUCCESS) {
+		if (IS_STRING == Z_TYPE_PP(ppzval)) {
+			YAF_G(local_library) = estrndup(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval));
+		} else if (IS_ARRAY == Z_TYPE_PP(ppzval)) {
+			if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("directory"), (void **)&ppsval) == SUCCESS
+					&& Z_TYPE_PP(ppsval) == IS_STRING) {
+				YAF_G(local_library) = estrndup(Z_STRVAL_PP(ppsval), Z_STRLEN_PP(ppsval));
+			}
+			if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("namespace"), (void **)&ppsval) == SUCCESS
+					&& Z_TYPE_PP(ppsval) == IS_STRING) {
+				YAF_G(local_namespace) = estrndup(Z_STRVAL_PP(ppsval), Z_STRLEN_PP(ppsval));
+			}
+		}
 	}
 
-	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("view"), (void **)&ppzval) == FAILURE
+	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("view"), (void **)&ppzval) == FAILURE 
 			|| Z_TYPE_PP(ppzval) != IS_ARRAY) {
 		YAF_G(view_ext) = YAF_DEFAULT_VIEW_EXT;
 	} else {
@@ -332,22 +342,38 @@ PHP_METHOD(yaf_application, __construct) {
 	zval_ptr_dtor(&zdispatcher);
 	zval_ptr_dtor(&zconfig);
 
-	if (YAF_G(library_directory)) {
-		loader = yaf_loader_instance(NULL, YAF_G(library_directory),
+	if (YAF_G(local_library)) {
+		loader = yaf_loader_instance(NULL, YAF_G(local_library),
 				strlen(YAF_G(global_library))? YAF_G(global_library) : NULL TSRMLS_CC);
-		efree(YAF_G(library_directory));
-		YAF_G(library_directory) = NULL;
+		efree(YAF_G(local_library));
+		YAF_G(local_library) = NULL;
 	} else {
-		char *library_directory;
-		spprintf(&library_directory, 0, "%s%c%s", YAF_G(directory), DEFAULT_SLASH, YAF_LIBRARY_DIRECTORY_NAME);
-		loader = yaf_loader_instance(NULL, library_directory,
+		char *local_library;
+		spprintf(&local_library, 0, "%s%c%s", YAF_G(directory), DEFAULT_SLASH, YAF_LIBRARY_DIRECTORY_NAME);
+		loader = yaf_loader_instance(NULL, local_library,
 				strlen(YAF_G(global_library))? YAF_G(global_library) : NULL TSRMLS_CC);
-		efree(library_directory);
+		efree(local_library);
 	}
 
 	if (!loader) {
 		yaf_trigger_error(YAF_ERR_STARTUP_FAILED TSRMLS_CC, "Initialization of application auto loader failed");
 		RETURN_FALSE;
+	}
+
+	if (YAF_G(local_namespace)) {
+		uint i, len;
+		char *tmp = YAF_G(local_namespace);
+		len  = strlen(tmp);
+		if (len) {
+			for(i=0; i<len; i++) {
+				if (tmp[i] == ',' || tmp[i] == ' ') {
+					tmp[i] = DEFAULT_DIR_SEPARATOR;
+				}
+			}
+			yaf_loader_register_namespace_single(loader, tmp, len TSRMLS_CC);
+		}
+		efree(YAF_G(local_namespace));
+		YAF_G(local_namespace) = NULL;
 	}
 
 	zend_update_property_bool(yaf_application_ce, self, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_RUN), 0 TSRMLS_CC);
