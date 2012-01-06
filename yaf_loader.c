@@ -749,7 +749,7 @@ PHP_METHOD(yaf_loader, import) {
 /** {{{ proto public Yaf_Loader::autoload($class_name)
 */
 PHP_METHOD(yaf_loader, autoload) {
-	char *class_name, *app_directory, *directory = NULL, *file_name = NULL;
+	char *class_name, *origin_classname, *app_directory, *directory = NULL, *file_name = NULL;
 #ifdef YAF_HAVE_NAMESPACE
 	char *origin_lcname = NULL;
 #endif
@@ -761,6 +761,7 @@ PHP_METHOD(yaf_loader, autoload) {
 
 	separator_len = strlen(YAF_G(name_separator));
 	app_directory = YAF_G(directory);
+	origin_classname = class_name;
 
 	do {
 		if (!class_name_len) {
@@ -844,7 +845,7 @@ PHP_METHOD(yaf_loader, autoload) {
 	if (!YAF_G(use_spl_autoload)) {
 		/** directory might be NULL since we passed a NULL */
 		if (yaf_internal_autoload(file_name, file_name_len, &directory TSRMLS_CC)) {
-			if (zend_hash_exists(EG(class_table), zend_str_tolower_dup(class_name, class_name_len), class_name_len + 1)) {
+			if (zend_hash_exists(EG(class_table), zend_str_tolower_dup(origin_classname, class_name_len), class_name_len + 1)) {
 #ifdef YAF_HAVE_NAMESPACE
 				if (origin_lcname) {
 					efree(origin_lcname);
@@ -880,7 +881,7 @@ PHP_METHOD(yaf_loader, autoload) {
 		RETURN_TRUE;
 	} else {
 		if (yaf_internal_autoload(file_name, file_name_len, &directory TSRMLS_CC) &&
-				zend_hash_exists(EG(class_table), zend_str_tolower_dup(class_name, class_name_len), class_name_len + 1)) {
+				zend_hash_exists(EG(class_table), zend_str_tolower_dup(origin_classname, class_name_len), class_name_len + 1)) {
 #ifdef YAF_HAVE_NAMESPACE
 			if (origin_lcname) {
 				efree(origin_lcname);
