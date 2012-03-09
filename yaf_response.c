@@ -107,10 +107,12 @@ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, 
 	zbody = zend_read_property(yaf_response_ce, response, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), 1 TSRMLS_CC);
 	obody = Z_STRVAL_P(zbody);
 
-	if (prepend) {
+	if (prepend > 0) {
 		Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", body, obody);
-	}  else {
+	}  else if (prepend < 0) {
 		Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", obody, body);
+	} else {
+        Z_STRLEN_P(zbody) = estrndup(body, body_len);
 	}
 
 	efree(obody);
@@ -191,7 +193,7 @@ PHP_METHOD(yaf_response, appendBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, 0 TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, -1 TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 
