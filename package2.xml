@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2012-02-05</date>
- <time>11:39:43</time>
+ <date>2012-03-12</date>
+ <time>22:16:37</time>
  <version>
-  <release>2.1.7</release>
-  <api>2.1.7</api>
+  <release>2.1.8</release>
+  <api>2.1.8</api>
  </version>
  <stability>
   <release>stable</release>
@@ -22,7 +22,7 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-- Release 2.1.7 stable
+  - Fixed bug Yaf_Response::setBody act the same as Yaf_Response::prependBody
  </notes>
  <contents> 
   <dir name="/"> 
@@ -134,6 +134,7 @@
  <providesextension>yaf</providesextension>
  <extsrcrelease />
  <changelog> 
+
   <release> 
    <date>2012-02-05</date> 
    <version> 
@@ -146,7 +147,7 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Release 2.1.7 stable
+    - Release 2.1.7 stable
    </notes> 
   </release> 
 
@@ -162,7 +163,7 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Fix Bug that classname with namespace can not be auto loaded
+    - Fix Bug that classname with namespace can not be auto loaded
    </notes> 
   </release> 
   <release> 
@@ -177,7 +178,7 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Fix Bug #60608
+    - Fix Bug #60608
    </notes> 
   </release> 
   <release> 
@@ -192,8 +193,8 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Improve the Yaf_Loader::getInstance, make the Yaf_Loader can be used independently
-- Implemented Yaf_View::assignRef, which didn't work as expect before.
+    - Improve the Yaf_Loader::getInstance, make the Yaf_Loader can be used independently
+    - Implemented Yaf_View::assignRef, which didn't work as expect before.
    </notes> 
   </release> 
   <release> 
@@ -208,7 +209,7 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Fixed Bug that Yaf still call to Yaf_View_Simple although a custom view engine was setted
+    - Fixed Bug that Yaf still call to Yaf_View_Simple although a custom view engine was setted
    </notes> 
   </release> 
   <release> 
@@ -223,13 +224,12 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Added Yaf_Application::getLastErrorNo
-- Added Yaf_Application::getLastErrorMsg
-- Added Yaf_Application::clearLastError
-- Changed trigger ERROR to E_RECOVERABLE_ERROR, then people can use set_error_handler to catch it
+    - Added Yaf_Application::getLastErrorNo
+    - Added Yaf_Application::getLastErrorMsg
+    - Added Yaf_Application::clearLastError
+    - Changed trigger ERROR to E_RECOVERABLE_ERROR, then people can use set_error_handler to catch it
    </notes> 
   </release> 
-
   <release> 
    <date>2011-08-31</date> 
    <version> 
@@ -242,8 +242,8 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Fixed Yaf_View_Simple::render flush output instantly in PHP5.4
-- Fixed Yaf_Session crash in PHP5.4
+    - Fixed Yaf_View_Simple::render flush output instantly in PHP5.4
+    - Fixed Yaf_Session crash in PHP5.4
    </notes> 
   </release> 
   <release> 
@@ -258,12 +258,12 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Avoided calling to get_class_entry for higher performance
-- Added arginfo for all methods
-- Remove unnecessary stack variable initialization
-- Standardize error message
-- Add Yaf_Request::setRequstUri
-- Fixed build broken with PHP 5.4
+    - Avoided calling to get_class_entry for higher performance
+    - Added arginfo for all methods
+    - Remove unnecessary stack variable initialization
+    - Standardize error message
+    - Add Yaf_Request::setRequstUri
+    - Fixed build broken with PHP 5.4
    </notes> 
   </release> 
   <release> 
@@ -278,10 +278,10 @@
    </stability> 
    <license uri="http://www.php.net/license">PHP License</license> 
    <notes> 
-- Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
-- Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
-- Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
-- Corrected some broken C89 statements
+    - Fixed Bug that when call to Yaf_Config_Ini/Yaf_Config_Simple with freaky paramters then invoke its methods cause crash (thanks to Felipe Pena)
+    - Yaf_Application::execute call Zend_API call_user_func instead of call zif_call_user_func, since zif_call_user_func was not declared with dllexport
+    - Built on windows with PHP-5.3.6 and PHP-5.2.15 (you can download the dll on Yaf Google Code)
+    - Corrected some broken C89 statements
    </notes> 
   </release> 
   <release> 
