@@ -94,9 +94,9 @@ static int yaf_response_set_body(yaf_response_t *response, char *name, int name_
 #endif
 /* }}} */
 
-/** {{{ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int prepend TSRMLS_DC)
+/** {{{ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int flag TSRMLS_DC)
  */
-int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int prepend TSRMLS_DC) {
+int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, char *body, long body_len, int flag TSRMLS_DC) {
 	zval *zbody;
 	char *obody;
 
@@ -107,12 +107,17 @@ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, 
 	zbody = zend_read_property(yaf_response_ce, response, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_BODY), 1 TSRMLS_CC);
 	obody = Z_STRVAL_P(zbody);
 
-	if (prepend > 0) {
-		Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", body, obody);
-	}  else if (prepend < 0) {
-		Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", obody, body);
-	} else {
-		ZVAL_STRINGL(zbody, body, body_len, 1);
+	switch (flag) {
+		case YAF_RESPONSE_PREPEND:
+			Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", body, obody);
+			break;
+		case YAF_RESPONSE_APPEND:
+			Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", obody, body);
+			break;
+		case YAF_RESPONSE_REPLACE:
+		default:
+			ZVAL_STRINGL(zbody, body, body_len, 1);
+			break;
 	}
 
 	efree(obody);
@@ -193,7 +198,7 @@ PHP_METHOD(yaf_response, appendBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, -1 TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, YAF_RESPONSE_APPEND TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 
@@ -214,7 +219,7 @@ PHP_METHOD(yaf_response, prependBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, 1 TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, YAF_RESPONSE_PREPEND TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 
@@ -281,7 +286,7 @@ PHP_METHOD(yaf_response, setBody) {
 
 	self = getThis();
 
-	if (yaf_response_alter_body(self, name, name_len, body, body_len, 0 TSRMLS_CC)) {
+	if (yaf_response_alter_body(self, name, name_len, body, body_len, YAF_RESPONSE_REPLACE TSRMLS_CC)) {
 		RETURN_ZVAL(self, 1, 0);
 	}
 

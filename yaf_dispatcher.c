@@ -721,7 +721,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					efree(executor);
 
 					if (ret && Z_TYPE_P(ret) == IS_STRING && Z_STRLEN_P(ret)) {
-						yaf_response_alter_body(response, NULL, 0, Z_STRVAL_P(ret), Z_STRLEN_P(ret), 0 TSRMLS_CC);
+						yaf_response_alter_body(response, NULL, 0, Z_STRVAL_P(ret), Z_STRLEN_P(ret), YAF_RESPONSE_APPEND  TSRMLS_CC);
 						zval_ptr_dtor(&ret);
 					} else if (ret) {
 						zval_ptr_dtor(&ret);
