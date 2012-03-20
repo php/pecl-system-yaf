@@ -112,7 +112,7 @@ int yaf_response_alter_body(yaf_response_t *response, char *name, int name_len, 
 	}  else if (prepend < 0) {
 		Z_STRLEN_P(zbody) = spprintf(&Z_STRVAL_P(zbody), 0, "%s%s", obody, body);
 	} else {
-        Z_STRLEN_P(zbody) = estrndup(body, body_len);
+		ZVAL_STRINGL(zbody, body, body_len, 1);
 	}
 
 	efree(obody);
