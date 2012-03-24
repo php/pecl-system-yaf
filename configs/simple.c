@@ -199,7 +199,7 @@ PHP_METHOD(yaf_config_simple, __isset) {
 PHP_METHOD(yaf_config_simple, offsetUnset) {
 	zval *readonly = zend_read_property(yaf_config_simple_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME_READONLY), 1 TSRMLS_CC);
 
-	if (Z_BVAL_P(readonly)) {
+	if (!Z_BVAL_P(readonly)) {
 		zval *name, *props;
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &name) == FAILURE) {
 			return;
@@ -211,7 +211,7 @@ PHP_METHOD(yaf_config_simple, offsetUnset) {
 		}
 
 		props = zend_read_property(yaf_config_simple_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
-		if (zend_hash_del(Z_ARRVAL_P(props), Z_STRVAL_P(name), Z_STRLEN_P(name)) == SUCCESS) {
+		if (zend_hash_del(Z_ARRVAL_P(props), Z_STRVAL_P(name), Z_STRLEN_P(name) + 1) == SUCCESS) {
 			RETURN_TRUE;
 		}
 	}
