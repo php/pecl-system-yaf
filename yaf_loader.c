@@ -528,6 +528,7 @@ int yaf_loader_register_namespace_single(yaf_loader_t *loader, char *prefix, uin
 		smart_str_appendc(&buf, DEFAULT_DIR_SEPARATOR);
 	} else {
 		smart_str_appendl(&buf, Z_STRVAL_P(namespaces), Z_STRLEN_P(namespaces));
+		efree(Z_STRVAL_P(namespaces));
 	}
 
 	smart_str_appendl(&buf, prefix, len);
@@ -812,6 +813,21 @@ PHP_METHOD(yaf_loader, autoload) {
 
 			break;
 		}
+
+		if (yaf_loader_is_category(class_name, class_name_len, YAF_LOADER_CONTROLLER, YAF_LOADER_LEN_CONTROLLER TSRMLS_CC)) {
+			/* this is a controller class */
+			spprintf(&directory, 0, "%s/%s", app_directory, YAF_CONTROLLER_DIRECTORY_NAME);
+			file_name_len = class_name_len - separator_len - YAF_LOADER_LEN_CONTROLLER;
+
+			if (YAF_G(name_suffix)) {
+				file_name = estrndup(class_name, file_name_len);
+			} else {
+				file_name = estrdup(class_name + YAF_LOADER_LEN_CONTROLLER + separator_len);
+			}
+
+			break;
+		}
+
 
 /* {{{ This only effects internally */
 		if (YAF_G(st_compatible) && (strncmp(class_name, YAF_LOADER_DAO, YAF_LOADER_LEN_DAO) == 0

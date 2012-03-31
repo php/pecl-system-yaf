@@ -23,7 +23,7 @@
 #define YAF_DEFAULT_LIBRARY_EXT		   		YAF_DEFAULT_CONTROLLER_EXT
 
 #define YAF_LIBRARY_DIRECTORY_NAME    		"library"
-#define YAF_CONTROLLER_DIRECTORY_NAME 		"controller"
+#define YAF_CONTROLLER_DIRECTORY_NAME 		"controllers"
 #define YAF_PLUGIN_DIRECTORY_NAME 	  		"plugins"
 #define YAF_MODULE_DIRECTORY_NAME     		"modules"
 #define YAF_VIEW_DIRECTORY_NAME       		"views"
