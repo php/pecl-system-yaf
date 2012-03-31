@@ -519,7 +519,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 	} else {
 		int	is_def_module = 0;
 		int is_def_ctr = 0;
-		zval *module, *controller, *dmodule, *dcontroller, *return_response, *instantly_flush;
+		zval *module, *controller, *dmodule, *dcontroller, *instantly_flush;
 		zend_class_entry *ce;
 		yaf_controller_t *executor;
 		zend_function    *fptr;
@@ -579,7 +579,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			   }
 			   }
 			   } while(0);
-			*/
+			   */
 			yaf_controller_construct(ce, icontroller, request, response, view, NULL TSRMLS_CC);
 
 			MAKE_STD_ZVAL(view_dir);
@@ -709,14 +709,19 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				return 0;
 			}
 
-			render = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
-			return_response = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), 1 TSRMLS_CC);
-			instantly_flush	= zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 1 TSRMLS_CC);
-
-			if (executor && Z_BVAL_P(render)) {
+			if (executor) {
 				/* controller's property can override the Dispatcher's */
+				int auto_render = 1;
 				render = zend_read_property(ce, executor, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
-				if (render == EG(uninitialized_zval_ptr) || Z_TYPE_P(render) > IS_BOOL || Z_BVAL_P(render)) {
+				instantly_flush	= zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 1 TSRMLS_CC);
+				if (render == EG(uninitialized_zval_ptr)) {
+					render = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
+					auto_render = Z_BVAL_P(render);
+				} else if (Z_TYPE_P(render) <= IS_BOOL && !Z_BVAL_P(render)) {
+					auto_render = 0;
+				}
+
+				if (auto_render) {
 					ret = NULL;
 					if (!Z_BVAL_P(instantly_flush)) {
 						zend_call_method_with_1_params(&executor, ce, NULL, "render", &ret, action);
@@ -750,11 +755,9 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				}
 			}
 			Z_DELREF_P(action);
-
-			return 1;
 		}
+		return 1;
 	}
-
 	return 0;
 }
 /* }}} */
