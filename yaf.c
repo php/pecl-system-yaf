@@ -224,9 +224,6 @@ PHP_RSHUTDOWN_FUNCTION(yaf)
 	if (YAF_G(buffer)) {
 		efree(YAF_G(buffer));
 	}
-	if (YAF_G(owrite_handler)) {
-		efree(YAF_G(owrite_handler));
-	}
 #endif
 
 	return SUCCESS;
