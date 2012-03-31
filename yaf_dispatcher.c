@@ -861,12 +861,13 @@ yaf_response_t * yaf_dispatcher_dispatch(yaf_dispatcher_t *dispatcher TSRMLS_DC)
 			zval_ptr_dtor(&response);
 			return NULL;
 		}
+		yaf_dispatcher_fix_default(dispatcher, request TSRMLS_CC);
 		YAF_PLUGIN_HANDLE(plugins, YAF_PLUGIN_HOOK_ROUTESHUTDOWN, request, response);
 		YAF_EXCEPTION_HANDLE(dispatcher, request, response);
 		(void)yaf_request_set_routed(request, 1 TSRMLS_CC);
+	} else {
+		yaf_dispatcher_fix_default(dispatcher, request TSRMLS_CC);
 	}
-
-	yaf_dispatcher_fix_default(dispatcher, request TSRMLS_CC);
 
 	YAF_PLUGIN_HANDLE(plugins, YAF_PLUGIN_HOOK_LOOPSTARTUP, request, response);
 	YAF_EXCEPTION_HANDLE(dispatcher, request, response);
