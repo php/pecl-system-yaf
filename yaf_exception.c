@@ -57,7 +57,7 @@ void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
 		yaf_application_t *app = zend_read_static_property(yaf_application_ce, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_APP), 1 TSRMLS_CC);
 		zend_update_property_long(yaf_application_ce, app, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRNO), type TSRMLS_CC);
 		zend_update_property_stringl(yaf_application_ce, app, ZEND_STRL(YAF_APPLICATION_PROPERTY_NAME_ERRMSG), message, msg_len TSRMLS_CC);
-		php_error_docref(NULL TSRMLS_CC, E_RECOVERABLE_ERROR, message);
+		php_error_docref(NULL TSRMLS_CC, E_RECOVERABLE_ERROR, "%s", message);
 	}
 	efree(message);
 }
