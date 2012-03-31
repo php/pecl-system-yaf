@@ -716,7 +716,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			if (executor && Z_BVAL_P(render)) {
 				/* controller's property can override the Dispatcher's */
 				render = zend_read_property(ce, executor, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
-				if (render == EG(uninitialized_zval_ptr) || Z_TYPE_P(render) != IS_BOOL || Z_BVAL_P(render)) {
+				if (render == EG(uninitialized_zval_ptr) || Z_TYPE_P(render) > IS_BOOL || Z_BVAL_P(render)) {
 					ret = NULL;
 					if (!Z_BVAL_P(instantly_flush)) {
 						zend_call_method_with_1_params(&executor, ce, NULL, "render", &ret, action);
