@@ -304,10 +304,10 @@ zend_class_entry * yaf_dispatcher_get_controller(char *app_dir, char *module, ch
 	int	 directory_len 	= 0;
 
 	if (def_module) {
-		directory_len = spprintf(&directory, 0, "%s%c%s", app_dir, DEFAULT_SLASH, "controllers");
+		directory_len = spprintf(&directory, 0, "%s%c%s", app_dir, DEFAULT_SLASH, YAF_CONTROLLER_DIRECTORY_NAME);
 	} else {
 		directory_len = spprintf(&directory, 0, "%s%c%s%c%s%c%s", app_dir, DEFAULT_SLASH,
-				"modules", DEFAULT_SLASH, module, DEFAULT_SLASH, "controllers");
+				YAF_MODULE_DIRECTORY_NAME, DEFAULT_SLASH, module, DEFAULT_SLASH, YAF_CONTROLLER_DIRECTORY_NAME);
 	}
 
 	if (directory_len) {
