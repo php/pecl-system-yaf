@@ -714,37 +714,40 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			instantly_flush	= zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 1 TSRMLS_CC);
 
 			if (executor && Z_BVAL_P(render)) {
-				ret = NULL;
-				if (!Z_BVAL_P(instantly_flush)) {
-					zend_call_method_with_1_params(&executor, ce, NULL, "render", &ret, action);
-					zval_dtor(executor);
-					efree(executor);
+				/* controller's property can override the Dispatcher's */
+				render = zend_read_property(ce, executor, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC);
+				if (render == EG(uninitialized_zval_ptr) || Z_TYPE_P(render) != IS_BOOL || Z_BVAL_P(render)) {
+					ret = NULL;
+					if (!Z_BVAL_P(instantly_flush)) {
+						zend_call_method_with_1_params(&executor, ce, NULL, "render", &ret, action);
+						zval_dtor(executor);
+						efree(executor);
 
-					if (ret && Z_TYPE_P(ret) == IS_STRING && Z_STRLEN_P(ret)) {
-						yaf_response_alter_body(response, NULL, 0, Z_STRVAL_P(ret), Z_STRLEN_P(ret), YAF_RESPONSE_APPEND  TSRMLS_CC);
-						zval_ptr_dtor(&ret);
-					} else if (ret) {
-						zval_ptr_dtor(&ret);
-						Z_DELREF_P(action);
-						return 0;
-					}
-				} else {
-					zend_call_method_with_1_params(&executor, ce, NULL, "display", &ret, action);
-					zval_dtor(executor);
-					efree(executor);
+						if (ret && Z_TYPE_P(ret) == IS_STRING && Z_STRLEN_P(ret)) {
+							yaf_response_alter_body(response, NULL, 0, Z_STRVAL_P(ret), Z_STRLEN_P(ret), YAF_RESPONSE_APPEND  TSRMLS_CC);
+							zval_ptr_dtor(&ret);
+						} else if (ret) {
+							zval_ptr_dtor(&ret);
+							Z_DELREF_P(action);
+							return 0;
+						}
+					} else {
+						zend_call_method_with_1_params(&executor, ce, NULL, "display", &ret, action);
+						zval_dtor(executor);
+						efree(executor);
 
-					if (!ret) {
-						Z_DELREF_P(action);
-						return 0;
-					}
+						if (!ret) {
+							Z_DELREF_P(action);
+							return 0;
+						}
 
-					if ((Z_TYPE_P(ret) == IS_BOOL && !Z_BVAL_P(ret))) {
-						zval_ptr_dtor(&ret);
-						Z_DELREF_P(action);
-						return 0;
+						if ((Z_TYPE_P(ret) == IS_BOOL && !Z_BVAL_P(ret))) {
+							zval_ptr_dtor(&ret);
+							Z_DELREF_P(action);
+							return 0;
+						}
 					}
 				}
-
 			}
 			Z_DELREF_P(action);
 

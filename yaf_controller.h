@@ -28,6 +28,8 @@
 #define YAF_CONTROLLER_PROPERTY_NAME_ACTIONS	"actions"
 #define YAF_CONTROLLER_PROPERTY_NAME_VIEW		"_view"
 
+#define YAF_CONTROLLER_PROPERTY_NAME_RENDER     "yafAutoRender"
+
 extern zend_class_entry *yaf_controller_ce;
 int yaf_controller_construct(zend_class_entry *ce, yaf_controller_t *self,
 		yaf_request_t *request, yaf_response_t *response, yaf_view_t *view, zval *args TSRMLS_DC);
