@@ -128,11 +128,13 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 					if (strncmp(file_name, script, file_name_len) == 0) {
 						basename 	 = Z_STRVAL_P(script_name);
 						basename_len = Z_STRLEN_P(script_name);
+						efree(file_name);
 						efree(script);
 						break;
 					}
 					efree(script);
 				}
+				efree(file_name);
 
 				phpself_name = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("PHP_SELF") TSRMLS_CC);
 				if (phpself_name && IS_STRING == Z_TYPE_P(phpself_name)) {
