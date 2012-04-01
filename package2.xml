@@ -10,19 +10,24 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2012-03-20</date>
+ <date>2012-04-01</date>
  <time>18:34:23</time>
  <version>
-  <release>2.1.9</release>
-  <api>2.1.9</api>
+  <release>2.1.10</release>
+  <api>2.1.10</api>
  </version>
  <stability>
-  <release>stable</release>
-  <api>stable</api>
+  <release>beta</release>
+  <api>beta</api>
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  - Fixed Bug that Yaf_Response::setBody cause invalid read
+  - Fixed bug #61493 (Can't remove item when using unset() with a Yaf_Config_Simple instance)
+  - Support controller autoloading(Only default module)
+  - Fixed bug that the controller name could be lowercase in routeShutdown hook
+  - Fixed bug that segfault while attempt to free owrite_handler
+  - Added Yaf_Controller::$yafAutoRender to controller render
+  - Fixed some memory leaks
  </notes>
  <contents> 
   <dir name="/"> 
@@ -118,6 +123,9 @@
     <file name="024.phpt" role="test" />
     <file name="025.phpt" role="test" />
     <file name="026.phpt" role="test" />
+    <file name="027.phpt" role="test" />
+    <file name="028.phpt" role="test" />
+    <file name="bug61493.phpt" role="test" />
     <file name="simple.ini" role="test" />
    </dir>
   </dir> 
@@ -137,6 +145,27 @@
  <extsrcrelease />
  <changelog> 
   <release> 
+   <date>2012-04-01</date> 
+   <version> 
+    <release>2.1.10</release> 
+    <api>2.1.10</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes> 
+    - Fixed bug #61493 (Can't remove item when using unset() with a Yaf_Config_Simple instance)
+    - Support controller autoloading(Only default module)
+    - Fixed bug that the controller name could be lowercase in routeShutdown hook
+    - Fixed bug that segfault while attempt to free owrite_handler
+    - Added Yaf_Controller::$yafAutoRender to controller render
+    - Fixed some memory leaks
+   </notes> 
+  </release> 
+
+  <release> 
    <date>2012-03-20</date> 
    <version> 
     <release>2.1.9</release> 
@@ -151,7 +180,6 @@
     - Fixed Bug that Yaf_Response::setBody cause invalid read
    </notes> 
   </release> 
-
   <release> 
    <date>2012-03-12</date> 
    <version> 
