@@ -3,6 +3,7 @@ Check for Yaf autoload controller
 --SKIPIF--
 <?php if (!extension_loaded("yaf")) print "skip"; ?>
 --INI--
+yaf.use_spl_autoload=0
 yaf.library="/php/global/dir"
 --FILE--
 <?php 

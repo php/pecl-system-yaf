@@ -896,8 +896,9 @@ PHP_METHOD(yaf_loader, autoload) {
 		}
 		RETURN_TRUE;
 	} else {
+		char *lower_case_name = zend_str_tolower_dup(origin_classname, class_name_len);
 		if (yaf_internal_autoload(file_name, file_name_len, &directory TSRMLS_CC) &&
-				zend_hash_exists(EG(class_table), zend_str_tolower_dup(origin_classname, class_name_len), class_name_len + 1)) {
+				zend_hash_exists(EG(class_table), lower_case_name, class_name_len + 1)) {
 #ifdef YAF_HAVE_NAMESPACE
 			if (origin_lcname) {
 				efree(origin_lcname);
@@ -909,6 +910,8 @@ PHP_METHOD(yaf_loader, autoload) {
 			if (file_name != class_name) {
 				efree(file_name);
 			}
+
+			efree(lower_case_name);
 			RETURN_TRUE;
 		}
 #ifdef YAF_HAVE_NAMESPACE
@@ -922,6 +925,7 @@ PHP_METHOD(yaf_loader, autoload) {
 		if (file_name != class_name) {
 			efree(file_name);
 		}
+		efree(lower_case_name);
 		RETURN_FALSE;
 	}
 }
