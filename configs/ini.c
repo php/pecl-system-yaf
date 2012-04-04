@@ -73,7 +73,7 @@ zval * yaf_config_ini_format(yaf_config_t *instance, zval **ppzval TSRMLS_DC) {
 }
 /* }}} */
 
-#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 3))
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2))
 /** {{{ static void yaf_config_ini_simple_parser_cb(zval *key, zval *value, zval *index, int callback_type, zval *arr TSRMLS_DC)
 */
 static void yaf_config_ini_simple_parser_cb(zval *key, zval *value, zval *index, int callback_type, zval *arr TSRMLS_DC) {
@@ -483,7 +483,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 					fh.type = ZEND_HANDLE_FP;
 					YAF_G(active_ini_file_section) = NULL;
 					array_init(configs);
-#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 3))
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2))
 					if (zend_parse_ini_file(&fh, 0, 0 /* ZEND_INI_SCANNER_NORMAL */,
 						   	(zend_ini_parser_cb_t)yaf_config_ini_parser_cb, configs TSRMLS_CC) == FAILURE
 							|| Z_TYPE_P(configs) != IS_ARRAY)
