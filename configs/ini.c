@@ -485,7 +485,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 					array_init(configs);
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 3))
 					if (zend_parse_ini_file(&fh, 0, 0 /* ZEND_INI_SCANNER_NORMAL */,
-						   	(zend_ini_parser_cb_t)yaf_config_ini_parser_cb, configs) == FAILURE
+						   	(zend_ini_parser_cb_t)yaf_config_ini_parser_cb, configs TSRMLS_CC) == FAILURE
 							|| Z_TYPE_P(configs) != IS_ARRAY)
 #else
 					if (zend_parse_ini_file(&fh, 0, (zend_ini_parser_cb_t)yaf_config_ini_parser_cb, configs) == FAILURE
