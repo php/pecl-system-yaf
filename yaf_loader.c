@@ -169,7 +169,7 @@ inline int yaf_loader_is_category(char *class, uint class_len, char *category, u
 	uint separator_len = strlen(YAF_G(name_separator));
 
 	if (YAF_G(name_suffix)) {
-		if (strncmp(class + class_len - category_len, category, category_len) == 0) {
+		if (class_len > category_len && strncmp(class + class_len - category_len, category, category_len) == 0) {
 			if (!separator_len || strncmp(class + class_len - category_len - separator_len, YAF_G(name_separator), separator_len) == 0) {
 				return 1;
 			}
