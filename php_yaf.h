@@ -111,8 +111,8 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	uint 		buf_nesting;
 	void		*buffer;
 	void 		*owrite_handler;
-	zval        *active_ini_file_section;
 #endif
+	zval        *active_ini_file_section;
 #ifdef YAF_HAVE_NAMESPACE
 	zend_bool	use_namespace;
 #endif
