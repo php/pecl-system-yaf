@@ -35,7 +35,7 @@ Yaf_Config_Ini Object
                 (
                     [application] => Array
                         (
-                            [directory] => APPLICATION_PATCH/applcation
+                            [directory] => APPLICATION_PATH/applcation
                         )
 
                     [name] => base
@@ -101,7 +101,7 @@ Yaf_Config_Ini Object
                 (
                     [application] => Array
                         (
-                            [directory] => APPLICATION_PATCH/applcation
+                            [directory] => APPLICATION_PATH/applcation
                         )
 
                     [name] => extra
@@ -169,7 +169,7 @@ Yaf_Config_Ini Object
                 (
                     [application] => Array
                         (
-                            [directory] => APPLICATION_PATCH/applcation
+                            [directory] => APPLICATION_PATH/applcation
                         )
 
                     [name] => extra
@@ -237,7 +237,7 @@ Yaf_Config_Ini Object
                 (
                     [application] => Array
                         (
-                            [directory] => APPLICATION_PATCH/applcation
+                            [directory] => APPLICATION_PATH/applcation
                             [dispatcher] => Array
                                 (
                                     [throwException] => 
@@ -307,6 +307,13 @@ Yaf_Config_Ini Object
                     [value] => 2
                 )
 
+            [envtest] => Array
+                (
+                    [env] => 
+                    [ini] => 
+                    [const] => FOO
+                )
+
         )
 
     [_readonly:protected] => 1
@@ -317,7 +324,7 @@ Yaf_Config_Ini Object
         (
             [application] => Array
                 (
-                    [directory] => APPLICATION_PATCH/applcation
+                    [directory] => APPLICATION_PATH/applcation
                 )
 
             [name] => extra
@@ -384,6 +391,6 @@ Yaf_Config_Ini Object
     [_readonly:protected] => 1
 )
 bool(true)
-baseextraproductnocatchbool(false)
+baseextraproductnocatchenvtestbool(false)
 NULL
 int(0)

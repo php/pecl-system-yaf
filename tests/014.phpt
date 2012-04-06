@@ -19,7 +19,7 @@ Yaf_Application Object
                 (
                     [application] => Array
                         (
-                            [directory] => APPLICATION_PATCH/applcation
+                            [directory] => %stests/applcation
                         )
 
                     [name] => extra

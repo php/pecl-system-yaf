@@ -15,7 +15,7 @@ Yaf_Config_Ini Object
         (
             [application] => Array
                 (
-                    [directory] => APPLICATION_PATCH/applcation
+                    [directory] => APPLICATION_PATH/applcation
                 )
 
             [name] => base
