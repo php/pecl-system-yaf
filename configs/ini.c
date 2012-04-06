@@ -209,9 +209,18 @@ static void yaf_config_ini_simple_parser_cb(zval *key, zval *value, zval *index,
 */
 static void yaf_config_ini_parser_cb(zval *key, zval *value, zval *index, int callback_type, zval *arr TSRMLS_DC) {
 
+	if (YAF_G(parsing_flag == YAF_CONFIG_INI_PARSING_END)) {
+		return;
+	}
+
 	if (callback_type == ZEND_INI_PARSER_SECTION) {
 		zval **parent;
 		char *seg, *skey;
+
+		if (YAF_G(parsing_flag) == YAF_CONFIG_INI_PARSING_PROCESS) {
+			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_END;
+			return;
+		}
 
 		skey = estrndup(Z_STRVAL_P(key), Z_STRLEN_P(key));
 
@@ -254,6 +263,9 @@ static void yaf_config_ini_parser_cb(zval *key, zval *value, zval *index, int ca
 			*(seg--) = '\0';
 		}	
 		zend_symtable_update(Z_ARRVAL_P(arr), skey, strlen(skey) + 1, &YAF_G(active_ini_file_section), sizeof(zval *), NULL);
+		if (YAF_G(ini_wanted_section) && !strncasecmp(YAF_G(ini_wanted_section), skey, strlen(skey))) {
+			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_PROCESS;
+		}
 
 		efree(skey);
 	} else if (value) {
