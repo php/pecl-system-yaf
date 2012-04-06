@@ -113,6 +113,8 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	void 		*owrite_handler;
 #endif
 	zval        *active_ini_file_section;
+	char        *ini_wanted_section;
+	uint        parsing_flag;
 #ifdef YAF_HAVE_NAMESPACE
 	zend_bool	use_namespace;
 #endif

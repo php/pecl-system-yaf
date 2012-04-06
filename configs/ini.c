@@ -20,6 +20,10 @@ zend_class_entry *yaf_config_ini_ce;
 
 yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, zval *section TSRMLS_DC);
 
+#define YAF_CONFIG_INI_PARSING_START   0
+#define YAF_CONFIG_INI_PARSING_PROCESS 1
+#define YAF_CONFIG_INI_PARSING_END     2
+
 /** {{{ ARG_INFO
  */
 ZEND_BEGIN_ARG_INFO_EX(yaf_config_ini_construct_arginfo, 0, 0, 1)
@@ -391,9 +395,18 @@ static void yaf_config_ini_simple_parser_cb(zval *key, zval *value, int callback
 static void yaf_config_ini_parser_cb(zval *key, zval *value, int callback_type, zval *arr) {
 	TSRMLS_FETCH();
 
+	if (YAF_G(parsing_flag == YAF_CONFIG_INI_PARSING_END)) {
+		return;
+	}
+
 	if (callback_type == ZEND_INI_PARSER_SECTION) {
 		zval **parent;
 		char *seg, *skey;
+
+		if (YAF_G(parsing_flag) == YAF_CONFIG_INI_PARSING_PROCESS) {
+			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_END;
+			return;
+		}
 
 		skey = estrndup(Z_STRVAL_P(key), Z_STRLEN_P(key));
 
@@ -436,7 +449,9 @@ static void yaf_config_ini_parser_cb(zval *key, zval *value, int callback_type, 
 			*(seg--) = '\0';
 		}	
 		zend_symtable_update(Z_ARRVAL_P(arr), skey, strlen(skey) + 1, &YAF_G(active_ini_file_section), sizeof(zval *), NULL);
-
+		if (YAF_G(ini_wanted_section) && !strncasecmp(YAF_G(ini_wanted_section), skey, strlen(skey))) {
+			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_PROCESS;
+		}
 		efree(skey);
 	} else if (value) {
 		zval *active_arr;
@@ -482,7 +497,15 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 					fh.filename = ini_file;
 					fh.type = ZEND_HANDLE_FP;
 					YAF_G(active_ini_file_section) = NULL;
-					array_init(configs);
+
+					YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_START;
+					if (section_name && Z_STRLEN_P(section_name)) {
+						YAF_G(ini_wanted_section) = Z_STRVAL_P(section_name); 
+					} else {
+						YAF_G(ini_wanted_section) = NULL;
+					}
+
+	 				array_init(configs);
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2))
 					if (zend_parse_ini_file(&fh, 0, 0 /* ZEND_INI_SCANNER_NORMAL */,
 						   	(zend_ini_parser_cb_t)yaf_config_ini_parser_cb, configs TSRMLS_CC) == FAILURE
