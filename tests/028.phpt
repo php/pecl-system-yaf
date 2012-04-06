@@ -1,5 +1,7 @@
 --TEST--
 Bug segfault while call exit in a view template
+--DESCRIPTION--
+Since PHP 5.4 change the output handler mechanism, this test will fail in 5.4
 --SKIPIF--
 <?php if (!extension_loaded("yaf")) print "skip"; ?>
 --INI--
