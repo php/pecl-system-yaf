@@ -57,11 +57,22 @@ ZEND_END_ARG_INFO()
  */
 static void yaf_config_ini_zval_deep_copy(zval **p) {
 	zval *value;
-
 	ALLOC_ZVAL(value);
 	*value = **p;
-	zval_copy_ctor(value);
-	Z_TYPE_P(value) = Z_TYPE_PP(p);
+
+	switch (Z_TYPE_PP(p)) {
+		case IS_ARRAY:
+			{
+				array_init(value);
+				zend_hash_copy(Z_ARRVAL_P(value), Z_ARRVAL_PP(p), 
+						(copy_ctor_func_t)yaf_config_ini_zval_deep_copy, NULL, sizeof(zval *));
+			}
+			break;
+		default:
+			zval_copy_ctor(value);
+			Z_TYPE_P(value) = Z_TYPE_PP(p);
+	}
+
 	INIT_PZVAL(value);
 	*p = value;
 }

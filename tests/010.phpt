@@ -84,7 +84,7 @@ Yaf_Config_Ini Object
                             [rewrite] => Array
                                 (
                                     [type] => rewrite
-                                    [match] => /ap/:name/:value
+                                    [match] => /yaf/:name/:value
                                     [route] => Array
                                         (
                                             [controller] => Index
@@ -151,7 +151,7 @@ Yaf_Config_Ini Object
                             [rewrite] => Array
                                 (
                                     [type] => rewrite
-                                    [match] => /ap/:name/:value
+                                    [match] => /yaf/:name/:value
                                     [route] => Array
                                         (
                                             [controller] => Index
@@ -219,7 +219,7 @@ Yaf_Config_Ini Object
                             [rewrite] => Array
                                 (
                                     [type] => rewrite
-                                    [match] => /ap/:name/:value
+                                    [match] => /yaf/:name/:value
                                     [route] => Array
                                         (
                                             [controller] => Index
@@ -293,7 +293,7 @@ Yaf_Config_Ini Object
                             [rewrite] => Array
                                 (
                                     [type] => rewrite
-                                    [match] => /ap/:name/:value
+                                    [match] => /yaf/:name/:age
                                     [route] => Array
                                         (
                                             [controller] => Index
@@ -367,7 +367,7 @@ Yaf_Config_Ini Object
                     [rewrite] => Array
                         (
                             [type] => rewrite
-                            [match] => /ap/:name/:value
+                            [match] => /yaf/:name/:value
                             [route] => Array
                                 (
                                     [controller] => Index
