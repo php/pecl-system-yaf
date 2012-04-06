@@ -216,6 +216,7 @@ static void yaf_config_ini_parser_cb(zval *key, zval *value, zval *index, int ca
 	if (callback_type == ZEND_INI_PARSER_SECTION) {
 		zval **parent;
 		char *seg, *skey;
+		uint skey_len;
 
 		if (YAF_G(parsing_flag) == YAF_CONFIG_INI_PARSING_PROCESS) {
 			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_END;
@@ -261,12 +262,13 @@ static void yaf_config_ini_parser_cb(zval *key, zval *value, zval *index, int ca
 	    seg = skey + strlen(skey) - 1;
         while (*seg == ' ' || *seg == ':') {
 			*(seg--) = '\0';
-		}	
-		zend_symtable_update(Z_ARRVAL_P(arr), skey, strlen(skey) + 1, &YAF_G(active_ini_file_section), sizeof(zval *), NULL);
-		if (YAF_G(ini_wanted_section) && !strncasecmp(YAF_G(ini_wanted_section), skey, strlen(skey))) {
+		}
+		skey_len = strlen(skey);
+		zend_symtable_update(Z_ARRVAL_P(arr), skey, skey_len + 1, &YAF_G(active_ini_file_section), sizeof(zval *), NULL);
+		if (YAF_G(ini_wanted_section) && Z_STRLEN_P(YAF_G(ini_wanted_section)) == skey_len
+				&& !strncasecmp(Z_STRVAL_P(YAF_G(ini_wanted_section)), skey, Z_STRLEN_P(YAF_G(ini_wanted_section)))) {
 			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_PROCESS;
 		}
-
 		efree(skey);
 	} else if (value) {
 		zval *active_arr;
@@ -414,6 +416,7 @@ static void yaf_config_ini_parser_cb(zval *key, zval *value, int callback_type, 
 	if (callback_type == ZEND_INI_PARSER_SECTION) {
 		zval **parent;
 		char *seg, *skey;
+		uint skey_len;
 
 		if (YAF_G(parsing_flag) == YAF_CONFIG_INI_PARSING_PROCESS) {
 			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_END;
@@ -460,8 +463,10 @@ static void yaf_config_ini_parser_cb(zval *key, zval *value, int callback_type, 
         while (*seg == ' ' || *seg == ':') {
 			*(seg--) = '\0';
 		}	
-		zend_symtable_update(Z_ARRVAL_P(arr), skey, strlen(skey) + 1, &YAF_G(active_ini_file_section), sizeof(zval *), NULL);
-		if (YAF_G(ini_wanted_section) && !strncasecmp(YAF_G(ini_wanted_section), skey, strlen(skey))) {
+		skey_len = strlen(skey);
+		zend_symtable_update(Z_ARRVAL_P(arr), skey, skey_len + 1, &YAF_G(active_ini_file_section), sizeof(zval *), NULL);
+		if (YAF_G(ini_wanted_section) && Z_STRLEN_P(YAF_G(ini_wanted_section)) == skey_len
+				&& !strncasecmp(Z_STRVAL_P(YAF_G(ini_wanted_section)), skey, Z_STRLEN_P(YAF_G(ini_wanted_section)))) {
 			YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_PROCESS;
 		}
 		efree(skey);
@@ -512,7 +517,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 
 					YAF_G(parsing_flag) = YAF_CONFIG_INI_PARSING_START;
 					if (section_name && Z_STRLEN_P(section_name)) {
-						YAF_G(ini_wanted_section) = Z_STRVAL_P(section_name); 
+						YAF_G(ini_wanted_section) = section_name;
 					} else {
 						YAF_G(ini_wanted_section) = NULL;
 					}
@@ -545,6 +550,8 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 			zval tmp;
 			if (zend_symtable_find(Z_ARRVAL_P(configs),
 						Z_STRVAL_P(section_name), Z_STRLEN_P(section_name) + 1, (void **)&section) == FAILURE) {
+				zval_dtor(configs);
+				efree(configs);
 				yaf_trigger_error(E_ERROR TSRMLS_CC, "There is no section '%s' in '%s'", Z_STRVAL_P(section_name), ini_file);
 				return NULL;
 			}
