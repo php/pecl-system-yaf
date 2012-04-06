@@ -237,8 +237,6 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultRoute"), (void **)&ppsval) == SUCCESS
 				&& Z_TYPE_PP(ppsval) == IS_ARRAY) {
 			YAF_G(default_route) = *ppsval;
-		} else {
-			YAF_G(default_route) = NULL;
 		}
 	}
 

@@ -90,6 +90,7 @@ PHP_GINIT_FUNCTION(yaf)
 	yaf_globals->default_action		= YAF_ROUTER_DEFAULT_ACTION;
 	yaf_globals->bootstrap			= YAF_DEFAULT_BOOTSTRAP;
 	yaf_globals->modules			= NULL;
+	yaf_globals->default_route      = NULL;
 }
 /* }}} */
 
