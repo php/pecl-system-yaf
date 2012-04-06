@@ -29,6 +29,32 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_route_map_construct_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
 /* }}} */
 
+/* {{{ yaf_route_t * yaf_route_map_instance(yaf_route_t *this_ptr, zend_bool controller_prefer, char *delim, uint len TSRMLS_DC)
+ */
+yaf_route_t * yaf_route_map_instance(yaf_route_t *this_ptr, zend_bool controller_prefer, char *delim, uint len TSRMLS_DC) {
+	yaf_route_t *instance;
+
+	if (this_ptr) {
+		instance  = this_ptr;
+	} else {
+		MAKE_STD_ZVAL(instance);
+		object_init_ex(instance, yaf_route_map_ce);
+	}
+
+	if (controller_prefer) {
+		zend_update_property_bool(yaf_route_map_ce, instance,
+				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 1 TSRMLS_CC);
+	}
+
+	if (delim && len) {
+		zend_update_property_stringl(yaf_route_map_ce, instance,
+				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), delim, len TSRMLS_CC);
+	}
+
+	return instance;
+}
+/* }}} */
+
 /** {{{ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 */
 int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
@@ -117,27 +143,19 @@ PHP_METHOD(yaf_route_map, route) {
 }
 /* }}} */
 
-/** {{{ proto public Yaf_Route_Simple::__construct(int $controller_prefer=0, string $delimer = '#!')
+/** {{{ proto public Yaf_Route_Simple::__construct(bool $controller_prefer=FALSE, string $delimer = '#!')
 */
 PHP_METHOD(yaf_route_map, __construct) {
-	long controller_prefer 	= 0;
-	char *delim		   		= NULL;
-	uint delim_len	   		= 0;
+	char *delim	= NULL;
+	uint delim_len = 0;
+	zend_bool controller_prefer = 0;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ls",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|bs",
 			   	&controller_prefer, &delim, &delim_len) == FAILURE) {
 		return;
 	}
 
-	if (controller_prefer) {
-		zend_update_property_bool(yaf_route_map_ce, getThis(),
-				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_CTL_PREFER), 1 TSRMLS_CC);
-	}
-
-	if (delim && delim_len) {
-		zend_update_property_stringl(yaf_route_map_ce, getThis(),
-				ZEND_STRL(YAF_ROUTE_MAP_VAR_NAME_DELIMETER), delim, delim_len TSRMLS_CC);
-	}
+	(void)yaf_route_map_instance(getThis(), controller_prefer, delim, delim_len TSRMLS_CC);
 }
 /* }}} */
 

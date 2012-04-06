@@ -55,8 +55,17 @@ yaf_router_t * yaf_router_instance(yaf_router_t *this_ptr TSRMLS_DC) {
 	MAKE_STD_ZVAL(routes);
 	array_init(routes);
 
-	MAKE_STD_ZVAL(route);
-	object_init_ex(route, yaf_route_static_ce);
+	if (!YAF_G(default_route)) {
+static_route:
+	    MAKE_STD_ZVAL(route);
+		object_init_ex(route, yaf_route_static_ce);
+	} else {
+		route = yaf_route_instance(NULL, YAF_G(default_route) TSRMLS_CC);
+		if (!route) {
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to initialize default route, use %s instead", yaf_route_static_ce->name);
+			goto static_route;
+		}
+	}
 
 	zend_hash_update(Z_ARRVAL_P(routes), "_default", sizeof("_default"), (void **)&route, sizeof(zval *), NULL);
 	zend_update_property(yaf_router_ce, instance, ZEND_STRL(YAF_ROUTER_PROPERTY_NAME_ROUTERS), routes TSRMLS_CC);

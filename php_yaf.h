@@ -107,6 +107,7 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	long		forward_limit;
 	HashTable	*configs;
 	zval 		*modules;
+	zval        *default_route;
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	uint 		buf_nesting;
 	void		*buffer;
