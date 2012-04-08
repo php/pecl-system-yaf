@@ -1214,6 +1214,7 @@ PHP_METHOD(yaf_dispatcher, setDefaultModule) {
 		ZVAL_STRING(module_std, zend_str_tolower_dup(Z_STRVAL_P(module), Z_STRLEN_P(module)), 0);
 		*Z_STRVAL_P(module_std) = toupper(*Z_STRVAL_P(module_std));
 		zend_update_property(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), module_std TSRMLS_CC);
+		zval_ptr_dtor(&module_std);
 
 		RETURN_ZVAL(self, 1, 0);
 	}
@@ -1261,6 +1262,7 @@ PHP_METHOD(yaf_dispatcher, setDefaultAction) {
 		MAKE_STD_ZVAL(action_lower);
 		ZVAL_STRING(action_lower, zend_str_tolower_dup(Z_STRVAL_P(action), Z_STRLEN_P(action)), 0);
 		zend_update_property(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ACTION), action_lower TSRMLS_CC);
+		zval_ptr_dtor(&action_lower);
 
 		RETURN_ZVAL(self, 1, 0);
 	}
