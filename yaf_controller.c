@@ -359,14 +359,14 @@ PHP_METHOD(yaf_controller, forward) {
 	request    = zend_read_property(yaf_controller_ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_REQUEST), 1 TSRMLS_CC);
 	parameters = zend_read_property(yaf_controller_ce, self, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_ARGS), 1 TSRMLS_CC);
 
+	if (Z_TYPE_P(request) != IS_OBJECT
+			|| !instanceof_function((request_ce = Z_OBJCE_P(request)), yaf_request_ce TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
 	if (ZVAL_IS_NULL(parameters)) {
 		MAKE_STD_ZVAL(parameters);
 		array_init(parameters);
-	}
-
-	if (Z_TYPE_P(request) != IS_OBJECT
-			|| !instanceof_function((request_ce = Z_OBJCE_P(request)), yaf_request_ce TSRMLS_CC)) {
-		RETURN_FALSE
 	}
 
 	switch (ZEND_NUM_ARGS()) {
