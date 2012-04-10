@@ -582,24 +582,33 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			   */
 			yaf_controller_construct(ce, icontroller, request, response, view, NULL TSRMLS_CC);
 
-			MAKE_STD_ZVAL(view_dir);
-			Z_TYPE_P(view_dir) = IS_STRING;
-
-			if (is_def_module) {
-				Z_STRLEN_P(view_dir) = spprintf(&(Z_STRVAL_P(view_dir)), 0, "%s/%s", app_dir ,"views");
-			} else {
-				Z_STRLEN_P(view_dir) = spprintf(&(Z_STRVAL_P(view_dir)), 0, "%s/%s/%s/%s", app_dir,
-						"modules", Z_STRVAL_P(module), "views");
-			}
-
-			/** tell the view engine where to find templates */
 			if ((view_ce = Z_OBJCE_P(view)) == yaf_view_simple_ce) {
-				zend_update_property(view_ce, view,  ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), view_dir TSRMLS_CC);
+				view_dir = zend_read_property(view_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), 1 TSRMLS_CC);
 			} else {
-				zend_call_method_with_1_params(&view, view_ce, NULL, "setscriptpath", NULL, view_dir);
+				zend_call_method_with_1_params(&view, view_ce, NULL, "getscriptpath", NULL, view_dir);
 			}
 
-			zval_ptr_dtor(&view_dir);
+			if (IS_STRING != Z_TYPE_P(view_dir) || !Z_STRLEN_P(view_dir)) {
+				/* view directory might be set by _constructor */
+				MAKE_STD_ZVAL(view_dir);
+				Z_TYPE_P(view_dir) = IS_STRING;
+
+				if (is_def_module) {
+					Z_STRLEN_P(view_dir) = spprintf(&(Z_STRVAL_P(view_dir)), 0, "%s/%s", app_dir ,"views");
+				} else {
+					Z_STRLEN_P(view_dir) = spprintf(&(Z_STRVAL_P(view_dir)), 0, "%s/%s/%s/%s", app_dir,
+							"modules", Z_STRVAL_P(module), "views");
+				}
+
+				/** tell the view engine where to find templates */
+				if ((view_ce = Z_OBJCE_P(view)) == yaf_view_simple_ce) {
+					zend_update_property(view_ce, view,  ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), view_dir TSRMLS_CC);
+				} else {
+					zend_call_method_with_1_params(&view, view_ce, NULL, "setscriptpath", NULL, view_dir);
+				}
+
+			    zval_ptr_dtor(&view_dir);
+			}
 
 			zend_update_property(ce, icontroller, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME),	controller TSRMLS_CC);
 
