@@ -815,7 +815,7 @@ void yaf_dispatcher_exception_handler(yaf_dispatcher_t *dispatcher, yaf_request_
 	if (!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC)) {
         /* failover to default module error catcher */
         zval *m = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 1 TSRMLS_CC);
-		zend_update_property(request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), m TSRMLS_CC);
+		zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), m TSRMLS_CC);
         if (!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC)) {
 			return;
 		}
