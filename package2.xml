@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2012-04-01</date>
- <time>18:34:23</time>
+ <date>2012-04-11</date>
+ <time>11:17:54</time>
  <version>
-  <release>2.1.10</release>
-  <api>2.1.10</api>
+  <release>2.1.11</release>
+  <api>2.1.11</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,12 +22,15 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  - Improved Yaf_Config_Ini::__Construct performance, and reduce memory consumption
-  - Fixed bug #61493 (Can't remove item when using unset() with a Yaf_Config_Simple instance)
-  - Support controller autoloading(Only default module)
-  - Fixed bug that the controller name could be lowercase in routeShutdown hook
-  - Fixed bug that segfault while attempt to free owrite_handler
-  - Added Yaf_Controller::$yafAutoRender to controller render
+  - Improve Yaf_Config parsing performance,  if the wanted section was parsed, then overpass the rest sections
+  - Now catchException will failover to the default moudle error handler
+  - Added Yaf_View_Simple::clear
+  - Support set default route by config(appliation.dispatcher.defaultRoute)
+  - Support adding Yaf_Route_Map by config
+  - Allow Yaf_View_Simple::get(void)
+  - Fixed Bug that Yaf_Config_Ini will take part of the section
+  - Fixed bug that yaf_config_ini_deep_copy is not much deepy.
+  - Fixed bug Yaf_Route_Simple dont respect application.modules configure
   - Fixed some memory leaks
  </notes>
  <contents> 
@@ -130,6 +133,7 @@
     <file name="030.phpt" role="test" />
     <file name="031.phpt" role="test" />
     <file name="032.phpt" role="test" />
+    <file name="033.phpt" role="test" />
     <file name="bug61493.phpt" role="test" />
     <file name="simple.ini" role="test" />
    </dir>
@@ -150,6 +154,31 @@
  <extsrcrelease />
  <changelog> 
   <release> 
+   <date>2012-04-11</date> 
+   <version> 
+    <release>2.1.11</release> 
+    <api>2.1.11</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes>
+    - Improve Yaf_Config parsing performance,  if the wanted section was parsed, then overpass the rest sections
+    - Now catchException will failover to the default moudle error handler
+    - Added Yaf_View_Simple::clear
+    - Support set default route by config(appliation.dispatcher.defaultRoute)
+    - Support adding Yaf_Route_Map by config
+    - Allow Yaf_View_Simple::get(void)
+    - Fixed Bug that Yaf_Config_Ini will take part of the section
+    - Fixed bug that yaf_config_ini_deep_copy is not much deepy.
+    - Fixed bug Yaf_Route_Simple dont respect application.modules configure
+    - Fixed some memory leaks
+   </notes> 
+  </release> 
+
+  <release> 
    <date>2012-04-01</date> 
    <version> 
     <release>2.1.10</release> 
@@ -169,7 +198,6 @@
     - Fixed some memory leaks
    </notes> 
   </release> 
-
   <release> 
    <date>2012-03-20</date> 
    <version> 
