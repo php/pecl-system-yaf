@@ -253,6 +253,8 @@ yaf_view_t * yaf_view_simple_instance(yaf_view_t *view, zval *tpl_dir, zval *opt
 
 	if (tpl_dir && Z_TYPE_P(tpl_dir) == IS_STRING && IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl_dir), Z_STRLEN_P(tpl_dir))) {
 		zend_update_property(yaf_view_simple_ce, instance, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), tpl_dir TSRMLS_CC);
+	} else {
+		zend_update_property_stringl(yaf_view_simple_ce, instance, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR), "", 0 TSRMLS_CC);
 	}
 
 	return instance;
