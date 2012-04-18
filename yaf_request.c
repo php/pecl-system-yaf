@@ -151,7 +151,7 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 					efree(phpself);
 				}
 
-				orig_name = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("PHP_SELF") TSRMLS_CC);
+				orig_name = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("ORIG_SCRIPT_NAME") TSRMLS_CC);
 				if (orig_name && IS_STRING == Z_TYPE_P(orig_name)) {
 					char 	*orig;
 					size_t	orig_len;
