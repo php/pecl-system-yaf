@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2012-04-11</date>
- <time>11:17:54</time>
+ <date>2012-04-18</date>
+ <time>16:55:09</time>
  <version>
-  <release>2.1.11</release>
-  <api>2.1.11</api>
+  <release>2.1.12</release>
+  <api>2.1.12</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,16 +22,9 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  - Improve Yaf_Config parsing performance,  if the wanted section was parsed, then overpass the rest sections
-  - Now catchException will failover to the default moudle error handler
-  - Added Yaf_View_Simple::clear
-  - Support set default route by config(appliation.dispatcher.defaultRoute)
-  - Support adding Yaf_Route_Map by config
-  - Allow Yaf_View_Simple::get(void)
-  - Fixed Bug that Yaf_Config_Ini will take part of the section
-  - Fixed bug that yaf_config_ini_deep_copy is not much deepy.
-  - Fixed bug Yaf_Route_Simple dont respect application.modules configure
-  - Fixed some memory leaks
+  - Fixed bug that baseUri set to wrong value (affected version: 2.1.10, 2.1.11)
+  - Fixed bug Yaf_View_Simple crash while calling assign if construct it with no tpl_dir
+  - Fixed bug that Yaf_View_Simple::display doesn't convert controller name
  </notes>
  <contents> 
   <dir name="/"> 
@@ -154,6 +147,24 @@
  <extsrcrelease />
  <changelog> 
   <release> 
+   <date>2012-04-18</date> 
+   <version> 
+    <release>2.1.12</release> 
+    <api>2.1.12</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes>
+    - Fixed bug that baseUri set to wrong value (affected version: 2.1.10, 2.1.11)
+    - Fixed bug Yaf_View_Simple crash while calling assign if construct it with no tpl_dir
+    - Fixed bug that Yaf_View_Simple::display doesn't convert controller name
+   </notes> 
+  </release> 
+
+  <release> 
    <date>2012-04-11</date> 
    <version> 
     <release>2.1.11</release> 
@@ -177,7 +188,6 @@
     - Fixed some memory leaks
    </notes> 
   </release> 
-
   <release> 
    <date>2012-04-01</date> 
    <version> 
