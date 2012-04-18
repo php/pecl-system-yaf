@@ -137,7 +137,7 @@ static zval * yaf_controller_render(yaf_controller_t *instance, char *action_nam
 /** {{{ static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC)
  */
 static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instance, char *action_name, int len, zval *var_array TSRMLS_DC) {
-	char *path, *view_ext, *self_name;
+	char *path, *view_ext, *self_name, *tmp;
 	zval *name, *param, *ret = NULL;
 	int  path_len;
 
@@ -149,7 +149,28 @@ static int yaf_controller_display(zend_class_entry *ce, yaf_controller_t *instan
 
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
 
+	tmp = self_name;
+ 	while (*tmp != '\0') {
+		if (*tmp == '_') {
+			*tmp = DEFAULT_SLASH;
+		}
+		tmp++;
+	}
+
+	action_name = estrndup(action_name, len);
+
+	tmp = action_name;
+ 	while (*tmp != '\0') {
+		if (*tmp == '_') {
+			*tmp = DEFAULT_SLASH;
+		}
+		tmp++;
+	}
+
 	path_len  = spprintf(&path, 0, "%s%c%s.%s", self_name, DEFAULT_SLASH, action_name, view_ext);
+
+	efree(self_name);
+	efree(action_name);
 
 	MAKE_STD_ZVAL(param);
 	ZVAL_STRING(param, path, 0);
