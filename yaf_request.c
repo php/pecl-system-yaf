@@ -134,7 +134,6 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 					}
 					efree(script);
 				}
-				efree(file_name);
 
 				phpself_name = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("PHP_SELF") TSRMLS_CC);
 				if (phpself_name && IS_STRING == Z_TYPE_P(phpself_name)) {
@@ -145,6 +144,7 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 					if (strncmp(file_name, phpself, file_name_len) == 0) {
 						basename	 = Z_STRVAL_P(phpself_name);
 						basename_len = Z_STRLEN_P(phpself_name);
+						efree(file_name);
 						efree(phpself);
 						break;
 					}
@@ -159,11 +159,13 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 					if (strncmp(file_name, orig, file_name_len) == 0) {
 						basename 	 = Z_STRVAL_P(orig_name);
 						basename_len = Z_STRLEN_P(orig_name);
+						efree(file_name);
 						efree(orig);
 						break;
 					}
 					efree(orig);
 				}
+				efree(file_name);
 			}
 		} while (0);
 
