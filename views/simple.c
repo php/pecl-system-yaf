@@ -91,6 +91,11 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_assign_by_ref_arginfo, 0, 0, 2)
 	ZEND_ARG_INFO(1, value)
 ZEND_END_ARG_INFO();
 
+ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_eval_arginfo, 0, 0, 1)
+	ZEND_ARG_INFO(0, tpl_str)
+	ZEND_ARG_INFO(0, vars)
+ZEND_END_ARG_INFO();
+
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_clear_arginfo, 0, 0, 0)
 	ZEND_ARG_INFO(0, name)
 ZEND_END_ARG_INFO();
@@ -468,6 +473,105 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 }
 /* }}} */
 
+/** {{{ int yaf_view_simple_eval(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC)
+*/
+int yaf_view_simple_eval(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC) {
+	zval *tpl_vars;
+	char *script;
+	uint len;
+
+	HashTable *calling_symbol_table;
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	zend_class_entry *old_scope;
+	yaf_view_simple_buffer *buffer;
+#endif
+
+	ZVAL_NULL(ret);
+
+	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
+	if (EG(active_symbol_table)) {
+		calling_symbol_table = EG(active_symbol_table);
+	} else {
+		calling_symbol_table = NULL;
+	}
+
+	ALLOC_HASHTABLE(EG(active_symbol_table));
+	zend_hash_init(EG(active_symbol_table), 0, NULL, ZVAL_PTR_DTOR, 0);
+
+	(void)yaf_view_simple_extract(tpl_vars, vars TSRMLS_CC);
+
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	YAF_REDIRECT_OUTPUT_BUFFER(buffer);
+#else
+	if (php_output_start_user(NULL, 0, PHP_OUTPUT_HANDLER_STDFLAGS TSRMLS_CC) == FAILURE) {
+		php_error_docref("ref.outcontrol" TSRMLS_CC, E_WARNING, "failed to create buffer");
+		return 0;
+	}
+#endif
+
+	if (Z_STRLEN_P(tpl)) {
+		zend_op_array *new_op_array;
+		char *eval_desc = zend_make_compiled_string_description("template code" TSRMLS_CC);
+		new_op_array = zend_compile_string(tpl, eval_desc TSRMLS_CC);
+		efree(eval_desc);
+
+		if (new_op_array) {
+			zval *result;
+
+			YAF_STORE_EG_ENVIRON();
+
+			EG(return_value_ptr_ptr) 	= &result;
+			EG(active_op_array) 		= new_op_array;
+
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
+			if (!EG(active_symbol_table)) {
+				zend_rebuild_symbol_table(TSRMLS_C);
+			}
+#endif
+			zend_execute(new_op_array TSRMLS_CC);
+
+			destroy_op_array(new_op_array TSRMLS_CC);
+			efree(new_op_array);
+
+			if (!EG(exception)) {
+				if (EG(return_value_ptr_ptr)) {
+					zval_ptr_dtor(EG(return_value_ptr_ptr));
+				}
+			}
+
+			YAF_RESTORE_EG_ENVIRON();
+		}
+	}
+
+	if (calling_symbol_table) {
+		zend_hash_destroy(EG(active_symbol_table));
+		FREE_HASHTABLE(EG(active_symbol_table));
+		EG(active_symbol_table) = calling_symbol_table;
+	}
+
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	if (buffer->len) {
+		ZVAL_STRINGL(ret, buffer->buffer, buffer->len, 1);
+	}
+#else
+	if (php_output_get_contents(ret TSRMLS_CC) == FAILURE) {
+		php_output_end(TSRMLS_C);
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to fetch ob content");
+		return 0;
+	}
+
+	if (php_output_discard(TSRMLS_C) != SUCCESS ) {
+		return 0;
+	}
+#endif
+
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	YAF_RESTORE_OUTPUT_BUFFER(buffer);
+#endif
+	return 1;
+}
+/* }}} */
+
 /** {{{ proto public Yaf_View_Simple::__construct(string $tpl_dir, array $options = NULL)
 */
 PHP_METHOD(yaf_view_simple, __construct) {
@@ -636,6 +740,22 @@ PHP_METHOD(yaf_view_simple, render) {
 }
 /* }}} */
 
+/** {{{ proto public Yaf_View_Simple::eval(string $tpl_content, array $vars = NULL)
+*/
+PHP_METHOD(yaf_view_simple, eval) {
+	zval *tpl, *vars = NULL, *tpl_vars;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &tpl, &vars) == FAILURE) {
+		return;
+	}
+
+	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
+	if (!yaf_view_simple_eval(getThis(), tpl, vars, return_value TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+}
+/* }}} */
+
 /** {{{ proto public Yaf_View_Simple::display(string $tpl, array $vars = NULL)
 */
 PHP_METHOD(yaf_view_simple, display) {
@@ -685,6 +805,7 @@ zend_function_entry yaf_view_simple_methods[] = {
 	PHP_ME(yaf_view_simple, get, yaf_view_simple_get_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_view_simple, assign, yaf_view_assign_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_view_simple, render, yaf_view_render_arginfo, ZEND_ACC_PUBLIC)
+	PHP_ME(yaf_view_simple, eval,  yaf_view_simple_eval_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_view_simple, display, yaf_view_display_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_view_simple, assignRef, yaf_view_simple_assign_by_ref_arginfo, ZEND_ACC_PUBLIC)
 	PHP_ME(yaf_view_simple, clear, yaf_view_simple_clear_arginfo, ZEND_ACC_PUBLIC)
