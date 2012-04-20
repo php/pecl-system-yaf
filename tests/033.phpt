@@ -56,6 +56,6 @@ try {
 }
 ?>
 --EXPECTF--
-Unable to find template /home/huixinchen/packages/php-5.2.17/ext/yaf/tests/modules/Module/views/controller/action.phtml
-Unable to find template /home/huixinchen/packages/php-5.2.17/ext/yaf/testsno-exists/controller/action.phtml
-Unable to find template /home/huixinchen/packages/php-5.2.17/ext/yaf/testsno-exists/controller/dummy.phtml
+Unable to find template %stests/modules/Module/views/controller/action.phtml
+Unable to find template %s/testsno-exists/controller/action.phtml
+Unable to find template %s/testsno-exists/controller/dummy.phtml
