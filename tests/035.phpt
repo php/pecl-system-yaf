@@ -38,7 +38,7 @@ Yaf_View_Simple Object
     [_tpl_dir:protected] => %s
     [_options:protected] => Array
         (
-            [short_tag] => 
+            [short_tag] => 0
         )
 
 )

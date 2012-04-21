@@ -299,19 +299,16 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	YAF_REDIRECT_OUTPUT_BUFFER(buffer);
-	do {
+	{
 		zval **short_tag;
 		zval *options = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_OPTS), 1 TSRMLS_CC);
-		if (IS_ARRAY == Z_TYPE_P(options)
-				&& (zend_hash_find(Z_ARRVAL_P(options), ZEND_STRS("short_tag"), (void **)&short_tag) == SUCCESS)) {
-			convert_to_boolean_ex(short_tag);
-			if (!Z_BVAL_PP(short_tag)) {
-				break;
-			}
+		if (IS_ARRAY != Z_TYPE_P(options)
+				|| (zend_hash_find(Z_ARRVAL_P(options), ZEND_STRS("short_tag"), (void **)&short_tag) == FAILURE)
+				|| zend_is_true(*short_tag)) {
+			short_open_tag = CG(short_tags);
+			CG(short_tags) = 1;
 		}
-		short_open_tag = CG(short_tags);
-        CG(short_tags) = 1;
-	} while(0);
+	}
 #else
 	if (php_output_start_user(NULL, 0, PHP_OUTPUT_HANDLER_STDFLAGS TSRMLS_CC) == FAILURE) {
 		php_error_docref("ref.outcontrol" TSRMLS_CC, E_WARNING, "failed to create buffer");
@@ -443,19 +440,16 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 	EG(scope) = yaf_view_simple_ce;
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
-	do {
+	{
 		zval **short_tag;
 		zval *options = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_OPTS), 1 TSRMLS_CC);
-		if (IS_ARRAY == Z_TYPE_P(options)
-				&& (zend_hash_find(Z_ARRVAL_P(options), ZEND_STRS("short_tag"), (void **)&short_tag) == SUCCESS)) {
-			convert_to_boolean_ex(short_tag);
-			if (!Z_BVAL_PP(short_tag)) {
-				break;
-			}
+		if (IS_ARRAY != Z_TYPE_P(options)
+				|| (zend_hash_find(Z_ARRVAL_P(options), ZEND_STRS("short_tag"), (void **)&short_tag) == FAILURE)
+				|| zend_is_true(*short_tag)) {
+			short_open_tag = CG(short_tags);
+			CG(short_tags) = 1;
 		}
-		short_open_tag = CG(short_tags);
-        CG(short_tags) = 1;
-	} while(0);
+	}
 #endif
 
 	if (IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl), Z_STRLEN_P(tpl))) {
