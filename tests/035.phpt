@@ -1,7 +1,12 @@
 --TEST--
 Check for Yaf_View_Simple with short_tag_open
 --SKIPIF--
-<?php if (!extension_loaded("yaf")) print "skip"; ?>
+<?php
+if (!extension_loaded("yaf")) print "skip"; 
+if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+   print "skip PHP 5.4 remove short_open_tag";
+} 
+?>
 --INI--
 short_open_tag = 0
 --FILE--
