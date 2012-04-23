@@ -813,11 +813,15 @@ void yaf_dispatcher_exception_handler(yaf_dispatcher_t *dispatcher, yaf_request_
 	view = yaf_dispatcher_init_view(dispatcher, NULL, NULL TSRMLS_CC);
 
 	if (!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC)) {
-        /* failover to default module error catcher */
-        zval *m = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 1 TSRMLS_CC);
-		zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), m TSRMLS_CC);
-        if (!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC)) {
-			return;
+		if (EG(exception) 
+				&& instanceof_function(Z_OBJCE_P(EG(exception)), 
+					yaf_buildin_exceptions[YAF_EXCEPTION_OFFSET(YAF_ERR_NOTFOUND_CONTROLLER)] TSRMLS_CC)) {
+			zval *m = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 1 TSRMLS_CC);
+			/* failover to default module error catcher */
+			zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), m TSRMLS_CC);
+			zval_ptr_dtor(&EG(exception));
+			EG(exception) = NULL;
+			!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC);
 		}
 	}
 

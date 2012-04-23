@@ -38,7 +38,7 @@
 zend_class_entry *yaf_ce_RuntimeException;
 zend_class_entry *yaf_exception_ce;
 
-static zend_class_entry * yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];
+zend_class_entry *yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];
 
 /** {{{void yaf_trigger_error(int type TSRMLS_DC, char *format, ...)
  */

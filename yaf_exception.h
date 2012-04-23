@@ -60,9 +60,9 @@
 		EG(current_execute_data)->opline = EG(opline_before_exception); \
 	} while(0)
 
-
 extern zend_class_entry *yaf_ce_RuntimeException;
 extern zend_class_entry *yaf_exception_ce;
+extern zend_class_entry *yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];
 void yaf_trigger_error(int type TSRMLS_DC, char *format, ...);
 void yaf_throw_exception(long code, char *message TSRMLS_DC);
 
