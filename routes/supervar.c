@@ -30,22 +30,24 @@ ZEND_END_ARG_INFO()
 /** {{{ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
  */
 int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
-	zval *varname, *zuir, *params;
+	zval *varname, *zuri, *params;
 	char *req_uri, *module = NULL, *controller = NULL, *action = NULL, *rest = NULL;
 
 	varname = zend_read_property(yaf_route_supervar_ce, route, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), 1 TSRMLS_CC);
 
-	zuir = yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(varname), Z_STRLEN_P(varname) TSRMLS_CC);
+	zuri = yaf_request_query(YAF_GLOBAL_VARS_GET, Z_STRVAL_P(varname), Z_STRLEN_P(varname) TSRMLS_CC);
 
-	if (!zuir || ZVAL_IS_NULL(zuir)) {
+	if (!zuri || ZVAL_IS_NULL(zuri)) {
 		return 0;
 	}
 
-	req_uri = estrndup(Z_STRVAL_P(zuir), Z_STRLEN_P(zuir));
+	req_uri = estrndup(Z_STRVAL_P(zuri), Z_STRLEN_P(zuri));
+
 	do {
-		char *s, *p;
+#define strip_slashs(p) while (*p == ' ' || *p == '/') { ++p; }
+		char *s, *p, *q;
 		char *uri;
-		int request_uri_len = Z_STRLEN_P(zuir);
+		int request_uri_len = Z_STRLEN_P(zuri);
 
 		if (request_uri_len == 0
 				|| (request_uri_len == 1 && *req_uri == '/')) {
@@ -54,77 +56,67 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 
 		uri = req_uri;
 		s = p = uri;
+		q = req_uri + request_uri_len - 1;
 
-		while(*p == ' ' || *p == '/') {
-			++p;
+		while (*q == ' ' || *q == '/') {
+			*q-- = '\0';
 		}
+
+		strip_slashs(p);
 
 		if ((s = strstr(p, "/")) != NULL) {
 			if (yaf_application_is_module_name(p, s-p TSRMLS_CC)) {
 				module = estrndup(p, s - p);
 				p  = s + 1;
+		        strip_slashs(p);
+				if ((s = strstr(p, "/")) != NULL) {
+					controller = estrndup(p, s - p);
+					p  = s + 1;
+				}
+			} else {
+				controller = estrndup(p, s - p);
+				p  = s + 1;
 			}
 		}
 
-		if ((s = strstr(p, "/")) != NULL) {
-			controller = estrndup(p, s - p);
-			p  = s + 1;
-		}
-
+		strip_slashs(p);
 		if ((s = strstr(p, "/")) != NULL) {
 			action = estrndup(p, s - p);
 			p  = s + 1;
 		}
 
+		strip_slashs(p);
 		if (*p != '\0') {
-			rest = estrdup(p);
+			do {
+				if (!module) {
+					if (yaf_application_is_module_name(p, strlen(p) TSRMLS_CC)) {
+						module = estrdup(p);
+						break;
+					}
+				}
+
+				if (!controller) {
+					controller = estrdup(p);
+					break;
+				}
+
+				if (!action) {
+					action = estrdup(p);
+					break;
+				}
+
+				rest = estrdup(p);
+			} while (0);
 		}
 
-		if (module == NULL
-				&& controller == NULL
+		if (controller != NULL 
 				&& action == NULL ) {
-			/* /one */
-			if (YAF_G(action_prefer)) {
-				action = rest;
-			} else {
-				controller = rest;
-			}
-			rest  = NULL;
-		} else if (module == NULL
-				&& action == NULL
-				&& rest  == NULL) {
-			/* /one/ */
+			/* /controller */
 			if (YAF_G(action_prefer)) {
 				action = controller;
 				controller = NULL;
 			}
-		} else if (controller == NULL
-				&& action == NULL
-				&& rest != NULL) {
-			/* /controller/action */
-			controller = module;
-			action     = rest;
-			module	   = NULL;
-			rest	   = NULL;
-		} else if (action == NULL
-				&& rest == NULL) {
-			/* /module/controller/ */
-			action	   = controller;
-			controller = module;
-			module 	   = NULL;
-		} else if (controller == NULL
-				&& action == NULL)	{
-			/* /module/rest */
-			controller = module;
-			action	   = rest;
-			module 	   = NULL;
-			rest       = NULL;
-		} else if (action == NULL) {
-			/* /module/controller/action */
-			action = rest;
-			rest   = NULL;
 		}
-
 	} while (0);
 
 	efree(req_uri);
