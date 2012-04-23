@@ -42,7 +42,8 @@ int yaf_route_static_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 	}
 
 	do {
-		char *s, *p;
+#define strip_slashs(p) while (*p == ' ' || *p == '/') { ++p; }
+		char *s, *p, *q;
 		char *uri;
 		int request_uri_len = Z_STRLEN_P(zuri);
 
@@ -53,77 +54,67 @@ int yaf_route_static_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 
 		uri = req_uri;
 		s = p = uri;
+		q = req_uri + request_uri_len - 1;
 
-		while(*p == ' ' || *p == '/') {
-			++p;
+		while (*q == ' ' || *q == '/') {
+			*q-- = '\0';
 		}
+
+		strip_slashs(p);
 
 		if ((s = strstr(p, "/")) != NULL) {
 			if (yaf_application_is_module_name(p, s-p TSRMLS_CC)) {
 				module = estrndup(p, s - p);
 				p  = s + 1;
+		        strip_slashs(p);
+				if ((s = strstr(p, "/")) != NULL) {
+					controller = estrndup(p, s - p);
+					p  = s + 1;
+				}
+			} else {
+				controller = estrndup(p, s - p);
+				p  = s + 1;
 			}
 		}
 
-		if ((s = strstr(p, "/")) != NULL) {
-			controller = estrndup(p, s - p);
-			p  = s + 1;
-		}
-
+		strip_slashs(p);
 		if ((s = strstr(p, "/")) != NULL) {
 			action = estrndup(p, s - p);
 			p  = s + 1;
 		}
 
+		strip_slashs(p);
 		if (*p != '\0') {
-			rest = estrdup(p);
+			do {
+				if (!module) {
+					if (yaf_application_is_module_name(p, strlen(p) TSRMLS_CC)) {
+						module = estrdup(p);
+						break;
+					}
+				}
+
+				if (!controller) {
+					controller = estrdup(p);
+					break;
+				}
+
+				if (!action) {
+					action = estrdup(p);
+					break;
+				}
+
+				rest = estrdup(p);
+			} while (0);
 		}
 
-		if (module == NULL
-				&& controller == NULL
+		if (controller != NULL 
 				&& action == NULL ) {
-			/* /one */
-			if (YAF_G(action_prefer)) {
-				action = rest;
-			} else {
-				controller = rest;
-			}
-			rest  = NULL;
-		} else if (module == NULL
-				&& action == NULL
-				&& rest  == NULL) {
-			/* /one/ */
+			/* /controller */
 			if (YAF_G(action_prefer)) {
 				action = controller;
 				controller = NULL;
 			}
-		} else if (controller == NULL
-				&& action == NULL
-				&& rest != NULL) {
-			/* /controller/action */
-			controller = module;
-			action     = rest;
-			module	   = NULL;
-			rest	   = NULL;
-		} else if (action == NULL
-				&& rest == NULL) {
-			/* /module/controller/ */
-			action	   = controller;
-			controller = module;
-			module 	   = NULL;
-		} else if (controller == NULL
-				&& action == NULL)	{
-			/* /module/rest */
-			controller = module;
-			action	   = rest;
-			module 	   = NULL;
-			rest       = NULL;
-		} else if (action == NULL) {
-			/* /module/controller/action */
-			action = rest;
-			rest   = NULL;
 		}
-
 	} while (0);
 
 	efree(req_uri);
