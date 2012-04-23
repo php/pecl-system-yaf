@@ -44,7 +44,7 @@ zend_class_entry *yaf_route_ce;
 
 /* {{{ yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC)
  */
-yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr,  zval *config TSRMLS_DC) {
+yaf_route_t * yaf_route_instance(yaf_route_t *this_ptr, zval *config TSRMLS_DC) {
 	zval **match, **def, **map, **ppzval;
 	yaf_route_t *instance = NULL;
 

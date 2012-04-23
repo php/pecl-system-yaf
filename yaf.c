@@ -226,6 +226,7 @@ PHP_RSHUTDOWN_FUNCTION(yaf)
 		efree(YAF_G(buffer));
 	}
 #endif
+	YAF_G(default_route) = NULL;
 
 	return SUCCESS;
 }
