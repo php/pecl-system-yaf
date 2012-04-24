@@ -107,8 +107,14 @@ int yaf_route_static_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 			} while (0);
 		}
 
-		if (controller != NULL 
-				&& action == NULL ) {
+		if (module && controller == NULL) {
+			controller = module;
+			module = NULL;
+		} else if (module && action == NULL) {
+			action = controller;
+			controller = module;
+			module = NULL;
+	    } else if (controller && action == NULL ) {
 			/* /controller */
 			if (YAF_G(action_prefer)) {
 				action = controller;

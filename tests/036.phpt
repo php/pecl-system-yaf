@@ -68,10 +68,10 @@ foo/bar : m=> c=>foo a=>bar
 /foo/bar/dummy : m=> c=>foo a=>bar args=>dummy->,
 /foo///bar/dummy/ : m=> c=>foo a=>bar args=>dummy->,
 foo/bar/dummy/ : m=> c=>foo a=>bar args=>dummy->,
-/my : m=>my c=> a=>
-/my/ : m=>my c=> a=>
-/my/foo : m=>my c=>foo a=>
-/my/foo/ : m=>my c=>foo a=>
+/my : m=> c=>my a=>
+/my/ : m=> c=>my a=>
+/my/foo : m=> c=>my a=>foo
+/my/foo/ : m=> c=>my a=>foo
 my/foo/bar : m=>my c=>foo a=>bar
 my/foo/bar/ : m=>my c=>foo a=>bar
 /my/foo/bar/dummy/1 : m=>my c=>foo a=>bar args=>dummy->1,
@@ -79,7 +79,7 @@ my/foo/bar/dummy/1/a/2///// : m=>my c=>foo a=>bar args=>dummy->1,a->2,
 / : m=> c=> a=>
 /foo : m=> c=> a=>foo
 /foo/ : m=> c=> a=>foo
-/my : m=>my c=> a=>
-/my/ : m=>my c=> a=>
-/my/foo : m=>my c=> a=>foo
-/my//foo/ : m=>my c=> a=>foo
+/my : m=> c=>my a=>
+/my/ : m=> c=>my a=>
+/my/foo : m=> c=>my a=>foo
+/my//foo/ : m=> c=>my a=>foo

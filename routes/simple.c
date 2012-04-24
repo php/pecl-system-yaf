@@ -50,7 +50,7 @@ int yaf_route_simple_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
 		return 0;
 	}
 
-	if (yaf_application_is_module_name(Z_STRVAL_P(module), Z_STRLEN_P(module) TSRMLS_CC)) {
+	if (Z_TYPE_P(module) == IS_STRING && yaf_application_is_module_name(Z_STRVAL_P(module), Z_STRLEN_P(module) TSRMLS_CC)) {
 		zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
 	}
 

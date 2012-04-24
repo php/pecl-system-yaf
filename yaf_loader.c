@@ -212,8 +212,7 @@ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int le
 	}
 #endif
 
-	if (!prefix_len) {
-		efree(prefix);
+	if (!prefix) {
 		return 0;
 	}
 
@@ -227,6 +226,7 @@ int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int le
 		}
 		ns = pos + prefix_len;
 	}
+
 	efree(prefix);
 	return 0;
 }
