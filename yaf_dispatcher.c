@@ -838,10 +838,8 @@ int yaf_dispatcher_route(yaf_dispatcher_t *dispatcher, yaf_request_t *request TS
 	yaf_router_t *router = zend_read_property(yaf_dispatcher_ce, dispatcher, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ROUTER), 1 TSRMLS_CC);
 	if (IS_OBJECT == Z_TYPE_P(router)) {
 		if ((router_ce = Z_OBJCE_P(router)) == yaf_router_ce) {
-			/* use buildin router */
-			if (!yaf_router_route(router, request TSRMLS_CC)) {
-				return 0;
-			}
+			/* use built-in router */
+			yaf_router_route(router, request TSRMLS_CC);
 		} else {
 			/* user custom router */
 			zval *ret = zend_call_method_with_1_params(&router, router_ce, NULL, "route", &ret, request);

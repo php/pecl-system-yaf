@@ -68,15 +68,15 @@ void yaf_trigger_error(int type TSRMLS_DC, char *format, ...) {
 zend_class_entry * yaf_get_exception_base(int root TSRMLS_DC) {
 #if can_handle_soft_dependency_on_SPL && defined(HAVE_SPL) && ((PHP_MAJOR_VERSION > 5) || (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 1))
 	if (!root) {
-		if (!yaf_ce_RuntimeException) {
+		if (!spl_ce_RuntimeException) {
 			zend_class_entry **pce;
 
 			if (zend_hash_find(CG(class_table), "runtimeexception", sizeof("RuntimeException"), (void **) &pce) == SUCCESS) {
-				yaf_ce_RuntimeException = *pce;
+				spl_ce_RuntimeException = *pce;
 				return *pce;
 			}
 		} else {
-			return yaf_ce_RuntimeException;
+			return spl_ce_RuntimeException;
 		}
 	}
 #endif

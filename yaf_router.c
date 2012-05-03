@@ -115,10 +115,9 @@ int yaf_router_route(yaf_router_t *router, yaf_request_t *request TSRMLS_DC) {
 			}
 			yaf_request_set_routed(request, 1 TSRMLS_CC);
 			zval_ptr_dtor(&ret);
-			return 1;
 		}
 	}
-	return 0;
+	return 1;
 }
 /* }}} */
 
