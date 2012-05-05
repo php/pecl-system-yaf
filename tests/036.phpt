@@ -12,7 +12,7 @@ $url = array(
   "/foo/bar/dummy", "/foo///bar/dummy/", "foo/bar/dummy/",
   "/my", "/my/", "/my/foo", "/my/foo/", "my/foo/bar", "my/foo/bar/",
   "/my/foo/bar/dummy/1", "my/foo/bar/dummy/1/a/2/////",
-  "/foo/index", "index/foo",
+  "/my/index/index", "my/index", "/foo/index", "index/foo",
 );
 
 $config = array( 
@@ -77,6 +77,8 @@ my/foo/bar : m=>my c=>foo a=>bar
 my/foo/bar/ : m=>my c=>foo a=>bar
 /my/foo/bar/dummy/1 : m=>my c=>foo a=>bar args=>dummy->1,
 my/foo/bar/dummy/1/a/2///// : m=>my c=>foo a=>bar args=>dummy->1,a->2,
+/my/index/index : m=>my c=>index a=>index
+my/index : m=> c=>my a=>index
 /foo/index : m=> c=>foo a=>index
 index/foo : m=> c=>index a=>foo
 / : m=> c=> a=>
