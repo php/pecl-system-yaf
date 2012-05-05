@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2012-04-24</date>
- <time>17:19:24</time>
+ <date>2012-05-05</date>
+ <time>11:46:17</time>
  <version>
-  <release>2.1.13</release>
-  <api>2.1.13</api>
+  <release>2.1.14</release>
+  <api>2.1.14</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,12 +22,8 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  - Added Yaf_View_Simple::eval
-  - Supported short_open_tag in Yaf_View_Simple
-  - Fixed a potential segfault while alternately access two yaf application host in one machine
-  - Improve the Yaf_Route_Static/Supervar::route logic
-  - Fixed bug that 404 occurred if the request is prefix with more than one slash
-  - Fixed bug that free NULL pointer in Yaf_Loader::registerLocalNameSpace
+  - Fixed Bug that if no routes success router will throw exception(since 2.1.13 Yaf supports configure default route by application.ini)
+  - Fixed Bug that 'foo/index' router result as c => index a => foo(affected 2.1.13)
  </notes>
  <contents> 
   <dir name="/"> 
@@ -155,8 +151,25 @@
   <release> 
    <date>2012-04-24</date> 
    <version> 
-    <release>2.1.12</release> 
-    <api>2.1.12</api> 
+    <release>2.1.14</release> 
+    <api>2.1.14</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes>
+    - Fixed Bug that if no routes success router will throw exception(since 2.1.13 Yaf supports configure default route by application.ini)
+    - Fixed Bug that 'foo/index' router result as c => index a => foo
+   </notes> 
+  </release> 
+
+  <release> 
+   <date>2012-04-24</date> 
+   <version> 
+    <release>2.1.13</release> 
+    <api>2.1.13</api> 
    </version> 
    <stability> 
     <release>beta</release> 
@@ -172,7 +185,6 @@
     - Fixed bug that free NULL pointer in Yaf_Loader::registerLocalNameSpace
    </notes> 
   </release> 
-
   <release> 
    <date>2012-04-18</date> 
    <version> 
