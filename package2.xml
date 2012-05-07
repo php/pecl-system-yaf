@@ -10,11 +10,11 @@
   <email>laruence@php.net</email>
   <active>yes</active>
  </lead>
- <date>2012-05-05</date>
- <time>11:46:17</time>
+ <date>2012-05-07</date>
+ <time>16:26:23</time>
  <version>
-  <release>2.1.14</release>
-  <api>2.1.14</api>
+  <release>2.1.15</release>
+  <api>2.1.15</api>
  </version>
  <stability>
   <release>beta</release>
@@ -22,8 +22,7 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-  - Fixed Bug that if no routes success router will throw exception(since 2.1.13 Yaf supports configure default route by application.ini)
-  - Fixed Bug that 'foo/index' router result as c => index a => foo(affected 2.1.13)
+  - Fixed typo variable name in static route(affect 2.1.14)
  </notes>
  <contents> 
   <dir name="/"> 
@@ -149,7 +148,23 @@
  <extsrcrelease />
  <changelog> 
   <release> 
-   <date>2012-04-24</date> 
+   <date>2012-05-07</date> 
+   <version> 
+    <release>2.1.15</release> 
+    <api>2.1.15</api> 
+   </version> 
+   <stability> 
+    <release>beta</release> 
+    <api>beta</api> 
+   </stability> 
+   <license uri="http://www.php.net/license">PHP License</license> 
+   <notes>
+    - Fixed typo variable name in static route(affect 2.1.14)
+   </notes> 
+  </release> 
+
+  <release> 
+   <date>2012-05-05</date> 
    <version> 
     <release>2.1.14</release> 
     <api>2.1.14</api> 
@@ -164,7 +179,6 @@
     - Fixed Bug that 'foo/index' router result as c => index a => foo
    </notes> 
   </release> 
-
   <release> 
    <date>2012-04-24</date> 
    <version> 
