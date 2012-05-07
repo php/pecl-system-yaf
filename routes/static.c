@@ -25,23 +25,23 @@ ZEND_BEGIN_ARG_INFO_EX(yaf_route_static_match_arginfo, 0, 0, 1)
 ZEND_END_ARG_INFO()
 /* }}} */
 
-static int yaf_route_pathinfo_route(yaf_request_t *request, char *request_uri, int request_uri_len TSRMLS_DC) /* {{{ */ {
+static int yaf_route_pathinfo_route(yaf_request_t *request, char *req_uri, int req_uri_len TSRMLS_DC) /* {{{ */ {
 	zval *params;
-	char *req_uri, *module = NULL, *controller = NULL, *action = NULL, *rest = NULL;
+	char *module = NULL, *controller = NULL, *action = NULL, *rest = NULL;
 
 	do {
 #define strip_slashs(p) while (*p == ' ' || *p == '/') { ++p; }
 		char *s, *p, *q;
 		char *uri;
 
-		if (request_uri_len == 0
-				|| (request_uri_len == 1 && *req_uri == '/')) {
+		if (req_uri_len == 0
+				|| (req_uri_len == 1 && *req_uri == '/')) {
 			break;
 		}
 
 		uri = req_uri;
 		s = p = uri;
-		q = req_uri + request_uri_len - 1;
+		q = req_uri + req_uri_len - 1;
 
 		while (*q == ' ' || *q == '/') {
 			*q-- = '\0';
