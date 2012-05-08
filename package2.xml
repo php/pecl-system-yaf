@@ -128,6 +128,7 @@
     <file name="034.phpt" role="test" />
     <file name="035.phpt" role="test" />
     <file name="036.phpt" role="test" />
+    <file name="037.phpt" role="test" />
     <file name="bug61493.phpt" role="test" />
     <file name="simple.ini" role="test" />
    </dir>
