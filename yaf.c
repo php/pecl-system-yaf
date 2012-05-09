@@ -229,6 +229,7 @@ PHP_RSHUTDOWN_FUNCTION(yaf)
 			buffer = YAF_G(buffer);
 			if (buffer->len) {
 				PHPWRITE(buffer->buffer, buffer->len);
+				efree(buffer->buffer);
 			}
 			YAF_G(buffer) = buffer->prev;
 			efree(buffer);
