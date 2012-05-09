@@ -274,6 +274,7 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 	if (IS_ABSOLUTE_PATH(Z_STRVAL_P(tpl), Z_STRLEN_P(tpl))) {
 		script 	= Z_STRVAL_P(tpl);
 		len 	= Z_STRLEN_P(tpl);
+
 		if (yaf_loader_compose(script, len + 1, 0 TSRMLS_CC) == 0) {
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 			YAF_RESTORE_OUTPUT_BUFFER(buffer);
@@ -741,9 +742,35 @@ PHP_METHOD(yaf_view_simple, render) {
 	}
 
 	tpl_vars = zend_read_property(yaf_view_simple_ce, getThis(), ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
-	if (!yaf_view_simple_render(getThis(), tpl, vars, return_value TSRMLS_CC)) {
-		RETURN_FALSE;
-	}
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	zend_try {
+#endif
+		if (!yaf_view_simple_render(getThis(), tpl, vars, return_value TSRMLS_CC)) {
+			RETVAL_FALSE;
+		}
+#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
+	} zend_catch {
+		yaf_view_simple_buffer *buffer;
+
+		if (YAF_G(owrite_handler)) {
+			OG(php_body_write) 	= (yaf_body_write_func)YAF_G(owrite_handler);
+			YAF_G(owrite_handler) = NULL;
+		}
+
+		if (YAF_G(buffer)) {
+			buffer = YAF_G(buffer);
+			YAF_G(buffer) = buffer->prev;
+			if (buffer->len) {
+				PHPWRITE(buffer->buffer, buffer->len);
+				efree(buffer->buffer);
+			}
+			--(YAF_G(buf_nesting));
+			efree(buffer);
+		}
+		zend_bailout();
+	} zend_end_try();
+#endif
+
 }
 /* }}} */
 
