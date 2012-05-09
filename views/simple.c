@@ -23,55 +23,6 @@
 
 zend_class_entry *yaf_view_simple_ce;
 
-#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
-struct _yaf_view_simple_buffer {
-	char *buffer;
-	unsigned long size;
-	unsigned long len;
-	struct _yaf_view_simple_buffer *prev;
-};
-
-typedef struct _yaf_view_simple_buffer yaf_view_simple_buffer;
-
-typedef int(*yaf_body_write_func)(const char *str, uint str_length TSRMLS_DC);
-
-/** {{{ MACROS
- */
-#define YAF_REDIRECT_OUTPUT_BUFFER(seg) \
-	do { \
-		if (!YAF_G(owrite_handler)) { \
-			YAF_G(owrite_handler) = OG(php_body_write); \
-		} \
-		OG(php_body_write) = yaf_view_simple_render_write; \
-		old_scope = EG(scope); \
-		EG(scope) = yaf_view_simple_ce; \
-		seg = (yaf_view_simple_buffer *)emalloc(sizeof(yaf_view_simple_buffer)); \
-		memset(seg, 0, sizeof(yaf_view_simple_buffer)); \
-		seg->prev  	 = YAF_G(buffer);\
-		YAF_G(buffer) = seg; \
-		YAF_G(buf_nesting)++;\
-	} while (0)
-
-#define YAF_RESTORE_OUTPUT_BUFFER(seg) \
-	do { \
-		OG(php_body_write) 	= (yaf_body_write_func)YAF_G(owrite_handler); \
-		EG(scope) 			= old_scope; \
-		YAF_G(buffer)  		= seg->prev; \
-		if (!(--YAF_G(buf_nesting))) { \
-			if (YAF_G(buffer)) { \
-				php_error_docref(NULL TSRMLS_CC, E_ERROR, "Yaf output buffer collapsed"); \
-			} else { \
-				YAF_G(owrite_handler) = NULL; \
-			} \
-		} \
-		if (seg->size) { \
-			efree(seg->buffer); \
-		} \
-		efree(seg); \
-	} while (0)
-/* }}} */
-#endif
-
 /** {{{ ARG_INFO */
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_simple_construct_arginfo, 0, 0, 1)
 	ZEND_ARG_INFO(0, tempalte_dir)

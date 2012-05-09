@@ -223,7 +223,16 @@ PHP_RSHUTDOWN_FUNCTION(yaf)
 	}
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	if (YAF_G(buffer)) {
-		efree(YAF_G(buffer));
+	    yaf_view_simple_buffer *buffer;
+		OG(php_body_write) 	= (yaf_body_write_func)YAF_G(owrite_handler);
+		do {
+			buffer = YAF_G(buffer);
+			if (buffer->len) {
+				PHPWRITE(buffer->buffer, buffer->len);
+			}
+			YAF_G(buffer) = buffer->prev;
+			efree(buffer);
+		} while (--(YAF_G(buf_nesting)));
 	}
 #endif
 	YAF_G(default_route) = NULL;
