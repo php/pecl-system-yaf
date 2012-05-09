@@ -234,6 +234,10 @@ int yaf_view_simple_render(yaf_view_t *view, zval *tpl, zval * vars, zval *ret T
 	zend_bool short_open_tag = 0;
 #endif
 
+	if (IS_STRING != Z_TYPE_P(tpl)) {
+		return 0;
+	}
+
 	ZVAL_NULL(ret);
 
 	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
@@ -373,6 +377,10 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 	zend_bool short_open_tag = 0;
 #endif
 
+	if (IS_STRING != Z_TYPE_P(tpl)) {
+		return 0;
+	}
+
 	ZVAL_NULL(ret);
 
 	tpl_vars = zend_read_property(yaf_view_simple_ce, view, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), 1 TSRMLS_CC);
@@ -480,6 +488,10 @@ int yaf_view_simple_eval(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSR
 	zend_class_entry *old_scope;
 	yaf_view_simple_buffer *buffer;
 #endif
+
+	if (IS_STRING != Z_TYPE_P(tpl)) {
+		return 0;
+	}
 
 	ZVAL_NULL(ret);
 
