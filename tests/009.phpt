@@ -2,6 +2,8 @@
 Check for Yaf_View_Simple
 --SKIPIF--
 <?php if (!extension_loaded("yaf")) print "skip"; ?>
+--INI--
+report_memleaks=0
 --FILE--
 <?php
 $view = new Yaf_View_Simple(dirname(__FILE__));
@@ -24,7 +26,7 @@ Yaf_View_Simple Object
     [_tpl_dir:protected] => %s
     [_options:protected] => 
 )
-int(1590)
+int(1779)
 string(8) "laruence"
 NULL
 Yaf_View_Simple Object
