@@ -845,7 +845,7 @@ void yaf_dispatcher_exception_handler(yaf_dispatcher_t *dispatcher, yaf_request_
 			zend_update_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), m TSRMLS_CC);
 			zval_ptr_dtor(&EG(exception));
 			EG(exception) = NULL;
-			!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC);
+			(void)yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC);
 		}
 	}
 

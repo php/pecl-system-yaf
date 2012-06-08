@@ -482,8 +482,6 @@ int yaf_view_simple_display(yaf_view_t *view, zval *tpl, zval *vars, zval *ret T
 */
 int yaf_view_simple_eval(yaf_view_t *view, zval *tpl, zval * vars, zval *ret TSRMLS_DC) {
 	zval *tpl_vars;
-	char *script;
-	uint len;
 	HashTable *calling_symbol_table;
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	zend_class_entry *old_scope;

@@ -133,6 +133,7 @@ static int yaf_route_pathinfo_route(yaf_request_t *request, char *req_uri, int r
 		efree(rest);
 	}
 
+	return 1;
 }
 /* }}} */
 
