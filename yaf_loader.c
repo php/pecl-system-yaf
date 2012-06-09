@@ -163,9 +163,9 @@ int yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 }
 /* }}} */
 
-/** {{{ inline int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC)
+/** {{{ static int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC)
  */
-inline int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC) {
+static int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC) {
 	uint separator_len = strlen(YAF_G(name_separator));
 
 	if (YAF_G(name_suffix)) {
