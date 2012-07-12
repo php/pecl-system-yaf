@@ -757,9 +757,6 @@ PHP_METHOD(yaf_view_simple, get) {
 */
 PHP_METHOD(yaf_view_simple, render) {
 	zval *tpl, *vars = NULL, *tpl_vars;
-#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
-	zend_bool short_open_tag = 0;
-#endif
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|z", &tpl, &vars) == FAILURE) {
 		return;
