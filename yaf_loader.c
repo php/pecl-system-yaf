@@ -417,6 +417,7 @@ int yaf_loader_import(char *path, int len, int use_path TSRMLS_DC) {
 			YAF_RESTORE_EG_ENVIRON();
 		}
 	} else {
+		/* return failed only on the file can not be found */
 		return 0;
 	}
 
