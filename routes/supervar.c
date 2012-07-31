@@ -30,8 +30,8 @@ ZEND_END_ARG_INFO()
 /** {{{ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC)
  */
 int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
-	zval *varname, *zuri;
-	char *req_uri;
+	zval *varname, *zuri, *base_uri;
+	char *request_uri;
 
 	varname = zend_read_property(yaf_route_supervar_ce, route, ZEND_STRL(YAF_ROUTE_SUPERVAR_PROPETY_NAME_VAR), 1 TSRMLS_CC);
 
@@ -41,9 +41,18 @@ int yaf_route_supervar_route(yaf_route_t *route, yaf_request_t *request TSRMLS_D
 		return 0;
 	}
 
-	req_uri = estrndup(Z_STRVAL_P(zuri), Z_STRLEN_P(zuri));
-    yaf_route_pathinfo_route(request, req_uri, Z_STRLEN_P(zuri) TSRMLS_CC);
-	efree(req_uri);
+	base_uri = zend_read_property(yaf_request_ce, request, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_BASE), 1 TSRMLS_CC);
+
+	if (base_uri && IS_STRING == Z_TYPE_P(base_uri)
+			&& !strncasecmp(Z_STRVAL_P(zuri), Z_STRVAL_P(base_uri), Z_STRLEN_P(base_uri))) {
+		request_uri  = estrdup(Z_STRVAL_P(zuri) + Z_STRLEN_P(base_uri));
+	} else {
+		request_uri  = estrdup(Z_STRVAL_P(zuri));
+	}
+
+	request_uri = estrndup(Z_STRVAL_P(zuri), Z_STRLEN_P(zuri));
+    yaf_route_pathinfo_route(request, request_uri, Z_STRLEN_P(zuri) TSRMLS_CC);
+	efree(request_uri);
 	return 1;
 }
 /* }}} */
