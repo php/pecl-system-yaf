@@ -333,11 +333,9 @@ int yaf_loader_compose(char *path, int len, int use_path TSRMLS_DC) {
 		}
 
 		if (new_op_array) {
-			zval *result;
-
 			YAF_STORE_EG_ENVIRON();
 
-			EG(return_value_ptr_ptr) 	= &result;
+			EG(return_value_ptr_ptr) 	= NULL;
 			EG(active_op_array) 		= new_op_array;
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
@@ -393,11 +391,9 @@ int yaf_loader_import(char *path, int len, int use_path TSRMLS_DC) {
 		}
 
 		if (new_op_array) {
-			zval *result;
-
 			YAF_STORE_EG_ENVIRON();
 
-			EG(return_value_ptr_ptr) = &result;
+			EG(return_value_ptr_ptr) = NULL;
 			EG(active_op_array) 	 = new_op_array;
 
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION > 2)) || (PHP_MAJOR_VERSION > 5)
