@@ -119,7 +119,6 @@ yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC)
 
 	if (IS_OBJECT == Z_TYPE_P(instance)
 			&& instanceof_function(Z_OBJCE_P(instance), yaf_dispatcher_ce TSRMLS_CC)) {
-		Z_ADDREF_P(instance);
 		return instance;
 	}
 
