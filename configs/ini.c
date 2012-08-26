@@ -543,8 +543,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 							|| Z_TYPE_P(configs) != IS_ARRAY)
 #endif
 					{
-						zval_dtor(configs);
-						efree(configs);
+						zval_ptr_dtor(&configs);
 						yaf_trigger_error(E_ERROR TSRMLS_CC, "Parsing ini file '%s' failed", ini_file);
 						return NULL;
 					}
@@ -561,8 +560,7 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 			zval tmp;
 			if (zend_symtable_find(Z_ARRVAL_P(configs),
 						Z_STRVAL_P(section_name), Z_STRLEN_P(section_name) + 1, (void **)&section) == FAILURE) {
-				zval_dtor(configs);
-				efree(configs);
+				zval_ptr_dtor(&configs);
 				yaf_trigger_error(E_ERROR TSRMLS_CC, "There is no section '%s' in '%s'", Z_STRVAL_P(section_name), ini_file);
 				return NULL;
 			}
