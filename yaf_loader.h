@@ -90,7 +90,7 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 int yaf_loader_import(char *path, int len, int use_path TSRMLS_DC);
 int yaf_loader_compose(char *path, int len, int use_path TSRMLS_DC);
 int yaf_register_autoloader(yaf_loader_t *loader TSRMLS_DC);
-int yaf_loader_register_namespace_single(yaf_loader_t *loader, char *prefix, uint len TSRMLS_DC);
+int yaf_loader_register_namespace_single(char *prefix, uint len TSRMLS_DC);
 yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, char *global_path TSRMLS_DC);
 
 extern PHPAPI int php_stream_open_for_zend_ex(const char *filename, zend_file_handle *handle, int mode TSRMLS_DC);

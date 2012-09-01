@@ -82,7 +82,7 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	char 		*environ;
 	char 		*directory;
 	char 		*local_library;
-	char        *local_namespace;
+	char        *local_namespaces;
 	char 		*global_library;
 	char 		*view_ext;
 	char 		*default_module;
