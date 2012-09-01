@@ -19,7 +19,6 @@ $/path/to/phpize
 $./configure --with-php-config=/path/to/php-config/
 $make && make install
 ```
-
 ### For windows 
 Yaf binary dlls could be found at http://code.google.com/p/yafphp/downloads/list
 
@@ -153,8 +152,7 @@ The view script for default controller and default action is in the application/
 ```
 
 ## Run the Applicatioin
-
-http://www.yourhostname.com/application/index.php
+  http://www.yourhostname.com/
 
 ## Alternative
 you can generate the example above by using Yaf Code Generator:  https://github.com/laruence/php-yaf/tree/master/tools/cg

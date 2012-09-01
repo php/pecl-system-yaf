@@ -90,6 +90,7 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	char 		*default_action;
 	char 		*bootstrap;
 	char 		*name_separator;
+	long 		name_separator_len;
 	zend_bool 	lowcase_path;
 	zend_bool 	use_spl_autoload;
 	zend_bool 	throw_exception;

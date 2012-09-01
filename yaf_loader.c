@@ -166,7 +166,7 @@ int yaf_loader_register(yaf_loader_t *loader TSRMLS_DC) {
 /** {{{ static int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC)
  */
 static int yaf_loader_is_category(char *class, uint class_len, char *category, uint category_len TSRMLS_DC) {
-	uint separator_len = strlen(YAF_G(name_separator));
+	uint separator_len = YAF_G(name_separator_len);
 
 	if (YAF_G(name_suffix)) {
 		if (class_len > category_len && strncmp(class + class_len - category_len, category, category_len) == 0) {
@@ -760,7 +760,7 @@ PHP_METHOD(yaf_loader, autoload) {
 		return;
 	}
 
-	separator_len = strlen(YAF_G(name_separator));
+	separator_len = YAF_G(name_separator_len);
 	app_directory = YAF_G(directory);
 	origin_classname = class_name;
 

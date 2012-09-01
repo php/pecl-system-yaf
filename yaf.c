@@ -54,6 +54,15 @@ zend_function_entry yaf_functions[] = {
 };
 /* }}} */
 
+/* {{{ PHP_INI_MH(OnUpdateSeparator)
+ */
+PHP_INI_MH(OnUpdateSeparator) {
+	YAF_G(name_separator) = new_value; 
+	YAF_G(name_separator_len) = new_value_length;
+	return SUCCESS;
+}
+/* }}} */
+
 /** {{{ PHP_INI
  */
 PHP_INI_BEGIN()
@@ -63,7 +72,7 @@ PHP_INI_BEGIN()
 	STD_PHP_INI_BOOLEAN("yaf.use_spl_autoload", "0", PHP_INI_ALL, OnUpdateBool, use_spl_autoload, zend_yaf_globals, yaf_globals)
 	STD_PHP_INI_ENTRY("yaf.forward_limit", 		"5", PHP_INI_ALL, OnUpdateLongGEZero, forward_limit, zend_yaf_globals, yaf_globals)
 	STD_PHP_INI_BOOLEAN("yaf.name_suffix", 		"1", PHP_INI_ALL, OnUpdateBool, name_suffix, zend_yaf_globals, yaf_globals)
-	STD_PHP_INI_ENTRY("yaf.name_separator", 	"",  PHP_INI_ALL, OnUpdateString, name_separator, zend_yaf_globals, yaf_globals)
+	PHP_INI_ENTRY("yaf.name_separator", 		"",  PHP_INI_ALL, OnUpdateSeparator)
 	STD_PHP_INI_BOOLEAN("yaf.cache_config",    	"0", PHP_INI_SYSTEM, OnUpdateBool, cache_config, zend_yaf_globals, yaf_globals)
 /* {{{ This only effects internally */
 	STD_PHP_INI_BOOLEAN("yaf.st_compatible",     "0", PHP_INI_ALL, OnUpdateBool, st_compatible, zend_yaf_globals, yaf_globals)
