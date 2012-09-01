@@ -170,7 +170,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 				uint i, len;
 				char *src = Z_STRVAL_PP(ppsval);
 				if (Z_STRLEN_PP(ppsval)) {
-				    char *target = emalloc(Z_STRLEN_PP(ppsval));
+				    char *target = emalloc(Z_STRLEN_PP(ppsval) + 1);
 					len = 0;
 					for(i=0; i<Z_STRLEN_PP(ppsval); i++) {
 						if (src[i] == ',') {
