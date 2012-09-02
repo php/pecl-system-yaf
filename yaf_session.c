@@ -290,7 +290,7 @@ PHP_METHOD(yaf_session, current) {
 PHP_METHOD(yaf_session, key) {
 	zval *sess;
 	char *key;
-	long index;
+	ulong index;
 
 	sess = zend_read_property(yaf_session_ce, getThis(), ZEND_STRL(YAF_SESSION_PROPERTY_NAME_SESSION), 1 TSRMLS_CC);
 	if (zend_hash_get_current_key(Z_ARRVAL_P(sess), &key, &index, 0) == HASH_KEY_IS_LONG) {

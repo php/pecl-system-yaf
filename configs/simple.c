@@ -263,7 +263,7 @@ PHP_METHOD(yaf_config_simple, current) {
 PHP_METHOD(yaf_config_simple, key) {
 	zval *prop;
 	char *string;
-	long index;
+	ulong index;
 
 	prop = zend_read_property(yaf_config_simple_ce, getThis(), ZEND_STRL(YAF_CONFIG_PROPERT_NAME), 1 TSRMLS_CC);
 	zend_hash_get_current_key(Z_ARRVAL_P(prop), &string, &index, 0);

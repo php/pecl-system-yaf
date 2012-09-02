@@ -103,7 +103,7 @@ static void yaf_config_copy_persistent(HashTable *pdst, HashTable *src TSRMLS_DC
 	zval **ppzval;
 	char *key;
 	uint keylen;
-	long idx;
+	ulong idx;
 
 	for(zend_hash_internal_pointer_reset(src);
 			zend_hash_has_more_elements(src) == SUCCESS;
@@ -138,7 +138,7 @@ static void yaf_config_copy_persistent(HashTable *pdst, HashTable *src TSRMLS_DC
 static void yaf_config_copy_losable(HashTable *ldst, HashTable *src TSRMLS_DC) {
 	zval **ppzval, *tmp;
 	char *key;
-	long idx;
+	ulong idx;
 	uint keylen;
 
 	for(zend_hash_internal_pointer_reset(src);

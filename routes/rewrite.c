@@ -122,8 +122,8 @@ static zval * yaf_route_rewrite_match(yaf_route_t *router, char *uir, int len TS
 		} else {
 			zval *ret, **ppzval;
 			char *key;
-			int	 len = 0;
-			long idx = 0;
+			uint len = 0;
+			ulong idx = 0;
 			HashTable *ht;
 
 			MAKE_STD_ZVAL(ret);
