@@ -41,10 +41,6 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(yaf_view_getpath_arginfo, 0, 0, 0)
 ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(yaf_view_clear_arginfo, 0, 0, 0)
-	ZEND_ARG_INFO(0, name)
-ZEND_END_ARG_INFO()
 /* }}} */
 
 /** {{{ yaf_view_interface_methods
@@ -53,7 +49,6 @@ zend_function_entry yaf_view_interface_methods[] = {
 	ZEND_ABSTRACT_ME(yaf_view, assign,  yaf_view_assign_arginfo)
 	ZEND_ABSTRACT_ME(yaf_view, display, yaf_view_display_arginfo)
 	ZEND_ABSTRACT_ME(yaf_view, render, yaf_view_render_arginfo)
-	ZEND_ABSTRACT_ME(yaf_view, clear, yaf_view_clear_arginfo)
 	ZEND_ABSTRACT_ME(yaf_view, setScriptPath, yaf_view_setpath_arginfo)
 	ZEND_ABSTRACT_ME(yaf_view, getScriptPath, yaf_view_getpath_arginfo)
 	{NULL, NULL, NULL}
