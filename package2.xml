@@ -27,6 +27,7 @@
   - Support short open tag in view templates regardless of php.short_open_tag
   - Make Yaf_Autoload faster(30%)
   - Controller of default module can be autoloaded now
+  - Single class can be local class now (previous is a design issue)
   - Performance improve in various place
   - Compatible with php5.5, which droped PHP logo guid
   - Fixed bug that Supervar should not respect the base_uri
