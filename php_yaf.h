@@ -101,6 +101,7 @@ ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	zend_bool  	running;
 	zend_bool  	in_exception;
 	zend_bool  	catch_exception;
+	zend_bool   suppressing_warning;
 /* {{{ This only effects internally */
 	zend_bool  	st_compatible;
 /* }}} */
