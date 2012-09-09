@@ -897,8 +897,9 @@ zend_function_entry yaf_view_simple_methods[] = {
 YAF_STARTUP_FUNCTION(view_simple) {
 	zend_class_entry ce;
 
-	YAF_INIT_CLASS_ENTRY(ce, "Yaf_View_Simple", "Yaf\\View\\Simple", yaf_view_simple_methods);
+	INIT_CLASS_ENTRY(ce, "Yaf_View_Simple", yaf_view_simple_methods);
 	yaf_view_simple_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	YAF_INIT_CLASS_ALIAS("Yaf\\View\\Simple", yaf_view_simple_ce);
 
 	zend_declare_property_null(yaf_view_simple_ce, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLVARS), ZEND_ACC_PROTECTED TSRMLS_CC);
 	zend_declare_property_null(yaf_view_simple_ce, ZEND_STRL(YAF_VIEW_PROPERTY_NAME_TPLDIR),  ZEND_ACC_PROTECTED TSRMLS_CC);

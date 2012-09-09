@@ -30,9 +30,9 @@ zend_function_entry yaf_response_http_methods[] = {
 YAF_STARTUP_FUNCTION(response_http) {
 	zend_class_entry ce;
 
-	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Response_Http", "Yaf\\Response\\Http", yaf_response_http_methods);
-
+	INIT_CLASS_ENTRY(ce, "Yaf_Response_Http", yaf_response_http_methods);
 	yaf_response_http_ce = zend_register_internal_class_ex(&ce, yaf_response_ce, NULL TSRMLS_CC);
+	YAF_INIT_CLASS_ALIAS("Yaf\\Response\\Http", yaf_response_http_ce);
 
 	zend_declare_property_bool(yaf_response_http_ce, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_HEADEREXCEPTION), 1, ZEND_ACC_PROTECTED TSRMLS_CC);
 	zend_declare_property_long(yaf_response_http_ce, ZEND_STRL(YAF_RESPONSE_PROPERTY_NAME_RESPONSECODE),	200, ZEND_ACC_PROTECTED TSRMLS_CC);

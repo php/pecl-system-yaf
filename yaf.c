@@ -78,9 +78,6 @@ PHP_INI_BEGIN()
 	STD_PHP_INI_BOOLEAN("yaf.st_compatible",     "0", PHP_INI_ALL, OnUpdateBool, st_compatible, zend_yaf_globals, yaf_globals)
 /* }}} */
 	STD_PHP_INI_ENTRY("yaf.environ",        	"product", PHP_INI_SYSTEM, OnUpdateString, environ, zend_yaf_globals, yaf_globals)
-#ifdef YAF_HAVE_NAMESPACE
-	STD_PHP_INI_BOOLEAN("yaf.use_namespace",   	"0", PHP_INI_SYSTEM, OnUpdateBool, use_namespace, zend_yaf_globals, yaf_globals)
-#endif
 PHP_INI_END();
 /* }}} */
 
