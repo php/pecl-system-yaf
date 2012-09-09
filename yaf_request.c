@@ -609,13 +609,11 @@ PHP_METHOD(yaf_request, setParam) {
 
 	if (1 == argc) {
 		zval *value ;
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &value) == FAILURE) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a", &value) == FAILURE) {
 			return;
 		}
-		if (value && Z_TYPE_P(value) == IS_ARRAY) {
-			if (yaf_request_set_params_multi(self, value TSRMLS_CC)) {
-				RETURN_ZVAL(self, 1, 0);
-			}
+		if (yaf_request_set_params_multi(self, value TSRMLS_CC)) {
+			RETURN_ZVAL(self, 1, 0);
 		}
 	} else if (2 == argc) {
 		zval *value;
