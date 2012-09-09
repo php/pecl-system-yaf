@@ -260,6 +260,8 @@ static yaf_config_t * yaf_config_ini_unserialize(yaf_config_t *this_ptr, zval *f
 			array_init(props);
 			yaf_config_copy_losable(Z_ARRVAL_P(props), (*ppval)->data TSRMLS_CC);
 			efree(key);
+			/* tricky way */
+			Z_SET_REFCOUNT_P(props, 0);
 			return yaf_config_ini_instance(this_ptr, props, section TSRMLS_CC);
 		}
 		efree(key);
