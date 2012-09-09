@@ -111,7 +111,6 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 		zend_update_property(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_PARAMS), params TSRMLS_CC);
 		zval_ptr_dtor(&params);
 	} else {
-		Z_ADDREF_P(params);
 		zend_update_property(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_PARAMS), params TSRMLS_CC);
 	}
 
