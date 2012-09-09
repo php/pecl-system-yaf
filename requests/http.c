@@ -243,6 +243,7 @@ PHP_METHOD(yaf_request_http, __construct) {
 
 	yaf_request_t *self = getThis();
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ss", &request_uri, &rlen, &base_uri, &blen) == FAILURE) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	}
 

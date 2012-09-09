@@ -100,12 +100,14 @@ PHP_METHOD(yaf_route_simple, __construct) {
 	zval *module, *controller, *action;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &module, &controller, &action) == FAILURE) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	}
 
 	if (IS_STRING != Z_TYPE_P(module)
 			|| IS_STRING != Z_TYPE_P(controller)
 			|| IS_STRING != Z_TYPE_P(action)) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expect 3 string paramsters", yaf_route_simple_ce->name);
 		RETURN_FALSE;
 	} else {

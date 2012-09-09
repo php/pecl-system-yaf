@@ -61,6 +61,12 @@
 		EG(current_execute_data)->opline = EG(opline_before_exception); \
 	} while(0)
 
+#define YAF_UNINITIALIZED_OBJECT(obj) \
+	do { \
+		zval_dtor(obj); \
+		ZVAL_FALSE(obj); \
+	} while(0)
+
 extern zend_class_entry *yaf_ce_RuntimeException;
 extern zend_class_entry *yaf_exception_ce;
 extern zend_class_entry *yaf_buildin_exceptions[YAF_MAX_BUILDIN_EXCEPTION];

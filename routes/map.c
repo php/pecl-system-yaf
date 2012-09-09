@@ -152,6 +152,7 @@ PHP_METHOD(yaf_route_map, __construct) {
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|bs",
 			   	&controller_prefer, &delim, &delim_len) == FAILURE) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	}
 

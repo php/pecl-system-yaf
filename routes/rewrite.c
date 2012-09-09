@@ -259,20 +259,18 @@ PHP_METHOD(yaf_route_rewrite, __construct) {
 	yaf_route_t	*self = getThis();
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "za|a", &match, &route, &verify) ==  FAILURE) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	}
 
 	if (IS_STRING != Z_TYPE_P(match) || !Z_STRLEN_P(match)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects a string as the first parameter", yaf_route_rewrite_ce->name);
-		RETURN_FALSE;
-	}
-
-	if (IS_ARRAY != Z_TYPE_P(route)) {
-		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects an array as the second parameter", yaf_route_rewrite_ce->name);
+		YAF_UNINITIALIZED_OBJECT(getThis());
+		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects a valid string as the first parameter", yaf_route_rewrite_ce->name);
 		RETURN_FALSE;
 	}
 
 	if (verify && IS_ARRAY != Z_TYPE_P(verify)) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC, "Expects an array as third parameter",  yaf_route_rewrite_ce->name);
 		RETURN_FALSE;
 	}

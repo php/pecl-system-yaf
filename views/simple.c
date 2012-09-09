@@ -643,6 +643,7 @@ PHP_METHOD(yaf_view_simple, __construct) {
 	zval *tpl_dir, *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|a", &tpl_dir, &options) == FAILURE) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	}
 

@@ -127,9 +127,11 @@ PHP_METHOD(yaf_request_simple, __construct) {
 	zval *self 		 = getThis();
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|zzzzz", &method, &module, &controller, &action, &params) == FAILURE) {
+		YAF_UNINITIALIZED_OBJECT(getThis());
 		return;
 	} else {
 		if ((params && IS_ARRAY != Z_TYPE_P(params))) {
+		    YAF_UNINITIALIZED_OBJECT(getThis());
 			yaf_trigger_error(YAF_ERR_TYPE_ERROR TSRMLS_CC,
 				   	"Expects the params is an array", yaf_request_simple_ce->name);
 			RETURN_FALSE;
