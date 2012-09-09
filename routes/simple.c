@@ -86,7 +86,7 @@ yaf_route_t * yaf_route_simple_instance(yaf_route_t *this_ptr, zval *module, zva
 PHP_METHOD(yaf_route_simple, route) {
 	yaf_request_t *request;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &request) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &request, yaf_request_ce) == FAILURE) {
 		return;
 	} else {
 		RETURN_BOOL(yaf_route_simple_route(getThis(), request TSRMLS_CC));

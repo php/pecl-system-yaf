@@ -135,7 +135,7 @@ int yaf_route_map_route(yaf_route_t *route, yaf_request_t *request TSRMLS_DC) {
 PHP_METHOD(yaf_route_map, route) {
 	yaf_request_t *request;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &request) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &request, yaf_request_ce) == FAILURE) {
 		return;
 	} else {
 		RETURN_BOOL(yaf_route_map_route(getThis(), request TSRMLS_CC));

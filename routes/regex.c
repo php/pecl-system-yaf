@@ -177,7 +177,7 @@ PHP_METHOD(yaf_route_regex, route) {
 	route = getThis();
 
 	RETVAL_FALSE;
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &request) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &request, yaf_request_ce) == FAILURE) {
 		return;
 	}
 
