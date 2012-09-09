@@ -59,9 +59,8 @@ zend_function_entry yaf_view_interface_methods[] = {
  */
 YAF_STARTUP_FUNCTION(view_interface) {
 	zend_class_entry ce;
-	INIT_CLASS_ENTRY(ce, "Yaf_View_Interface", yaf_view_interface_methods);
+	YAF_INIT_CLASS_ENTRY(ce, "Yaf_View_Interface", "Yaf\\View_Interface", yaf_view_interface_methods);
 	yaf_view_interface_ce = zend_register_internal_interface(&ce TSRMLS_CC);
-	YAF_INIT_CLASS_ALIAS("Yaf\\View_Interface", yaf_view_interface_ce);
 
 	return SUCCESS;
 }

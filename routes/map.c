@@ -174,10 +174,9 @@ zend_function_entry yaf_route_map_methods[] = {
 YAF_STARTUP_FUNCTION(route_map) {
 	zend_class_entry ce;
 
-	INIT_CLASS_ENTRY(ce, "Yaf_Route_Map", yaf_route_map_methods);
+	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Route_Map", "Yaf\\Route\\Map", yaf_route_map_methods);
 	yaf_route_map_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	zend_class_implements(yaf_route_map_ce TSRMLS_CC, 1, yaf_route_ce);
-	YAF_INIT_CLASS_ALIAS("Yaf\\Route\\Map", yaf_route_map_ce);
 
 	yaf_route_map_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
 

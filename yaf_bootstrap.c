@@ -41,10 +41,9 @@ zend_function_entry yaf_bootstrap_methods[] = {
 YAF_STARTUP_FUNCTION(bootstrap) {
 	zend_class_entry ce;
 
-	INIT_CLASS_ENTRY(ce, "Yaf_Bootstrap_Abstract", yaf_bootstrap_methods);
+	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Bootstrap_Abstract",  "Yaf\\Bootstrap_Abstract", yaf_bootstrap_methods);
 	yaf_bootstrap_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	yaf_bootstrap_ce->ce_flags |= ZEND_ACC_EXPLICIT_ABSTRACT_CLASS;
-	YAF_INIT_CLASS_ALIAS("Yaf\\Bootstrap_Abstract", yaf_bootstrap_ce);
 
 	return SUCCESS;
 }

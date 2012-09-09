@@ -823,7 +823,7 @@ zend_function_entry yaf_config_ini_methods[] = {
 YAF_STARTUP_FUNCTION(config_ini) {
 	zend_class_entry ce;
 
-	INIT_CLASS_ENTRY(ce, "Yaf_Config_Ini", yaf_config_ini_methods);
+	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Config_Ini", "Yaf\\Config\\Ini", yaf_config_ini_methods);
 	yaf_config_ini_ce = zend_register_internal_class_ex(&ce, yaf_config_ce, NULL TSRMLS_CC);
 
 #ifdef HAVE_SPL
@@ -833,7 +833,6 @@ YAF_STARTUP_FUNCTION(config_ini) {
 #endif
 
 	yaf_config_ini_ce->ce_flags |= ZEND_ACC_FINAL_CLASS;
-	YAF_INIT_CLASS_ALIAS("Yaf\\Config\\Ini", yaf_config_ini_ce);
 
 	return SUCCESS;
 }
