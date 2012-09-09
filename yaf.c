@@ -234,6 +234,10 @@ PHP_RSHUTDOWN_FUNCTION(yaf)
 	}
 	YAF_G(default_route) = NULL;
 
+	if (YAF_G(view_ext) != YAF_DEFAULT_VIEW_EXT) {
+		efree(YAF_G(view_ext));
+	}
+
 	return SUCCESS;
 }
 /* }}} */
