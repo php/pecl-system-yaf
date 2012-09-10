@@ -148,7 +148,9 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("ext"), (void **)&ppzval) == SUCCESS
 			&& Z_TYPE_PP(ppzval) == IS_STRING) {
 		YAF_G(ext) = estrndup(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval));
-	} 
+	} else {
+		YAF_G(ext) = YAF_DEFAULT_EXT;
+	}
 
 	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("bootstrap"), (void **)&ppzval) == SUCCESS
 			&& Z_TYPE_PP(ppzval) == IS_STRING) {
@@ -185,10 +187,14 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 		}
 	}
 
-	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("view"), (void **)&ppzval) == SUCCESS
-			&& Z_TYPE_PP(ppzval) == IS_ARRAY) {
-		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("ext"), (void **)&ppsval) == SUCCESS
-				&& Z_TYPE_PP(ppsval) == IS_STRING) {
+	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("view"), (void **)&ppzval) == FAILURE 
+			|| Z_TYPE_PP(ppzval) != IS_ARRAY) {
+		YAF_G(view_ext) = YAF_DEFAULT_VIEW_EXT;
+	} else {
+		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("ext"), (void **)&ppsval) == FAILURE
+				|| Z_TYPE_PP(ppsval) != IS_STRING) {
+			YAF_G(view_ext) = YAF_DEFAULT_VIEW_EXT;
+		} else {
 			YAF_G(view_ext) = estrndup(Z_STRVAL_PP(ppsval), Z_STRLEN_PP(ppsval));
 		}
 	}
@@ -198,22 +204,32 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 		YAF_G(base_uri) = estrndup(Z_STRVAL_PP(ppzval), Z_STRLEN_PP(ppzval));
 	}
 
-	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("dispatcher"), (void **)&ppzval) == SUCCESS
-			&& Z_TYPE_PP(ppzval) == IS_ARRAY) {
-		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultModule"), (void **)&ppsval) == SUCCESS
-				&& Z_TYPE_PP(ppsval) == IS_STRING) {
+	if (zend_hash_find(Z_ARRVAL_P(app), ZEND_STRS("dispatcher"), (void **)&ppzval) == FAILURE
+			|| Z_TYPE_PP(ppzval) != IS_ARRAY) {
+		YAF_G(default_module) = YAF_ROUTER_DEFAULT_MODULE;
+		YAF_G(default_controller) = YAF_ROUTER_DEFAULT_CONTROLLER;
+		YAF_G(default_action)  = YAF_ROUTER_DEFAULT_ACTION;
+	} else {
+		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultModule"), (void **)&ppsval) == FAILURE
+				|| Z_TYPE_PP(ppsval) != IS_STRING) {
+			YAF_G(default_module) = YAF_ROUTER_DEFAULT_MODULE;
+		} else {
 			YAF_G(default_module) = zend_str_tolower_dup(Z_STRVAL_PP(ppsval), Z_STRLEN_PP(ppsval));
 			*(YAF_G(default_module)) = toupper(*YAF_G(default_module));
 		}
 
-		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultController"), (void **)&ppsval) == SUCCESS
-				&& Z_TYPE_PP(ppsval) == IS_STRING) {
+		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultController"), (void **)&ppsval) == FAILURE
+				|| Z_TYPE_PP(ppsval) != IS_STRING) {
+			YAF_G(default_controller) = YAF_ROUTER_DEFAULT_CONTROLLER;
+		} else {
 			YAF_G(default_controller) = zend_str_tolower_dup(Z_STRVAL_PP(ppsval), Z_STRLEN_PP(ppsval));
 			*(YAF_G(default_controller)) = toupper(*YAF_G(default_controller));
 		}
 
-		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultAction"), (void **)&ppsval) == SUCCESS
-				&& Z_TYPE_PP(ppsval) == IS_STRING) {
+		if (zend_hash_find(Z_ARRVAL_PP(ppzval), ZEND_STRS("defaultAction"), (void **)&ppsval) == FAILURE
+				|| Z_TYPE_PP(ppsval) != IS_STRING) {
+			YAF_G(default_action)	  = YAF_ROUTER_DEFAULT_ACTION;
+		} else {
 			YAF_G(default_action) = zend_str_tolower_dup(Z_STRVAL_PP(ppsval), Z_STRLEN_PP(ppsval));
 		}
 
@@ -262,7 +278,7 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 			efree(modules);
 		} else {
 			MAKE_STD_ZVAL(module);
-			ZVAL_STRING(module, YAF_G(default_module)? YAF_G(default_module) : YAF_ROUTER_DEFAULT_MODULE , 1);
+			ZVAL_STRING(module, YAF_G(default_module), 1);
 			zend_hash_next_index_insert(Z_ARRVAL_P(zmodules), (void **)&module, sizeof(zval *), NULL);
 		}
 		YAF_G(modules) = zmodules;
@@ -592,7 +608,7 @@ PHP_METHOD(yaf_application, bootstrap) {
 			bootstrap_path  = estrdup(YAF_G(bootstrap));
 			len = strlen(YAF_G(bootstrap));
 		} else {
-			len = spprintf(&bootstrap_path, 0, "%s%c%s.%s", YAF_G(directory), DEFAULT_SLASH, YAF_DEFAULT_BOOTSTRAP, YAF_G(ext)? YAF_G(ext) : YAF_DEFAULT_EXT);
+			len = spprintf(&bootstrap_path, 0, "%s%c%s.%s", YAF_G(directory), DEFAULT_SLASH, YAF_DEFAULT_BOOTSTRAP, YAF_G(ext));
 		}
 
 		if (!yaf_loader_import(bootstrap_path, len + 1, 0 TSRMLS_CC)) {

@@ -145,14 +145,10 @@ yaf_dispatcher_t * yaf_dispatcher_instance(yaf_dispatcher_t *this_ptr TSRMLS_DC)
 	router	 = yaf_router_instance(NULL TSRMLS_CC);
 
 	zend_update_property(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ROUTER), router TSRMLS_CC);
-	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE),
-			YAF_G(default_module)? YAF_G(default_module) : YAF_ROUTER_DEFAULT_MODULE TSRMLS_CC);
-	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_CONTROLLER),
-			YAF_G(default_controller)? YAF_G(default_controller) : YAF_ROUTER_DEFAULT_CONTROLLER TSRMLS_CC);
-	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ACTION),
-			YAF_G(default_action)? YAF_G(default_action) : YAF_ROUTER_DEFAULT_ACTION TSRMLS_CC);
+	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_MODULE), 	YAF_G(default_module) TSRMLS_CC);
+	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_CONTROLLER), YAF_G(default_controller) TSRMLS_CC);
+	zend_update_property_string(yaf_dispatcher_ce, instance, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_ACTION), 	YAF_G(default_action) TSRMLS_CC);
 	zend_update_static_property(yaf_dispatcher_ce, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
-	zval_ptr_dtor(&instance);
 
 	zval_ptr_dtor(&router);
 
@@ -724,6 +720,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				if (!ret) {
 					zval_ptr_dtor(&action);
 					zval_ptr_dtor(&iaction);
+					zval_ptr_dtor(&icontroller);
 					return 0;
 				}
 
@@ -733,6 +730,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					zval_ptr_dtor(&ret);
 					zval_ptr_dtor(&action);
 					zval_ptr_dtor(&iaction);
+					zval_ptr_dtor(&icontroller);
 					return 1;
 				}
 			} else {
@@ -787,7 +785,6 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					}
 				} else {
 					zval_ptr_dtor(&executor);
-					zval_ptr_dtor(&action);
 				}
 			}
 			zval_ptr_dtor(&action);

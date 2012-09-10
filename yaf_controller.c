@@ -32,7 +32,6 @@
 #include "yaf_response.h"
 #include "yaf_dispatcher.h"
 #include "yaf_view.h"
-#include "yaf_router.h"
 #include "yaf_exception.h"
 #include "yaf_action.h"
 #include "yaf_controller.h"
@@ -89,7 +88,7 @@ zval * yaf_controller_render(yaf_controller_t *instance, char *action_name, int 
 
 	view   	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
 	name	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 0 TSRMLS_CC);
-	view_ext  = YAF_G(view_ext)? YAF_G(view_ext) : YAF_DEFAULT_VIEW_EXT;
+	view_ext  = YAF_G(view_ext);
 
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
 
@@ -169,7 +168,7 @@ int yaf_controller_display(yaf_controller_t *instance, char *action_name, int le
 
 	view   	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
 	name	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 1 TSRMLS_CC);
-	view_ext  = YAF_G(view_ext)? YAF_G(view_ext) : YAF_DEFAULT_VIEW_EXT;
+	view_ext  = YAF_G(view_ext);
 
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
 
@@ -503,7 +502,14 @@ PHP_METHOD(yaf_controller, render) {
 	} else {
 		zval *output = yaf_controller_render(getThis(), action_name, action_name_len, var_array TSRMLS_CC);
 		if (output) {
-			RETURN_ZVAL(output, 0, 1);
+			if (IS_STRING == Z_TYPE_P(output)) {
+				/* save a string copy here */
+				ZVAL_STRINGL(return_value, Z_STRVAL_P(output), Z_STRLEN_P(output), 0);
+				efree(output);
+				return;
+			} else {
+				RETURN_ZVAL(output, 1, 1);
+			}
 		} else {
 			RETURN_FALSE;
 		}

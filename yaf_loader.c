@@ -31,7 +31,6 @@
 #include "yaf_application.h"
 #include "yaf_namespace.h"
 #include "yaf_request.h"
-#include "yaf_router.h"
 #include "yaf_loader.h"
 #include "yaf_exception.h"
 
@@ -313,14 +312,10 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 	}
 
 	if (!yaf_loader_register(instance TSRMLS_CC)) {
-		zval_ptr_dtor(&instance);
 		return NULL;
 	}
 
 	zend_update_static_property(yaf_loader_ce, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
-	if (!this_ptr) {
-		zval_ptr_dtor(&instance);
-	}
 
 	return instance;
 }
@@ -448,7 +443,7 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 	zval *library_dir, *global_dir;
 	char *q, *p, *seg;
 	uint seg_len, directory_len, status;
-	char *ext = YAF_G(ext)? YAF_G(ext) : YAF_DEFAULT_EXT;
+	char *ext = YAF_G(ext);
 	smart_str buf = {0};
 
 	if (NULL == *directory) {

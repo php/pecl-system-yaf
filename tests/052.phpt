@@ -28,7 +28,6 @@ var_dump($request->getParam("xxxx"));
 var_dump($request->getParams());
 echo "-----others-----\n";
 var_dump($request->isXmlHttpRequest());
-var_dump($request->getLanguage());
 var_dump($request->isCli());
 var_dump($request->isPost());
 ?>
@@ -63,6 +62,5 @@ array(0) {
 }
 -----others-----
 bool(false)
-NULL
 bool(true)
 bool(false)

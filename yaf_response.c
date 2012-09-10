@@ -381,20 +381,20 @@ PHP_METHOD(yaf_response, clearBody) {
  */
 PHP_METHOD(yaf_response, getBody) {
 	zval *body = NULL;
-	zval **name = NULL;
+	zval *name = NULL;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|Z", &name) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|z", &name) == FAILURE) {
 		return;
 	}
 
 	if (!name) {
 		body = yaf_response_get_body(getThis(), YAF_RESPONSE_PROPERTY_NAME_DEFAULTBODY, sizeof(YAF_RESPONSE_PROPERTY_NAME_DEFAULTBODY) - 1 TSRMLS_CC);
 	} else {
-		if (ZVAL_IS_NULL(*name)) {
+		if (ZVAL_IS_NULL(name)) {
 			body = yaf_response_get_body(getThis(), NULL, 0 TSRMLS_CC);
 		} else {
-			convert_to_string_ex(name);
-			body = yaf_response_get_body(getThis(), Z_STRVAL_PP(name), Z_STRLEN_PP(name) TSRMLS_CC);
+			convert_to_string_ex(&name);
+			body = yaf_response_get_body(getThis(), Z_STRVAL_P(name), Z_STRLEN_P(name) TSRMLS_CC);
 		}
 	}
 

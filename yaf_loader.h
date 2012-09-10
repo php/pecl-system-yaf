@@ -19,6 +19,9 @@
 #ifndef YAF_LOADER_H
 #define YAF_LOADER_H
 
+#define YAF_DEFAULT_VIEW_EXT     	  		"phtml"
+#define YAF_DEFAULT_LIBRARY_EXT		   		YAF_DEFAULT_CONTROLLER_EXT
+
 #define YAF_LIBRARY_DIRECTORY_NAME    		"library"
 #define YAF_CONTROLLER_DIRECTORY_NAME 		"controllers"
 #define YAF_PLUGIN_DIRECTORY_NAME 	  		"plugins"

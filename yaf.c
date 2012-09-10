@@ -91,15 +91,15 @@ PHP_GINIT_FUNCTION(yaf)
 	yaf_globals->autoload_started   = 0;
 	yaf_globals->configs			= NULL;
 	yaf_globals->directory			= NULL;
-	yaf_globals->local_library		= NULL;
-	yaf_globals->ext				= NULL;
-	yaf_globals->view_ext			= NULL;
-	yaf_globals->default_module		= NULL;
-	yaf_globals->default_controller = NULL;
-	yaf_globals->default_action		= NULL;
-	yaf_globals->bootstrap			= NULL;
+	yaf_globals->local_library  = NULL;
+	yaf_globals->ext			    = YAF_DEFAULT_EXT;
+	yaf_globals->view_ext			= YAF_DEFAULT_VIEW_EXT;
+	yaf_globals->default_module		= YAF_ROUTER_DEFAULT_MODULE;
+	yaf_globals->default_controller = YAF_ROUTER_DEFAULT_CONTROLLER;
+	yaf_globals->default_action		= YAF_ROUTER_DEFAULT_ACTION;
+	yaf_globals->bootstrap			= YAF_DEFAULT_BOOTSTRAP;
 	yaf_globals->modules			= NULL;
-	yaf_globals->default_route		= NULL;
+	yaf_globals->default_route      = NULL;
 	yaf_globals->suppressing_warning = 0;
 }
 /* }}} */
@@ -200,11 +200,6 @@ PHP_RINIT_FUNCTION(yaf)
 	YAF_G(local_namespaces)    	= NULL;
 	YAF_G(modules)				= NULL;
 	YAF_G(base_uri)				= NULL;
-	YAF_G(ext)					= NULL;
-	YAF_G(view_ext)				= NULL;
-	YAF_G(default_module)		= NULL;
-	YAF_G(default_controller)	= NULL;
-	YAF_G(default_action)		= NULL;
 #if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 4))
 	YAF_G(buffer)				= NULL;
 	YAF_G(owrite_handler)		= NULL;
@@ -236,21 +231,6 @@ PHP_RSHUTDOWN_FUNCTION(yaf)
 	}
 	if (YAF_G(base_uri)) {
 		efree(YAF_G(base_uri));
-	}
-	if (YAF_G(ext)) {
-		efree(YAF_G(ext));
-	}
-	if (YAF_G(view_ext)) {
-		efree(YAF_G(view_ext));
-	}
-	if (YAF_G(default_module)) {
-		efree(YAF_G(default_module));
-	}
-	if (YAF_G(default_controller)) {
-		efree(YAF_G(default_controller));
-	}
-	if (YAF_G(default_action)) {
-		efree(YAF_G(default_action));
 	}
 	YAF_G(default_route) = NULL;
 
