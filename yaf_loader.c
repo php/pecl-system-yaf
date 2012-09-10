@@ -312,10 +312,14 @@ yaf_loader_t * yaf_loader_instance(yaf_loader_t *this_ptr, char *library_path, c
 	}
 
 	if (!yaf_loader_register(instance TSRMLS_CC)) {
+		zval_ptr_dtor(&instance);
 		return NULL;
 	}
 
 	zend_update_static_property(yaf_loader_ce, ZEND_STRL(YAF_LOADER_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
+	if (!this_ptr) {
+		zval_ptr_dtor(&instance);
+	}
 
 	return instance;
 }

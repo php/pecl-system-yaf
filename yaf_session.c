@@ -113,6 +113,7 @@ static yaf_session_t * yaf_session_instance(TSRMLS_D) {
 
 
 	zend_update_static_property(yaf_session_ce, ZEND_STRL(YAF_SESSION_PROPERTY_NAME_INSTANCE), instance TSRMLS_CC);
+	zval_ptr_dtor(&instance);
 
 	efree(member);
 
@@ -157,7 +158,7 @@ PHP_METHOD(yaf_session, getInstance) {
 
 	if (Z_TYPE_P(instance) != IS_OBJECT || !instanceof_function(Z_OBJCE_P(instance), yaf_session_ce TSRMLS_CC)) {
 		if ((instance = yaf_session_instance(TSRMLS_C))) {
-			RETURN_ZVAL(instance, 1, 1);
+			RETURN_ZVAL(instance, 1, 0);
 		} else {
 			RETURN_NULL();
 		}
