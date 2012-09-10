@@ -502,14 +502,7 @@ PHP_METHOD(yaf_controller, render) {
 	} else {
 		zval *output = yaf_controller_render(getThis(), action_name, action_name_len, var_array TSRMLS_CC);
 		if (output) {
-			if (IS_STRING == Z_TYPE_P(output)) {
-				/* save a string copy here */
-				ZVAL_STRINGL(return_value, Z_STRVAL_P(output), Z_STRLEN_P(output), 0);
-				efree(output);
-				return;
-			} else {
-				RETURN_ZVAL(output, 1, 1);
-			}
+			RETURN_ZVAL(output, 0, 1);
 		} else {
 			RETURN_FALSE;
 		}

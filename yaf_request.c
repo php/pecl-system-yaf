@@ -345,7 +345,7 @@ zval * yaf_request_get_language(yaf_request_t *instance TSRMLS_DC) {
 		zval * accept_langs = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("HTTP_ACCEPT_LANGUAGE") TSRMLS_CC);
 
 		if (IS_STRING != Z_TYPE_P(accept_langs) || !Z_STRLEN_P(accept_langs)) {
-			return lang;
+			return accept_langs; 
 		} else {
 			char  	*ptrptr, *seg;
 			uint	prefer_len = 0;
@@ -688,7 +688,7 @@ PHP_METHOD(yaf_request, getParams) {
 */
 PHP_METHOD(yaf_request, getLanguage) {
 	zval *lang = yaf_request_get_language(getThis() TSRMLS_CC);
-	RETURN_ZVAL(lang, 1, 0);
+	RETURN_ZVAL(lang, 0, 1);
 }
 /* }}} */
 
