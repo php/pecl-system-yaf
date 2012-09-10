@@ -30,7 +30,7 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 		object_init_ex(instance, yaf_request_simple_ce);
 	}
 
-	if (!method) {
+	if (!method || IS_STRING != Z_TYPE_P(method)) {
 		MAKE_STD_ZVAL(method);
 		if (!SG(request_info).request_method) {
 			if (!strncasecmp(sapi_module.name, "cli", 3)) {

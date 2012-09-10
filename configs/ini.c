@@ -548,9 +548,13 @@ yaf_config_t * yaf_config_ini_instance(yaf_config_t *this_ptr, zval *filename, z
 						return NULL;
 					}
 				}
+			} else {
+				zval_ptr_dtor(&configs);
+				yaf_trigger_error(E_ERROR TSRMLS_CC, "Argument is not a valid ini file '%s'", ini_file);
+				return NULL;
 			}
 		} else {
-			efree(configs);
+			zval_ptr_dtor(&configs);
 			yaf_trigger_error(E_ERROR TSRMLS_CC, "Unable to find config file '%s'", ini_file);
 			return NULL;
 		}
