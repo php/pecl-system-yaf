@@ -701,6 +701,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 
 				zend_update_property(ce, iaction, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), controller TSRMLS_CC);
 				zend_update_property(ce, iaction, ZEND_STRL(YAF_ACTION_PROPERTY_NAME_CTRL), icontroller TSRMLS_CC);
+				zval_ptr_dtor(&icontroller);
 
 				if (fptr->common.num_args) {
 					zval *method_name = NULL;
@@ -720,7 +721,6 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				if (!ret) {
 					zval_ptr_dtor(&action);
 					zval_ptr_dtor(&iaction);
-					zval_ptr_dtor(&icontroller);
 					return 0;
 				}
 
@@ -730,7 +730,6 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					zval_ptr_dtor(&ret);
 					zval_ptr_dtor(&action);
 					zval_ptr_dtor(&iaction);
-					zval_ptr_dtor(&icontroller);
 					return 1;
 				}
 			} else {
