@@ -30,6 +30,7 @@
 
 #include "php_yaf.h"
 #include "yaf_request.h"
+#include "yaf_router.h"
 #include "yaf_namespace.h"
 #include "yaf_exception.h"
 
@@ -105,10 +106,11 @@ int yaf_request_set_base_uri(yaf_request_t *request, char *base_uri, char *reque
 
 	if (!base_uri) {
 		zval 	*script_filename;
-		char 	*file_name, *ext = YAF_G(ext);
+		char 	*file_name, *ext;
 		size_t 	file_name_len;
 		uint  	ext_len;
 
+		ext = YAF_G(ext)? YAF_G(ext) : YAF_DEFAULT_EXT;
 		ext_len	= strlen(ext);
 
 		script_filename = yaf_request_query(YAF_GLOBAL_VARS_SERVER, ZEND_STRL("SCRIPT_FILENAME") TSRMLS_CC);

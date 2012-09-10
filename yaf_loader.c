@@ -31,6 +31,7 @@
 #include "yaf_application.h"
 #include "yaf_namespace.h"
 #include "yaf_request.h"
+#include "yaf_router.h"
 #include "yaf_loader.h"
 #include "yaf_exception.h"
 
@@ -447,7 +448,7 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 	zval *library_dir, *global_dir;
 	char *q, *p, *seg;
 	uint seg_len, directory_len, status;
-	char *ext = YAF_G(ext);
+	char *ext = YAF_G(ext)? YAF_G(ext) : YAF_DEFAULT_EXT;
 	smart_str buf = {0};
 
 	if (NULL == *directory) {

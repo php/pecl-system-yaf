@@ -32,6 +32,7 @@
 #include "yaf_response.h"
 #include "yaf_dispatcher.h"
 #include "yaf_view.h"
+#include "yaf_router.h"
 #include "yaf_exception.h"
 #include "yaf_action.h"
 #include "yaf_controller.h"
@@ -88,7 +89,7 @@ zval * yaf_controller_render(yaf_controller_t *instance, char *action_name, int 
 
 	view   	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 0 TSRMLS_CC);
 	name	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 0 TSRMLS_CC);
-	view_ext  = YAF_G(view_ext);
+	view_ext  = YAF_G(view_ext)? YAF_G(view_ext) : YAF_DEFAULT_VIEW_EXT;
 
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
 
@@ -168,7 +169,7 @@ int yaf_controller_display(yaf_controller_t *instance, char *action_name, int le
 
 	view   	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_VIEW), 1 TSRMLS_CC);
 	name	  = zend_read_property(yaf_controller_ce, instance, ZEND_STRL(YAF_CONTROLLER_PROPERTY_NAME_NAME), 1 TSRMLS_CC);
-	view_ext  = YAF_G(view_ext);
+	view_ext  = YAF_G(view_ext)? YAF_G(view_ext) : YAF_DEFAULT_VIEW_EXT;
 
 	self_name = zend_str_tolower_dup(Z_STRVAL_P(name), Z_STRLEN_P(name));
 

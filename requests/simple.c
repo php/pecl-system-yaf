@@ -51,14 +51,14 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 	if (module || controller || action) {
 		if (!module || Z_TYPE_P(module) != IS_STRING) {
 			zend_update_property_string(yaf_request_simple_ce, instance,
-				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), YAF_G(default_module) TSRMLS_CC);
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), YAF_G(default_module)? YAF_G(default_module) : YAF_ROUTER_DEFAULT_MODULE TSRMLS_CC);
 		} else {
 			zend_update_property(yaf_request_simple_ce, instance, ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_MODULE), module TSRMLS_CC);
 		}
 
 		if (!controller || Z_TYPE_P(controller) != IS_STRING) {
 			zend_update_property_string(yaf_request_simple_ce, instance,
-				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), YAF_G(default_controller) TSRMLS_CC);
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), YAF_G(default_controller)? YAF_G(default_controller) : YAF_ROUTER_DEFAULT_CONTROLLER TSRMLS_CC);
 		} else {
 			zend_update_property(yaf_request_simple_ce, instance,
 					ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_CONTROLLER), controller TSRMLS_CC);
@@ -66,7 +66,7 @@ yaf_request_t * yaf_request_simple_instance(yaf_request_t *this_ptr, zval *modul
 
 		if (!action || Z_TYPE_P(action) != IS_STRING) {
 			zend_update_property_string(yaf_request_simple_ce, instance,
-				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), YAF_G(default_action) TSRMLS_CC);
+				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), YAF_G(default_action)? YAF_G(default_action) : YAF_ROUTER_DEFAULT_ACTION TSRMLS_CC);
 		} else {
 			zend_update_property(yaf_request_simple_ce, instance,
 				   	ZEND_STRL(YAF_REQUEST_PROPERTY_NAME_ACTION), action TSRMLS_CC);
