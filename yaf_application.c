@@ -301,9 +301,12 @@ static int yaf_application_parse_option(zval *options TSRMLS_DC) {
 			if (zend_hash_get_current_data(ht, (void **)&value) == FAILURE) {
 				continue;
 			}
-			snprintf(name, sizeof(name), "%s.%s", "yaf", key);
+			len = snprintf(name, sizeof(name), "%s.%s", "yaf", key);
+			if (len > sizeof(name) -1) {
+				len = sizeof(name) - 1;
+			}
 			convert_to_string(*value);
-			zend_alter_ini_entry(name, strlen(name) + 1, Z_STRVAL_PP(value), Z_STRLEN_PP(value), PHP_INI_USER, PHP_INI_STAGE_RUNTIME);
+			zend_alter_ini_entry(name, len + 1, Z_STRVAL_PP(value), Z_STRLEN_PP(value), PHP_INI_USER, PHP_INI_STAGE_RUNTIME);
 		}
 	}
 
