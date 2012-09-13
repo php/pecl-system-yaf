@@ -198,7 +198,7 @@ YAF_STARTUP_FUNCTION(route_static) {
 
 	YAF_INIT_CLASS_ENTRY(ce, "Yaf_Route_Static", "Yaf\\Route_Static", yaf_route_static_methods);
 	yaf_route_static_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
-	zend_class_implements(yaf_route_static_ce TSRMLS_CC, 1, yaf_router_ce);
+	zend_class_implements(yaf_route_static_ce TSRMLS_CC, 1, yaf_route_ce);
 
 	return SUCCESS;
 }
