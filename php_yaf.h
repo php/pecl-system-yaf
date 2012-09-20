@@ -59,6 +59,10 @@ extern zend_module_entry yaf_module_entry;
 #define Z_DELREF_P 	 ZVAL_DELREF
 #endif
 
+#ifdef environ
+#undef environ
+#endif
+
 #define yaf_application_t	zval
 #define yaf_view_t 			zval
 #define yaf_controller_t	zval
