@@ -1030,32 +1030,38 @@ PHP_METHOD(yaf_dispatcher, enableView) {
 /** {{{ proto public Yaf_Dispatcher::returnResponse()
 */
 PHP_METHOD(yaf_dispatcher, returnResponse) {
-	long auto_response;
+	zend_bool auto_response;
 	yaf_dispatcher_t *self = getThis();
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &auto_response) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &auto_response) == FAILURE) {
 		return;
 	}
 
-	zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), (auto_response)? 1:0 TSRMLS_CC);
-
-	RETURN_ZVAL(self, 1, 0);
+	if (ZEND_NUM_ARGS()) {
+		zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), (auto_response)? 1:0 TSRMLS_CC);
+		RETURN_ZVAL(self, 1, 0);
+	} else {
+		RETURN_BOOL(Z_BVAL_P(zend_read_property(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RETURN), 1 TSRMLS_CC)));
+	}
 }
 /* }}} */
 
 /** {{{ proto public Yaf_Dispatcher::flushInstantly(bool $flag)
 */
 PHP_METHOD(yaf_dispatcher, flushInstantly) {
-	long instantly_flush;
+	zend_bool instantly_flush;
 	yaf_dispatcher_t *self = getThis();
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &instantly_flush) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &instantly_flush) == FAILURE) {
 		return;
 	}
 
-	zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), (instantly_flush)? 1:0 TSRMLS_CC);
-
-	RETURN_ZVAL(self, 1, 0);
+	if (ZEND_NUM_ARGS()) {
+		zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), (instantly_flush)? 1:0 TSRMLS_CC);
+		RETURN_ZVAL(self, 1, 0);
+	} else {
+		RETURN_BOOL(Z_BVAL_P(zend_read_property(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_FLUSH), 1 TSRMLS_CC)));		
+	}
 }
 /* }}} */
 
@@ -1163,42 +1169,53 @@ PHP_METHOD(yaf_dispatcher, dispatch) {
 /** {{{ proto public Yaf_Dispatcher::throwException(bool $flag=0)
 */
 PHP_METHOD(yaf_dispatcher, throwException) {
-	int flag;
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flag) == FAILURE) {
+	zend_bool flag;
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &flag) == FAILURE) {
 		return;
 	}
 
-	YAF_G(throw_exception) = flag? 1: 0;
-	RETURN_ZVAL(getThis(), 1, 0);
+	if (ZEND_NUM_ARGS()) {
+		YAF_G(throw_exception) = flag? 1: 0;
+		RETURN_ZVAL(getThis(), 1, 0);
+	} else {
+		RETURN_BOOL(YAF_G(throw_exception));
+	}
 }
 /* }}} */
 
 /** {{{ proto public Yaf_Dispatcher::catchException(bool $flag=0)
 */
 PHP_METHOD(yaf_dispatcher, catchException) {
-	int flag;
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flag) == FAILURE) {
+	zend_bool flag;
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &flag) == FAILURE) {
 		return;
 	}
 
-	YAF_G(catch_exception) = flag? 1: 0;
-	RETURN_ZVAL(getThis(), 1, 0);
+	if (ZEND_NUM_ARGS()) { 
+		YAF_G(catch_exception) = flag? 1: 0;
+		RETURN_ZVAL(getThis(), 1, 0);
+	} else {
+		RETURN_BOOL(YAF_G(catch_exception));
+	}
 }
 /* }}} */
 
 /** {{{ proto public Yaf_Dispatcher::autoRender(int $flag)
  */
 PHP_METHOD(yaf_dispatcher, autoRender) {
-    long flag;
-    yaf_dispatcher_t *self = getThis();
+	zend_bool flag;
+	yaf_dispatcher_t *self = getThis();
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &flag) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &flag) == FAILURE) {
 		return;
-    }
+	}
 
-    zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), flag? 1 : 0 TSRMLS_CC);
-
-    RETURN_ZVAL(self, 1, 0);
+	if (ZEND_NUM_ARGS()) {
+		zend_update_property_bool(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), flag? 1 : 0 TSRMLS_CC);
+		RETURN_ZVAL(self, 1, 0);
+	} else {
+		RETURN_BOOL(Z_BVAL_P(zend_read_property(yaf_dispatcher_ce, self, ZEND_STRL(YAF_DISPATCHER_PROPERTY_NAME_RENDER), 1 TSRMLS_CC)));
+	} 
 }
 /* }}} */
 
