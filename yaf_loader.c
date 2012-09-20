@@ -876,7 +876,7 @@ PHP_METHOD(yaf_loader, autoload) {
 				php_error_docref(NULL TSRMLS_CC, E_STRICT, "Could not find class %s in %s", class_name, directory);
 			}
 		}  else {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not find script %s", directory);
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Failed opening script %s: %s", directory, strerror(errno));
 		}
 
 #ifdef YAF_HAVE_NAMESPACE
