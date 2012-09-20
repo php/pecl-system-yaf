@@ -81,7 +81,7 @@ extern PHPAPI void php_debug_zval_dump(zval **struc, int level TSRMLS_DC);
 ZEND_BEGIN_MODULE_GLOBALS(yaf)
 	char 		*ext;
 	char		*base_uri;
-	char 		*app_env;
+	char 		*environ;
 	char 		*directory;
 	char 		*local_library;
 	char        *local_namespaces;
