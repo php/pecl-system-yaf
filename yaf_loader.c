@@ -374,6 +374,7 @@ int yaf_loader_import(char *path, int len, int use_path TSRMLS_DC) {
 	file_handle.opened_path = NULL;
 	file_handle.handle.fp = NULL;
 
+	/* we do such trick for performance issue */
 	if (!zend_origin_error_handler) {
 		restore_cb = 1;
 		zend_origin_error_handler = zend_error_cb;
