@@ -155,7 +155,7 @@
     <file name="061.phpt" role="test" />
     <file name="build.inc" role="test" />
     <file name="bug61493.phpt" role="test" />
-    <file name="bug63881.phpt" role="test" />
+    <file name="bug63381.phpt" role="test" />
     <file name="simple.ini" role="test" />
     <file name="system.ini" role="test" />
    </dir>
