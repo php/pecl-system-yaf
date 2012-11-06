@@ -800,9 +800,11 @@ PHP_METHOD(yaf_view_simple, render) {
 	} zend_catch {
 		yaf_view_simple_buffer *buffer;
 
-		if (YAF_G(owrite_handler)) {
-			OG(php_body_write) 	= (yaf_body_write_func)YAF_G(owrite_handler);
-			YAF_G(owrite_handler) = NULL;
+		if (!(--YAF_G(buf_nesting))) {
+			if (YAF_G(owrite_handler)) {
+				OG(php_body_write) 	= (yaf_body_write_func)YAF_G(owrite_handler);
+				YAF_G(owrite_handler) = NULL;
+			}
 		}
 
 		if (YAF_G(buffer)) {
@@ -812,7 +814,6 @@ PHP_METHOD(yaf_view_simple, render) {
 				PHPWRITE(buffer->buffer, buffer->len);
 				efree(buffer->buffer);
 			}
-			--(YAF_G(buf_nesting));
 			efree(buffer);
 		}
 		zend_bailout();
