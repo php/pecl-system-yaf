@@ -813,7 +813,7 @@ void yaf_dispatcher_exception_handler(yaf_dispatcher_t *dispatcher, yaf_request_
 
 	view = yaf_dispatcher_init_view(dispatcher, NULL, NULL TSRMLS_CC);
 	if (!view) {
-		return NULL;
+		return;
 	}
 
 	if (!yaf_dispatcher_handle(dispatcher, request, response, view TSRMLS_CC)) {
