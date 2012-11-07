@@ -207,7 +207,7 @@ PHP_METHOD(yaf_session, get) {
 }
 /* }}} */
 
-/** {{{ proto public staitc Yaf_Session::set($name, $value)
+/** {{{ proto public static Yaf_Session::set($name, $value)
 */
 PHP_METHOD(yaf_session, set) {
 	zval *value;
@@ -228,7 +228,7 @@ PHP_METHOD(yaf_session, set) {
 }
 /* }}} */
 
-/** {{{ proto public staitc Yaf_Session::del($name)
+/** {{{ proto public static Yaf_Session::del($name)
 */
 PHP_METHOD(yaf_session, del) {
 	char *name;
