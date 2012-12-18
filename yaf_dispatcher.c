@@ -522,7 +522,7 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 		return 0;
 	} else {
 		int	is_def_module = 0;
-		int is_def_ctr = 0;
+		/* int is_def_ctr = 0; */
 		zval *module, *controller, *dmodule, *dcontroller, *instantly_flush;
 		zend_class_entry *ce;
 		yaf_controller_t *executor;
@@ -553,9 +553,9 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 			is_def_module = 1;
 		}
 
-		if (strncasecmp(Z_STRVAL_P(dcontroller), Z_STRVAL_P(controller), Z_STRLEN_P(controller)) == 0) {
+		/* if (strncasecmp(Z_STRVAL_P(dcontroller), Z_STRVAL_P(controller), Z_STRLEN_P(controller)) == 0) {
 			is_def_ctr = 1;
-		}
+		} */
 
 		ce = yaf_dispatcher_get_controller(app_dir, Z_STRVAL_P(module), Z_STRVAL_P(controller), Z_STRLEN_P(controller), is_def_module TSRMLS_CC);
 		if (!ce) {
