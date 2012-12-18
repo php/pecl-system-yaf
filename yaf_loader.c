@@ -476,14 +476,13 @@ int yaf_internal_autoload(char *file_name, uint name_len, char **directory TSRML
 /** {{{ int yaf_loader_register_namespace_single(char *prefix, uint len TSRMLS_DC)
  */
 int yaf_loader_register_namespace_single(char *prefix, uint len TSRMLS_DC) {
-	char *namespaces;
 
 	if (YAF_G(local_namespaces)) {
 		uint orig_len = strlen(YAF_G(local_namespaces));
 		YAF_G(local_namespaces) = erealloc(YAF_G(local_namespaces), orig_len + 1 + len + 1);
 		snprintf(YAF_G(local_namespaces) + orig_len, len + 2, "%c%s", DEFAULT_DIR_SEPARATOR, prefix);
 	} else {
-		namespaces = YAF_G(local_namespaces) = emalloc(len + 1 + 1);
+		YAF_G(local_namespaces) = emalloc(len + 1 + 1);
 		snprintf(YAF_G(local_namespaces), len + 2, "%s", prefix);
 	}
 
