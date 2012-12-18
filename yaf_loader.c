@@ -190,7 +190,7 @@ static int yaf_loader_is_category(char *class, uint class_len, char *category, u
  */
 int yaf_loader_is_local_namespace(yaf_loader_t *loader, char *class_name, int len TSRMLS_DC) {
 	char *pos, *ns, *prefix = NULL;
-	char orig_char, *backup = NULL;
+	char orig_char = 0, *backup = NULL;
 	uint prefix_len = 0;
 
 	if (!YAF_G(local_namespaces)) {
