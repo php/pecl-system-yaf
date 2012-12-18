@@ -424,7 +424,7 @@ zend_class_entry * yaf_dispatcher_get_action(char *app_dir, yaf_controller_t *co
 /* {{{ This only effects internally */
 	   	if (YAF_G(st_compatible)) {
 		char *directory, *class, *class_lowercase, *p;
-		uint directory_len, class_len;
+		uint class_len;
 		zend_class_entry **ce;
 		char *action_upper = estrndup(action, len);
 
@@ -449,9 +449,9 @@ zend_class_entry * yaf_dispatcher_get_action(char *app_dir, yaf_controller_t *co
 		}
 
 		if (def_module) {
-			directory_len = spprintf(&directory, 0, "%s%c%s", app_dir, DEFAULT_SLASH, "actions");
+			spprintf(&directory, 0, "%s%c%s", app_dir, DEFAULT_SLASH, "actions");
 		} else {
-			directory_len = spprintf(&directory, 0, "%s%c%s%c%s%c%s", app_dir, DEFAULT_SLASH,
+			spprintf(&directory, 0, "%s%c%s%c%s%c%s", app_dir, DEFAULT_SLASH,
 					"modules", DEFAULT_SLASH, module, DEFAULT_SLASH, "actions");
 		}
 
