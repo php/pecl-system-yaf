@@ -687,7 +687,6 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 				if (!ret) {
 					zval_ptr_dtor(&action);
 					zval_ptr_dtor(&iaction);
-					zval_ptr_dtor(&icontroller);
 					return 0;
 				}
 
@@ -697,9 +696,9 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 					zval_ptr_dtor(&ret);
 					zval_ptr_dtor(&action);
 					zval_ptr_dtor(&iaction);
-					zval_ptr_dtor(&icontroller);
 					return 1;
 				}
+				zval_ptr_dtor(&ret);
 			} else {
 				zval_ptr_dtor(&icontroller);
 				return 0;
@@ -750,9 +749,8 @@ int yaf_dispatcher_handle(yaf_dispatcher_t *dispatcher, yaf_request_t *request, 
 							zval_ptr_dtor(&ret);
 							zval_ptr_dtor(&action);
 							return 0;
-						} else {
-							zval_ptr_dtor(&ret);
 						}
+						zval_ptr_dtor(&ret);
 					}
 				} else {
 					zval_ptr_dtor(&executor);
