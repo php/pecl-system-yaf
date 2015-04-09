@@ -297,7 +297,7 @@ zend_module_entry yaf_module_entry = {
 	PHP_RINIT(yaf),
 	PHP_RSHUTDOWN(yaf),
 	PHP_MINFO(yaf),
-	YAF_VERSION,
+	PHP_YAF_VERSION,
 	PHP_MODULE_GLOBALS(yaf),
 	PHP_GINIT(yaf),
 	NULL,
